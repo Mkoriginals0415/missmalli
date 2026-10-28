@@ -95,7 +95,7 @@ export default function HomePage() {
         </div>
       )}
 
-      <main className="flex-1 space-y-16 sm:space-y-24 pb-16">
+      <main className="flex-1 space-y-12 sm:space-y-24 pb-24 lg:pb-16">
         {sections.map((section) => {
           if (!section.enabled) return null;
 
@@ -601,16 +601,16 @@ export default function HomePage() {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="flex sm:grid sm:grid-cols-3 gap-4 sm:gap-6 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 sm:pb-0">
                     {testimonials.items.map((t, idx) => (
                       <div
                         key={t.id || idx}
-                        className="p-6 rounded-[22px] bg-white border border-brand-lilac/30 shadow-sm space-y-4 flex flex-col justify-between hover:shadow-md transition"
+                        className="w-[280px] sm:w-auto shrink-0 p-5 sm:p-6 rounded-[22px] bg-white border border-brand-lilac/30 shadow-xs space-y-4 flex flex-col justify-between hover:shadow-md transition"
                       >
-                        <div className="space-y-3">
+                        <div className="space-y-2.5">
                           <div className="flex text-amber-500">
                             {[...Array(t.rating || 5)].map((_, i) => (
-                              <Star key={i} className="w-4 h-4 fill-amber-400 stroke-amber-400" />
+                              <Star key={i} className="w-3.5 h-3.5 fill-amber-400 stroke-amber-400" />
                             ))}
                           </div>
                           <p className="text-xs sm:text-sm text-brand-deepPlum/90 leading-relaxed font-sans font-medium">

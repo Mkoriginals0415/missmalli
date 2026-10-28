@@ -20,124 +20,177 @@ export function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-brand-ivory/95 backdrop-blur-md border-b border-brand-lilac/30 transition-all shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
-        {/* Mobile Hamburger Button */}
-        <div className="flex items-center gap-3 lg:hidden">
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-brand-deepPlum hover:text-brand-plum rounded-lg"
-            aria-label="Toggle navigation"
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
+    <>
+      <header className="sticky top-0 z-40 bg-brand-ivory/95 backdrop-blur-md border-b border-brand-lilac/30 transition-all shadow-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 h-16 sm:h-20 flex items-center justify-between">
+          {/* Mobile Hamburger Button */}
+          <div className="flex items-center gap-2 lg:hidden">
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="p-2 -ml-2 text-brand-deepPlum hover:text-brand-plum rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center transition"
+              aria-label="Open menu"
+            >
+              <Menu className="w-6 h-6 stroke-[2.2]" />
+            </button>
+          </div>
 
-        {/* Real Brand Logo Image from workspace */}
-        <Link to="/" className="flex items-center group py-1">
-          <img
-            src="/brand/logo.png"
-            alt="Miss Malli"
-            className="h-10 sm:h-12 w-auto object-contain hover:opacity-95 transition"
-          />
-        </Link>
-
-        {/* Center Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-8 text-[14px] font-semibold text-brand-deepPlum">
-          {navLinks.map((link) => {
-            const isActive = currentPath === link.to;
-            return (
-              <Link
-                key={link.label}
-                to={link.to}
-                className={`transition-colors hover:text-brand-plum relative py-1 ${
-                  isActive ? "text-brand-plum font-bold" : ""
-                }`}
-              >
-                {link.label}
-                {isActive && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-plum rounded-full" />
-                )}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Right Action Icons (Search removed per user request) */}
-        <div className="flex items-center gap-3 sm:gap-4">
-          <Link
-            to="/wishlist"
-            className="p-2 text-brand-deepPlum hover:text-brand-plum transition relative"
-            aria-label="Wishlist"
-          >
-            <Heart className="w-5 h-5 stroke-[2.2]" />
-            {savedIds.length > 0 && (
-              <span className="absolute top-1 right-1 bg-brand-plum text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-sm">
-                {savedIds.length}
-              </span>
-            )}
+          {/* Real Brand Logo Image from workspace */}
+          <Link to="/" className="flex items-center group py-1">
+            <img
+              src="/brand/logo.png"
+              alt="Miss Malli"
+              className="h-8 sm:h-11 w-auto object-contain hover:opacity-95 transition"
+            />
           </Link>
 
-          <Link
-            to="/bag"
-            className="p-2 text-brand-deepPlum hover:text-brand-plum transition relative"
-            aria-label="Shopping Bag"
-          >
-            <ShoppingBag className="w-5 h-5 stroke-[2.2]" />
-            {bagItems.length > 0 && (
-              <span className="absolute top-1 right-1 bg-brand-plum text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-sm">
-                {bagItems.length}
-              </span>
-            )}
-          </Link>
-
-          {/* WhatsApp Support / Order pill button */}
-          <a
-            href="https://wa.me/919876543210?text=Hi%20Miss%20Malli%2C%20I'd%20like%20assistance%20with%20an%20order"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-deepPlum text-white text-[13px] font-semibold hover:bg-brand-plum transition shadow-md"
-          >
-            <MessageCircle className="w-4 h-4 text-emerald-400" />
-            <span>WhatsApp Order</span>
-          </a>
-        </div>
-      </div>
-
-      {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden bg-brand-ivory border-b border-brand-lilac/40 px-6 py-5 space-y-4 animate-fade-in shadow-lg">
-          <nav className="flex flex-col space-y-3 text-sm font-semibold text-brand-deepPlum">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                to={link.to}
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-1 hover:text-brand-plum"
-              >
-                {link.label}
-              </Link>
-            ))}
+          {/* Center Desktop Navigation */}
+          <nav className="hidden lg:flex items-center gap-8 text-[14px] font-semibold text-brand-deepPlum">
+            {navLinks.map((link) => {
+              const isActive = currentPath === link.to;
+              return (
+                <Link
+                  key={link.label}
+                  to={link.to}
+                  className={`transition-colors hover:text-brand-plum relative py-1 ${
+                    isActive ? "text-brand-plum font-bold" : ""
+                  }`}
+                >
+                  {link.label}
+                  {isActive && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-plum rounded-full" />
+                  )}
+                </Link>
+              );
+            })}
           </nav>
 
-          <div className="pt-3 border-t border-brand-lilac/30 flex flex-col gap-2.5">
+          {/* Right Action Icons (Search removed per user request) */}
+          <div className="flex items-center gap-1 sm:gap-4">
             <Link
-              to="/my-requests"
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-xs font-semibold text-brand-plum hover:underline"
+              to="/wishlist"
+              className="p-2 text-brand-deepPlum hover:text-brand-plum transition relative min-w-[44px] min-h-[44px] flex items-center justify-center"
+              aria-label="Wishlist"
             >
-              Track WhatsApp Orders
+              <Heart className="w-5 h-5 stroke-[2.2]" />
+              {savedIds.length > 0 && (
+                <span className="absolute top-1.5 right-1.5 bg-brand-plum text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs">
+                  {savedIds.length}
+                </span>
+              )}
             </Link>
+
             <Link
-              to="/admin"
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-xs font-semibold text-brand-deepPlum/70 hover:underline"
+              to="/bag"
+              className="p-2 text-brand-deepPlum hover:text-brand-plum transition relative min-w-[44px] min-h-[44px] flex items-center justify-center"
+              aria-label="Shopping Bag"
             >
-              Seller Admin Portal
+              <ShoppingBag className="w-5 h-5 stroke-[2.2]" />
+              {bagItems.length > 0 && (
+                <span className="absolute top-1.5 right-1.5 bg-brand-plum text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs">
+                  {bagItems.length}
+                </span>
+              )}
             </Link>
+
+            {/* WhatsApp Support / Order pill button */}
+            <a
+              href="https://wa.me/919876543210?text=Hi%20Miss%20Malli%2C%20I'd%20like%20assistance%20with%20an%20order"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-deepPlum text-white text-[13px] font-semibold hover:bg-brand-plum transition shadow-md"
+            >
+              <MessageCircle className="w-4 h-4 text-emerald-400" />
+              <span>WhatsApp Order</span>
+            </a>
+          </div>
+        </div>
+      </header>
+
+      {/* Luxury Mobile Slide-over Navigation Drawer */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          {/* Backdrop Blur */}
+          <div
+            className="fixed inset-0 bg-brand-deepPlum/60 backdrop-blur-xs transition-opacity duration-300"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+
+          {/* Drawer Content */}
+          <div className="fixed inset-y-0 left-0 w-[82%] max-w-sm bg-brand-ivory shadow-2xl z-10 flex flex-col justify-between overflow-y-auto border-r border-brand-lilac/30 animate-in slide-in-from-left duration-300">
+            <div>
+              {/* Header inside Drawer */}
+              <div className="p-5 flex items-center justify-between border-b border-brand-lilac/30">
+                <img
+                  src="/brand/logo.png"
+                  alt="Miss Malli"
+                  className="h-8 w-auto object-contain"
+                />
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2 -mr-2 text-brand-deepPlum hover:text-brand-plum rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center"
+                  aria-label="Close menu"
+                >
+                  <X className="w-6 h-6 stroke-[2.2]" />
+                </button>
+              </div>
+
+              {/* Navigation Links */}
+              <nav className="p-5 space-y-1">
+                {navLinks.map((link) => {
+                  const isActive = currentPath === link.to;
+                  return (
+                    <Link
+                      key={link.label}
+                      to={link.to}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center justify-between px-3.5 py-3 rounded-xl text-base font-medium transition ${
+                        isActive
+                          ? "bg-brand-plum/10 text-brand-plum font-bold"
+                          : "text-brand-deepPlum hover:bg-brand-lilac/20"
+                      }`}
+                    >
+                      <span>{link.label}</span>
+                      {isActive && (
+                        <span className="w-2 h-2 rounded-full bg-brand-plum" />
+                      )}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
+
+            {/* Bottom Actions & Support inside Drawer */}
+            <div className="p-5 border-t border-brand-lilac/30 space-y-3 bg-brand-warmWhite/60">
+              <a
+                href="https://wa.me/919876543210?text=Hi%20Miss%20Malli%2C%20I%20have%20an%20enquiry"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-2.5 py-3 rounded-full bg-emerald-600 text-white font-semibold text-sm shadow-sm"
+              >
+                <MessageCircle className="w-4 h-4" />
+                <span>Chat with WhatsApp Stylist</span>
+              </a>
+
+              <div className="flex items-center justify-between pt-2 text-xs font-medium text-brand-deepPlum/70">
+                <Link
+                  to="/my-requests"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="hover:text-brand-plum underline"
+                >
+                  Track WhatsApp Inquiries
+                </Link>
+                <Link
+                  to="/admin"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="hover:text-brand-plum underline"
+                >
+                  Admin Portal
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 }

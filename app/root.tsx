@@ -13,6 +13,7 @@ import {
 import stylesheet from "~/styles/app.css?url";
 import { getStoreSettings } from "~/db/d1.server";
 import { DEFAULT_THEME_COLORS, StoreThemeColors } from "~/db/mock-data";
+import { BottomNav } from "~/components/layout/BottomNav";
 
 export async function loader({ context }: LoaderFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
@@ -69,8 +70,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
           }}
         />
       </head>
-      <body className="h-full bg-brand-ivory text-brand-dark">
+      <body className="h-full bg-brand-ivory text-brand-dark overflow-x-hidden antialiased pb-16 lg:pb-0 selection:bg-brand-lilac/30 selection:text-brand-deepPlum">
         {children}
+        <BottomNav />
         <ScrollRestoration />
         <Scripts />
       </body>

@@ -221,16 +221,58 @@ export default function ProductDetailPage() {
         </nav>
 
         {/* Product Details Section (Page 03) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-start">
-          {/* Left: Thumbnail Column + Main Zoom Image */}
-          <div className="lg:col-span-7 flex flex-col-reverse sm:flex-row gap-4 items-start">
-            {/* Thumbnails */}
-            <div className="flex sm:flex-col gap-3 overflow-x-auto sm:overflow-visible shrink-0 pb-2 sm:pb-0">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-12 items-start">
+          {/* Left: Thumbnail Column + Main Image with Mobile Swipe indicator */}
+          <div className="lg:col-span-7 flex flex-col sm:flex-row-reverse gap-3 sm:gap-4 items-start">
+            {/* Main Image with Zoom on Hover */}
+            <div className="relative flex-1 aspect-[3/4] w-full rounded-[24px] sm:rounded-[28px] overflow-hidden bg-brand-lilac/20 shadow-md group">
+              <img
+                src={product.images[activePhoto] || product.images[0]}
+                alt={product.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition duration-500 ease-out"
+              />
+              
+              {/* Photo Counter Badge (Mobile & Desktop) */}
+              <span className="absolute bottom-3 left-3 px-3 py-1 rounded-full bg-black/50 backdrop-blur-xs text-white text-[11px] font-medium tracking-wide">
+                {activePhoto + 1} / {product.images.length}
+              </span>
+
+              {/* Prev / Next Chevrons on Mobile */}
+              {product.images.length > 1 && (
+                <>
+                  <button
+                    onClick={() => setActivePhoto((prev) => (prev > 0 ? prev - 1 : product.images.length - 1))}
+                    className="sm:hidden absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 backdrop-blur-xs text-brand-deepPlum flex items-center justify-center shadow-xs active:scale-95"
+                    aria-label="Previous image"
+                  >
+                    ‹
+                  </button>
+                  <button
+                    onClick={() => setActivePhoto((prev) => (prev < product.images.length - 1 ? prev + 1 : 0))}
+                    className="sm:hidden absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 backdrop-blur-xs text-brand-deepPlum flex items-center justify-center shadow-xs active:scale-95"
+                    aria-label="Next image"
+                  >
+                    ›
+                  </button>
+                </>
+              )}
+
+              <button
+                onClick={handleShare}
+                className="absolute top-3 right-3 p-2.5 rounded-full bg-white/85 backdrop-blur-xs text-brand-deepPlum hover:bg-white transition shadow-xs min-w-[40px] min-h-[40px] flex items-center justify-center"
+                title="Share"
+              >
+                <Share2 className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Thumbnails (Horizontal swipeable on mobile, vertical column on desktop) */}
+            <div className="flex sm:flex-col gap-2.5 overflow-x-auto sm:overflow-visible shrink-0 pb-1 sm:pb-0 w-full sm:w-auto no-scrollbar">
               {product.images.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setActivePhoto(idx)}
-                  className={`w-16 sm:w-20 aspect-[3/4] rounded-[16px] overflow-hidden border-2 transition ${
+                  className={`w-14 sm:w-20 aspect-[3/4] rounded-[14px] sm:rounded-[16px] overflow-hidden border-2 transition shrink-0 ${
                     activePhoto === idx
                       ? "border-brand-plum shadow-md scale-95"
                       : "border-transparent opacity-70 hover:opacity-100"
@@ -239,25 +281,6 @@ export default function ProductDetailPage() {
                   <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
                 </button>
               ))}
-            </div>
-
-            {/* Main Image with Zoom on Hover */}
-            <div className="relative flex-1 aspect-[3/4] w-full rounded-[28px] overflow-hidden bg-brand-lilac/20 shadow-md group">
-              <img
-                src={product.images[activePhoto] || product.images[0]}
-                alt={product.name}
-                className="w-full h-full object-cover group-hover:scale-110 transition duration-500 ease-out"
-              />
-              <span className="absolute bottom-4 left-4 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md text-white text-[11px] font-sans">
-                main image · zoom on hover
-              </span>
-              <button
-                onClick={handleShare}
-                className="absolute top-4 right-4 p-2.5 rounded-full bg-white/80 backdrop-blur-md text-brand-deepPlum hover:bg-white transition shadow-sm"
-                title="Share"
-              >
-                <Share2 className="w-4 h-4" />
-              </button>
             </div>
           </div>
 
@@ -322,7 +345,7 @@ export default function ProductDetailPage() {
                     <button
                       key={v.id}
                       onClick={() => setSelectedColor(v.colorName)}
-                      className={`w-8 h-8 rounded-full border-2 transition ${
+                      className={`w-9 h-9 sm:w-8 sm:h-8 rounded-full border-2 transition min-w-[36px] min-h-[36px] ${
                         selectedColor === v.colorName
                           ? "border-brand-plum scale-110 shadow-md ring-2 ring-brand-plum/30"
                           : "border-white hover:opacity-80"
@@ -343,9 +366,9 @@ export default function ProductDetailPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setBlouseOption("with")}
-                  className={`flex-1 py-2 text-xs font-semibold rounded-xl border transition ${
+                  className={`flex-1 py-3 px-3 text-xs font-semibold rounded-xl border transition min-h-[44px] flex items-center justify-center ${
                     blouseOption === "with"
-                      ? "bg-brand-deepPlum text-white border-brand-deepPlum shadow-sm"
+                      ? "bg-brand-deepPlum text-white border-brand-deepPlum shadow-xs"
                       : "bg-white text-brand-deepPlum border-brand-lilac/40 hover:bg-brand-ivory"
                   }`}
                 >
@@ -353,9 +376,9 @@ export default function ProductDetailPage() {
                 </button>
                 <button
                   onClick={() => setBlouseOption("without")}
-                  className={`flex-1 py-2 text-xs font-semibold rounded-xl border transition ${
+                  className={`flex-1 py-3 px-3 text-xs font-semibold rounded-xl border transition min-h-[44px] flex items-center justify-center ${
                     blouseOption === "without"
-                      ? "bg-brand-deepPlum text-white border-brand-deepPlum shadow-sm"
+                      ? "bg-brand-deepPlum text-white border-brand-deepPlum shadow-xs"
                       : "bg-white text-brand-deepPlum border-brand-lilac/40 hover:bg-brand-ivory"
                   }`}
                 >
@@ -366,17 +389,19 @@ export default function ProductDetailPage() {
 
             {/* Quantity & Add to Bag & Wishlist Row (Page 03) */}
             <div className="flex items-center gap-3 pt-2">
-              <div className="flex items-center justify-between border border-brand-lilac/50 rounded-full bg-white px-3 py-2 w-28">
+              <div className="flex items-center justify-between border border-brand-lilac/50 rounded-full bg-white px-3 py-2 w-28 min-h-[44px]">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="text-brand-deepPlum hover:text-brand-plum"
+                  className="text-brand-deepPlum hover:text-brand-plum p-1"
+                  aria-label="Decrease quantity"
                 >
                   <Minus className="w-3.5 h-3.5" />
                 </button>
                 <span className="font-bold text-xs">{quantity}</span>
                 <button
                   onClick={() => setQuantity(quantity + 1)}
-                  className="text-brand-deepPlum hover:text-brand-plum"
+                  className="text-brand-deepPlum hover:text-brand-plum p-1"
+                  aria-label="Increase quantity"
                 >
                   <Plus className="w-3.5 h-3.5" />
                 </button>
@@ -384,7 +409,7 @@ export default function ProductDetailPage() {
 
               <button
                 onClick={handleAddToBag}
-                className="flex-1 py-3 px-6 rounded-full bg-brand-plum text-white font-semibold text-xs hover:bg-brand-deepPlum transition shadow-md flex items-center justify-center gap-2"
+                className="flex-1 py-3 px-6 rounded-full bg-brand-plum text-white font-semibold text-xs hover:bg-brand-deepPlum transition shadow-md flex items-center justify-center gap-2 min-h-[44px]"
               >
                 <ShoppingBag className="w-4 h-4" />
                 <span>Add to Bag</span>
@@ -392,9 +417,10 @@ export default function ProductDetailPage() {
 
               <button
                 onClick={() => toggleSave(product.id)}
-                className={`p-3 rounded-full border border-brand-lilac/50 transition ${
+                className={`p-3 rounded-full border border-brand-lilac/50 transition min-w-[44px] min-h-[44px] flex items-center justify-center ${
                   isSaved(product.id) ? "bg-brand-blush text-brand-plum border-brand-plum" : "bg-white text-brand-deepPlum"
                 }`}
+                aria-label="Save to Wishlist"
               >
                 <Heart className={`w-4 h-4 ${isSaved(product.id) ? "fill-brand-plum" : ""}`} />
               </button>
@@ -405,12 +431,12 @@ export default function ProductDetailPage() {
               <button
                 onClick={handleBuyNow}
                 disabled={isSubmitting}
-                className="w-full py-3.5 px-6 rounded-full bg-brand-deepPlum text-white font-semibold text-xs hover:bg-brand-plum transition shadow-lg flex items-center justify-center gap-2.5 disabled:opacity-50"
+                className="w-full py-3.5 px-6 rounded-full bg-brand-deepPlum text-white font-semibold text-xs hover:bg-brand-plum transition shadow-lg flex items-center justify-center gap-2.5 disabled:opacity-50 min-h-[48px]"
               >
                 <MessageCircle className="w-4 h-4 text-emerald-400" />
                 <span>Buy Now on WhatsApp (#{product.code})</span>
               </button>
-              <p className="text-[11px] text-center text-brand-deepPlum/60 mt-1.5">
+              <p className="text-[11px] text-center text-brand-deepPlum/60 mt-1.5 font-medium">
                 Generates a private request link and opens seller WhatsApp.
               </p>
             </div>
@@ -509,18 +535,21 @@ export default function ProductDetailPage() {
         {/* =========================================================
             COMPLETE THE LOOK (Page 03)
            ========================================================= */}
-        <section className="space-y-6 pt-8 border-t border-brand-lilac/40">
-          <h2 className="text-2xl font-bold text-brand-deepPlum">
-            Complete the Look
-          </h2>
+        <section className="space-y-4 pt-6 border-t border-brand-lilac/40">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl sm:text-2xl font-bold text-brand-deepPlum">
+              Complete the Look
+            </h2>
+            <span className="text-xs text-brand-deepPlum/60 font-semibold sm:hidden">Swipe →</span>
+          </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
+          <div className="flex sm:grid sm:grid-cols-4 gap-3 sm:gap-6 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 sm:pb-0">
             {accessories.map((acc) => (
               <div
                 key={acc.id}
-                className="bg-white rounded-[22px] overflow-hidden border border-brand-lilac/30 shadow-sm p-3.5 space-y-2 flex flex-col justify-between"
+                className="w-[200px] sm:w-auto shrink-0 bg-white rounded-[20px] overflow-hidden border border-brand-lilac/30 shadow-xs p-3 space-y-2 flex flex-col justify-between"
               >
-                <div className="relative aspect-square rounded-[16px] overflow-hidden bg-brand-lilac/10">
+                <div className="relative aspect-square rounded-[14px] overflow-hidden bg-brand-lilac/10">
                   <img src={acc.image} alt={acc.name} className="w-full h-full object-cover" />
                   <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-brand-deepPlum text-white text-[9px] font-bold">
                     #{acc.code}
@@ -528,7 +557,7 @@ export default function ProductDetailPage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-xs text-brand-deepPlum truncate">{acc.name}</h3>
-                  <div className="flex items-center justify-between mt-1">
+                  <div className="flex items-center justify-between mt-1.5">
                     <span className="text-xs font-bold text-brand-deepPlum">
                       ₹ {acc.price.toLocaleString("en-IN")}
                     </span>
@@ -546,7 +575,7 @@ export default function ProductDetailPage() {
                         });
                         showToast(`Added ${acc.name} to bag`, { text: "View Bag", url: "/bag" });
                       }}
-                      className="text-[11px] font-bold text-brand-plum hover:underline"
+                      className="px-2.5 py-1 rounded-full bg-brand-plum/10 text-brand-plum text-[10.5px] font-bold hover:bg-brand-plum hover:text-white transition"
                     >
                       + Add
                     </button>
@@ -560,27 +589,27 @@ export default function ProductDetailPage() {
         {/* =========================================================
             CUSTOMER REVIEWS (Page 03)
            ========================================================= */}
-        <section className="space-y-6 pt-4">
-          <h2 className="text-2xl font-bold text-brand-deepPlum">
+        <section className="space-y-4 pt-4">
+          <h2 className="text-xl sm:text-2xl font-bold text-brand-deepPlum">
             Customer Reviews
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="flex sm:grid sm:grid-cols-3 gap-4 sm:gap-6 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 sm:pb-0">
             {[1, 2, 3].map((idx) => (
               <div
                 key={idx}
-                className="p-5 rounded-[22px] bg-white border border-brand-lilac/30 shadow-sm space-y-2"
+                className="w-[260px] sm:w-auto shrink-0 p-4 sm:p-5 rounded-[20px] bg-white border border-brand-lilac/30 shadow-xs space-y-2"
               >
                 <div className="flex text-amber-500">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="w-3.5 h-3.5 fill-amber-400 stroke-amber-400" />
                   ))}
                 </div>
-                <p className="text-xs text-brand-deepPlum/80 leading-relaxed">
+                <p className="text-xs text-brand-deepPlum/80 leading-relaxed font-medium">
                   "Gorgeous colour, exactly as pictured. The golden zari sheen is subtle and heirloom quality."
                 </p>
-                <span className="text-[11px] text-brand-deepPlum/50 block font-medium">
-                  — Verified buyer
+                <span className="text-[10.5px] text-brand-deepPlum/60 block font-semibold">
+                  — Verified Collector (Chennai)
                 </span>
               </div>
             ))}
@@ -588,20 +617,20 @@ export default function ProductDetailPage() {
         </section>
       </main>
 
-      {/* Mobile Sticky Order Bar */}
-      <div className="lg:hidden sticky bottom-0 z-40 bg-white/95 backdrop-blur-md border-t border-brand-deepPlum/15 px-4 py-3 flex items-center justify-between gap-3 shadow-2xl">
-        <div>
-          <span className="text-xs font-bold text-brand-deepPlum block leading-tight truncate max-w-[170px]">
+      {/* Mobile Sticky Order Bar with Safe Area Support */}
+      <div className="lg:hidden sticky bottom-0 z-50 bg-white/95 backdrop-blur-md border-t border-brand-deepPlum/15 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] flex items-center justify-between gap-3 shadow-2xl">
+        <div className="min-w-0 flex-1">
+          <span className="text-xs font-bold text-brand-deepPlum block leading-tight truncate">
             {product.name}
           </span>
           <span className="text-sm font-bold text-brand-plum">
             ₹ {(product.price * quantity).toLocaleString("en-IN")}
           </span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={handleAddToBag}
-            className="p-2.5 rounded-full border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-ivory transition shadow-xs"
+            className="p-2.5 rounded-full border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-ivory transition shadow-2xs min-w-[42px] min-h-[42px] flex items-center justify-center"
             aria-label="Add to bag"
           >
             <ShoppingBag className="w-4 h-4" />
@@ -609,7 +638,7 @@ export default function ProductDetailPage() {
           <button
             onClick={handleBuyNow}
             disabled={isSubmitting}
-            className="py-2.5 px-4 rounded-full bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md flex items-center gap-1.5 whitespace-nowrap"
+            className="py-2.5 px-4 rounded-full bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md flex items-center gap-1.5 whitespace-nowrap min-h-[42px]"
           >
             <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
             <span>Order on WhatsApp</span>

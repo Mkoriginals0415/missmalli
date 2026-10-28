@@ -87,11 +87,11 @@ export default function WishlistPage() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
             {savedSarees.map((saree) => (
               <div
                 key={saree.id}
-                className="bg-white rounded-[22px] overflow-hidden border border-brand-lilac/30 shadow-sm flex flex-col justify-between"
+                className="bg-white rounded-[18px] sm:rounded-[22px] overflow-hidden border border-brand-lilac/30 shadow-xs flex flex-col justify-between"
               >
                 <div className="relative aspect-[3/4] bg-brand-lilac/10 overflow-hidden">
                   <img
@@ -99,27 +99,28 @@ export default function WishlistPage() {
                     alt={saree.name}
                     className="w-full h-full object-cover"
                   />
-                  <span className="absolute top-3 left-3 px-2 py-0.5 rounded-full bg-brand-deepPlum text-white text-[9px] font-bold">
+                  <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full bg-brand-deepPlum text-white text-[9px] font-bold">
                     #{saree.code}
                   </span>
                   <button
                     onClick={() => toggleSave(saree.id)}
-                    className="absolute top-3 right-3 p-2 rounded-full bg-white/90 text-brand-plum hover:text-red-500 shadow-sm"
+                    className="absolute top-2.5 right-2.5 p-2 rounded-full bg-white/90 text-brand-plum hover:text-red-500 shadow-xs min-w-[38px] min-h-[38px] flex items-center justify-center"
                     title="Remove from wishlist"
+                    aria-label="Remove from wishlist"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
-                <div className="p-4 space-y-2">
+                <div className="p-3 sm:p-4 space-y-1.5 sm:space-y-2">
                   <Link to={`/p/${saree.slug}`} className="block hover:text-brand-plum">
                     <h3 className="font-semibold text-xs sm:text-sm text-brand-deepPlum line-clamp-1">
                       {saree.name}
                     </h3>
                   </Link>
-                  <p className="text-[11px] text-brand-deepPlum/60">{saree.fabric}</p>
+                  <p className="text-[10.5px] sm:text-[11px] text-brand-deepPlum/60">{saree.fabric}</p>
 
-                  <div className="flex items-center justify-between pt-1">
+                  <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2 pt-1">
                     <span className="text-xs sm:text-sm font-bold text-brand-deepPlum">
                       ₹ {saree.price.toLocaleString("en-IN")}
                     </span>
@@ -139,9 +140,9 @@ export default function WishlistPage() {
                         toggleSave(saree.id);
                         showToast(`Moved "${saree.name}" to bag!`);
                       }}
-                      className="text-[11px] font-bold text-brand-plum hover:underline"
+                      className="w-full xs:w-auto px-3 py-1.5 rounded-full bg-brand-plum/10 text-brand-plum text-[10.5px] font-bold hover:bg-brand-plum hover:text-white transition text-center min-h-[36px] flex items-center justify-center"
                     >
-                      + Add to bag
+                      + Bag
                     </button>
                   </div>
                 </div>
@@ -153,7 +154,7 @@ export default function WishlistPage() {
 
       {/* Floating Interactive Toast */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-4 duration-300">
+        <div className="fixed bottom-20 lg:bottom-6 right-6 z-50 animate-in slide-in-from-bottom-4 duration-300">
           <div className="px-4 py-3 rounded-2xl bg-brand-deepPlum text-white text-xs font-bold shadow-xl flex items-center gap-2 border border-brand-lilac/30">
             <Check className="w-4 h-4 text-emerald-400 stroke-[3]" />
             <span>{toastMessage}</span>

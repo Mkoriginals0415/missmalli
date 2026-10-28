@@ -213,21 +213,21 @@ export default function ShoppingBagPage() {
               {/* Coupon Code Input (Page 04) */}
               <form
                 onSubmit={handleApplyCoupon}
-                className="flex gap-3 bg-white rounded-[22px] p-3 border border-brand-lilac/30 shadow-sm"
+                className="flex gap-2 sm:gap-3 bg-white rounded-[22px] p-2.5 sm:p-3 border border-brand-lilac/30 shadow-sm"
               >
-                <div className="flex items-center gap-2 flex-1 px-3">
-                  <Tag className="w-4 h-4 text-brand-deepPlum/40" />
+                <div className="flex items-center gap-2 flex-1 px-3 min-h-[44px]">
+                  <Tag className="w-4 h-4 text-brand-deepPlum/40 shrink-0" />
                   <input
                     type="text"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
-                    placeholder="Enter coupon code (e.g. FESTIVE30)"
+                    placeholder="Coupon code (FESTIVE30)"
                     className="w-full text-xs text-brand-deepPlum bg-transparent focus:outline-none uppercase font-mono"
                   />
                 </div>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-full bg-brand-ivory border border-brand-deepPlum text-brand-deepPlum text-xs font-semibold hover:bg-brand-deepPlum hover:text-white transition"
+                  className="px-5 py-2.5 rounded-full bg-brand-ivory border border-brand-deepPlum text-brand-deepPlum text-xs font-bold hover:bg-brand-deepPlum hover:text-white transition min-h-[44px]"
                 >
                   Apply
                 </button>
@@ -246,7 +246,7 @@ export default function ShoppingBagPage() {
 
             {/* Order Summary (Right Column) */}
             <div className="lg:col-span-4 space-y-4">
-              <div className="bg-white rounded-[28px] border border-brand-lilac/30 p-6 space-y-5 shadow-sm">
+              <div className="bg-white rounded-[28px] border border-brand-lilac/30 p-5 sm:p-6 space-y-5 shadow-sm">
                 <h3 className="font-bold text-base text-brand-deepPlum">Order Summary</h3>
 
                 <div className="space-y-3 text-xs border-b border-brand-lilac/20 pb-4">
@@ -281,7 +281,7 @@ export default function ShoppingBagPage() {
                 <button
                   onClick={handleSendWhatsAppOrder}
                   disabled={isSubmitting}
-                  className="w-full py-4 px-6 rounded-full bg-brand-plum text-white font-semibold text-xs hover:bg-brand-deepPlum transition shadow-lg flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="w-full py-3.5 px-6 rounded-full bg-brand-deepPlum text-white font-bold text-xs hover:bg-brand-plum transition shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 min-h-[48px]"
                 >
                   {isSubmitting ? (
                     <>
@@ -296,19 +296,43 @@ export default function ShoppingBagPage() {
                   )}
                 </button>
 
-                <p className="text-[11px] text-center text-brand-deepPlum/60 leading-relaxed">
-                  🔒 No address form on the site. Delivery address and final payment details are agreed in your direct WhatsApp chat with the seller.
+                <p className="text-[11px] text-center text-brand-deepPlum/60 leading-relaxed font-medium">
+                  🔒 No online payment form needed. Delivery address and payment method are confirmed directly with our WhatsApp concierge.
                 </p>
 
-                <div className="pt-2 flex items-center justify-center gap-1.5 text-[10px] text-brand-deepPlum/50">
+                <div className="pt-1 flex items-center justify-center gap-1.5 text-[10.5px] text-brand-deepPlum/60 font-semibold">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Secure WhatsApp order concierge</span>
+                  <span>Secure WhatsApp order routing</span>
                 </div>
               </div>
             </div>
           </div>
         )}
       </main>
+
+      {/* Sticky Mobile Checkout Bar above BottomNav */}
+      {items.length > 0 && (
+        <div className="lg:hidden sticky bottom-16 z-30 bg-white/95 backdrop-blur-md border-t border-brand-lilac/40 px-4 py-3 flex items-center justify-between gap-3 shadow-2xl">
+          <div>
+            <span className="text-[10.5px] text-brand-deepPlum/70 block font-medium">Total ({items.length} items)</span>
+            <span className="text-base font-bold text-brand-plum">
+              ₹ {finalTotal.toLocaleString("en-IN")}
+            </span>
+          </div>
+          <button
+            onClick={handleSendWhatsAppOrder}
+            disabled={isSubmitting}
+            className="py-3 px-5 rounded-full bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md flex items-center gap-2 min-h-[44px]"
+          >
+            {isSubmitting ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <MessageCircle className="w-4 h-4 text-emerald-400" />
+            )}
+            <span>Order on WhatsApp</span>
+          </button>
+        </div>
+      )}
 
       <Footer />
     </div>
