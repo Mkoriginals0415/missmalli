@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { getHomepageContent, updateHomepageContent } from "~/db/d1.server";
 import { HomepageContent, CollectionItem, HomepageSection } from "~/db/mock-data";
+import { ImageUpload } from "~/components/ui/ImageUpload";
 
 export async function loader({ context }: LoaderFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
@@ -285,30 +286,27 @@ export default function AdminCollectionsPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2.5">
-                <div>
-                  <label className="text-[10px] font-bold uppercase text-brand-deepPlum/70 block mb-1">
-                    Slug / URL Path
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. georgette"
-                    value={newCollectionSlug}
-                    onChange={(e) => setNewCollectionSlug(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-lg border border-brand-deepPlum/20 text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] font-bold uppercase text-brand-deepPlum/70 block mb-1">
-                    Image URL
-                  </label>
-                  <input
-                    type="text"
-                    value={newCollectionImage}
-                    onChange={(e) => setNewCollectionImage(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-lg border border-brand-deepPlum/20 text-[11px]"
-                  />
-                </div>
+              <div>
+                <label className="text-[10px] font-bold uppercase text-brand-deepPlum/70 block mb-1">
+                  Slug / URL Path
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. georgette"
+                  value={newCollectionSlug}
+                  onChange={(e) => setNewCollectionSlug(e.target.value)}
+                  className="w-full px-3 py-1.5 rounded-lg border border-brand-deepPlum/20 text-xs"
+                />
+              </div>
+
+              <div>
+                <ImageUpload
+                  value={newCollectionImage}
+                  onChange={setNewCollectionImage}
+                  label="Collection Cover Image"
+                  aspectRatio="portrait"
+                  helpText="Select or drag a photo for this collection card"
+                />
               </div>
 
               <div className="flex justify-end gap-2 pt-1">
@@ -374,29 +372,26 @@ export default function AdminCollectionsPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2.5">
-                <div>
-                  <label className="text-[10px] font-bold uppercase text-brand-deepPlum/70 block mb-1">
-                    Slug
-                  </label>
-                  <input
-                    type="text"
-                    value={editingItem.slug}
-                    onChange={(e) => setEditingItem({ ...editingItem, slug: e.target.value })}
-                    className="w-full px-3 py-1.5 rounded-lg border border-brand-deepPlum/20 text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] font-bold uppercase text-brand-deepPlum/70 block mb-1">
-                    Image URL
-                  </label>
-                  <input
-                    type="text"
-                    value={editingItem.image}
-                    onChange={(e) => setEditingItem({ ...editingItem, image: e.target.value })}
-                    className="w-full px-3 py-1.5 rounded-lg border border-brand-deepPlum/20 text-[11px]"
-                  />
-                </div>
+              <div>
+                <label className="text-[10px] font-bold uppercase text-brand-deepPlum/70 block mb-1">
+                  Slug
+                </label>
+                <input
+                  type="text"
+                  value={editingItem.slug}
+                  onChange={(e) => setEditingItem({ ...editingItem, slug: e.target.value })}
+                  className="w-full px-3 py-1.5 rounded-lg border border-brand-deepPlum/20 text-xs"
+                />
+              </div>
+
+              <div>
+                <ImageUpload
+                  value={editingItem.image}
+                  onChange={(img) => setEditingItem({ ...editingItem, image: img })}
+                  label="Collection Cover Image"
+                  aspectRatio="portrait"
+                  helpText="Select or drag a photo for this collection card"
+                />
               </div>
 
               <div className="flex justify-end gap-2 pt-1">
@@ -605,14 +600,12 @@ export default function AdminCollectionsPage() {
             </div>
 
             <div>
-              <label className="text-xs font-bold text-brand-deepPlum block mb-1">
-                Banner Graphic URL
-              </label>
-              <input
-                type="text"
+              <ImageUpload
                 value={promotion.image}
-                onChange={(e) => setPromotion({ ...promotion, image: e.target.value })}
-                className="w-full px-3.5 py-2 rounded-xl border border-brand-deepPlum/20 text-xs"
+                onChange={(img) => setPromotion({ ...promotion, image: img })}
+                label="Banner Graphic / Photo"
+                aspectRatio="landscape"
+                helpText="Upload a high-resolution promotional banner photo"
               />
             </div>
 

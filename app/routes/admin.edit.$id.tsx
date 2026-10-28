@@ -3,6 +3,7 @@ import { json, type LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { useLoaderData, useNavigate, Link } from "@remix-run/react";
 import { ArrowLeft, Save, Upload, Eye, Plus, Trash2 } from "lucide-react";
 import { getProductById } from "~/db/d1.server";
+import { processImageFile } from "~/components/ui/ImageUpload";
 
 export async function loader({ params, context }: LoaderFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
@@ -102,12 +103,30 @@ export default function AdminProductEditor() {
                   First photo is the cover and image WhatsApp displays in preview cards
                 </p>
               </div>
-              <button
-                onClick={handleAddImage}
-                className="text-xs font-semibold text-brand-purple hover:underline flex items-center gap-1"
-              >
-                <Plus className="w-3.5 h-3.5" /> Add photo URL
-              </button>
+              <div className="flex items-center gap-2">
+                <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-deepPlum text-white text-xs font-bold cursor-pointer hover:bg-brand-plum transition shadow-xs">
+                  <Upload className="w-3.5 h-3.5 text-brand-lilac" />
+                  <span>Upload Photo</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        const dataUrl = await processImageFile(e.target.files[0]);
+                        setImages([...images, dataUrl]);
+                      }
+                    }}
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={handleAddImage}
+                  className="text-xs font-semibold text-brand-deepPlum/70 hover:underline flex items-center gap-1"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Link
+                </button>
+              </div>
             </div>
 
             <div className="flex gap-3 overflow-x-auto no-scrollbar py-2">

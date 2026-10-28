@@ -14,10 +14,12 @@ import {
   ExternalLink,
   Sparkles,
   Layers,
-  Star
+  Star,
+  Upload
 } from "lucide-react";
 import { getHomepageContent, updateHomepageContent } from "~/db/d1.server";
 import { HomepageContent, CollectionItem, TestimonialItem, HomepageSection } from "~/db/mock-data";
+import { ImageUpload, processImageFile } from "~/components/ui/ImageUpload";
 
 export async function loader({ context }: LoaderFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
@@ -424,29 +426,55 @@ export default function AdminHomepageEditor() {
 
           {/* Desktop Images Editor (5 Images) */}
           <div className="space-y-3 pt-4 border-t border-brand-deepPlum/10">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-brand-deepPlum">
-              Desktop 5-Column Gallery Images
-            </h4>
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-brand-deepPlum">
+                Desktop 5-Column Gallery Images
+              </h4>
+              <p className="text-[11px] text-brand-deepPlum/60">
+                Upload photos directly from your computer for each column of the desktop gallery
+              </p>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
               {hero.desktopImages.map((imgUrl, i) => (
-                <div key={i} className="p-3 rounded-2xl bg-brand-ivory/50 border border-brand-deepPlum/15 space-y-2">
-                  <div className="aspect-[3/4] rounded-xl overflow-hidden bg-white relative border border-brand-deepPlum/10">
+                <div key={i} className="p-3 rounded-2xl bg-brand-ivory/50 border border-brand-deepPlum/15 space-y-2 flex flex-col justify-between">
+                  <div className="aspect-[3/4] rounded-xl overflow-hidden bg-white relative border border-brand-deepPlum/10 shadow-2xs group">
                     <img src={imgUrl} alt={`Col ${i + 1}`} className="w-full h-full object-cover" />
-                    <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-black/60 text-white text-[9px] font-bold">
+                    <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded-md bg-black/70 text-white text-[9px] font-bold">
                       Column {i + 1}
                     </span>
                   </div>
-                  <input
-                    type="text"
-                    value={imgUrl}
-                    onChange={(e) => {
-                      const updated = [...hero.desktopImages];
-                      updated[i] = e.target.value;
-                      setHero({ ...hero, desktopImages: updated });
-                    }}
-                    placeholder="https://..."
-                    className="w-full px-2 py-1.5 rounded-lg border border-brand-deepPlum/20 text-[10px] text-brand-deepPlum"
-                  />
+
+                  <div className="space-y-1.5 pt-1">
+                    <label className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-2 rounded-xl bg-brand-deepPlum text-white text-[11px] font-bold cursor-pointer hover:bg-brand-plum transition shadow-xs">
+                      <Upload className="w-3 h-3 text-brand-lilac" />
+                      <span>Upload Photo</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={async (e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            const dataUrl = await processImageFile(e.target.files[0]);
+                            const updated = [...hero.desktopImages];
+                            updated[i] = dataUrl;
+                            setHero({ ...hero, desktopImages: updated });
+                          }
+                        }}
+                      />
+                    </label>
+
+                    <input
+                      type="text"
+                      value={imgUrl}
+                      onChange={(e) => {
+                        const updated = [...hero.desktopImages];
+                        updated[i] = e.target.value;
+                        setHero({ ...hero, desktopImages: updated });
+                      }}
+                      placeholder="Or paste link..."
+                      className="w-full px-2 py-1 rounded-lg border border-brand-deepPlum/20 text-[9px] text-brand-deepPlum font-mono"
+                    />
+                  </div>
                 </div>
               ))}
             </div>
@@ -459,25 +487,18 @@ export default function AdminHomepageEditor() {
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {hero.mobileImages.map((imgUrl, i) => (
-                <div key={i} className="p-3 rounded-2xl bg-brand-ivory/50 border border-brand-deepPlum/15 space-y-2 flex items-center gap-4">
-                  <div className="w-20 h-24 rounded-xl overflow-hidden bg-white shrink-0 relative border border-brand-deepPlum/10">
-                    <img src={imgUrl} alt={`Mobile Card ${i + 1}`} className="w-full h-full object-cover" />
-                  </div>
-                  <div className="flex-1 space-y-1">
-                    <label className="text-[11px] font-bold text-brand-deepPlum block">
-                      Card {i + 1} Image URL
-                    </label>
-                    <input
-                      type="text"
-                      value={imgUrl}
-                      onChange={(e) => {
-                        const updated = [...hero.mobileImages];
-                        updated[i] = e.target.value;
-                        setHero({ ...hero, mobileImages: updated });
-                      }}
-                      className="w-full px-3 py-2 rounded-lg border border-brand-deepPlum/20 text-xs text-brand-deepPlum"
-                    />
-                  </div>
+                <div key={i} className="p-4 rounded-2xl bg-brand-ivory/50 border border-brand-deepPlum/15">
+                  <ImageUpload
+                    value={imgUrl}
+                    onChange={(newVal) => {
+                      const updated = [...hero.mobileImages];
+                      updated[i] = newVal;
+                      setHero({ ...hero, mobileImages: updated });
+                    }}
+                    label={`Mobile Notched Card ${i + 1}`}
+                    aspectRatio="portrait"
+                    helpText="Upload a portrait photo for the mobile hero card"
+                  />
                 </div>
               ))}
             </div>
@@ -647,16 +668,22 @@ export default function AdminHomepageEditor() {
                     />
                   </div>
 
-                  <div>
-                    <label className="text-[10px] font-bold uppercase text-brand-deepPlum/70 block">
-                      Image URL
+                  <div className="pt-1">
+                    <label className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-2 rounded-xl bg-brand-deepPlum text-white text-[11px] font-bold cursor-pointer hover:bg-brand-plum transition shadow-xs">
+                      <Upload className="w-3.5 h-3.5 text-brand-lilac" />
+                      <span>Upload Card Photo</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={async (e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            const dataUrl = await processImageFile(e.target.files[0]);
+                            updateCategoryItem(cat.id, { image: dataUrl });
+                          }
+                        }}
+                      />
                     </label>
-                    <input
-                      type="text"
-                      value={cat.image}
-                      onChange={(e) => updateCategoryItem(cat.id, { image: e.target.value })}
-                      className="w-full px-2.5 py-1.5 rounded-lg border border-brand-deepPlum/20 text-[10px]"
-                    />
                   </div>
                 </div>
               </div>
@@ -809,25 +836,14 @@ export default function AdminHomepageEditor() {
               />
             </div>
 
-            <div>
-              <label className="text-xs font-bold text-brand-deepPlum block mb-1">
-                Banner Image URL
-              </label>
-              <input
-                type="text"
+            <div className="md:col-span-2 pt-2">
+              <ImageUpload
                 value={promotion.image}
-                onChange={(e) => setPromotion({ ...promotion, image: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-brand-deepPlum/20 text-xs font-semibold text-brand-deepPlum"
+                onChange={(img) => setPromotion({ ...promotion, image: img })}
+                label="Promotion Banner Graphic"
+                aspectRatio="landscape"
+                helpText="Upload a photo from your computer for the festive sale banner"
               />
-            </div>
-
-            <div>
-              <label className="text-xs font-bold text-brand-deepPlum block mb-1">
-                Live Image Preview
-              </label>
-              <div className="h-20 w-32 rounded-xl overflow-hidden bg-brand-gold/20 border border-brand-deepPlum/20">
-                <img src={promotion.image} alt="Banner Preview" className="w-full h-full object-cover" />
-              </div>
             </div>
           </div>
         </div>
@@ -884,25 +900,14 @@ export default function AdminHomepageEditor() {
               />
             </div>
 
-            <div>
-              <label className="text-xs font-bold text-brand-deepPlum block mb-1">
-                Artisan Image URL
-              </label>
-              <input
-                type="text"
+            <div className="md:col-span-2 pt-2">
+              <ImageUpload
                 value={artisan.image}
-                onChange={(e) => setArtisan({ ...artisan, image: e.target.value })}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-brand-deepPlum/20 text-xs font-semibold text-brand-deepPlum"
+                onChange={(img) => setArtisan({ ...artisan, image: img })}
+                label="Artisan / Master Weaver Photo"
+                aspectRatio="banner"
+                helpText="Upload a photo of artisans at loom for the story section"
               />
-            </div>
-
-            <div>
-              <label className="text-xs font-bold text-brand-deepPlum block mb-1">
-                Live Preview
-              </label>
-              <div className="h-20 w-36 rounded-xl overflow-hidden bg-brand-lilac/20 border border-brand-deepPlum/20">
-                <img src={artisan.image} alt="Artisan Preview" className="w-full h-full object-cover" />
-              </div>
             </div>
           </div>
         </div>
@@ -1031,15 +1036,24 @@ export default function AdminHomepageEditor() {
                   </div>
 
                   <div>
-                    <label className="text-[10px] font-bold uppercase text-brand-deepPlum/70 block">
-                      Avatar Photo URL
+                    <label className="text-[10px] font-bold uppercase text-brand-deepPlum/70 block mb-1">
+                      Customer Avatar Photo
                     </label>
-                    <input
-                      type="text"
-                      value={t.avatar || ""}
-                      onChange={(e) => updateTestimonial(t.id, { avatar: e.target.value })}
-                      className="w-full px-2.5 py-1.5 rounded-lg border border-brand-deepPlum/20 text-[10px]"
-                    />
+                    <label className="inline-flex items-center justify-center gap-1.5 w-full py-1.5 px-2 rounded-lg bg-brand-deepPlum text-white text-[11px] font-bold cursor-pointer hover:bg-brand-plum transition shadow-xs">
+                      <Upload className="w-3 h-3 text-brand-lilac" />
+                      <span>Upload Avatar</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={async (e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            const dataUrl = await processImageFile(e.target.files[0], 200);
+                            updateTestimonial(t.id, { avatar: dataUrl });
+                          }
+                        }}
+                      />
+                    </label>
                   </div>
                 </div>
               </div>
