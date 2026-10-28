@@ -67,9 +67,9 @@ export default function AdminProductEditor() {
   return (
     <div className="space-y-6">
       {/* Header Bar */}
-      <div className="flex items-center justify-between pb-4 border-b border-brand-lavender/30">
-        <div className="flex items-center gap-3">
-          <Link to="/admin/products" className="p-1.5 text-brand-dark/60 hover:text-brand-purple">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-brand-lavender/30">
+        <div className="flex items-center gap-2.5">
+          <Link to="/admin/products" className="p-2 -ml-2 text-brand-dark/60 hover:text-brand-deepPlum min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
@@ -84,7 +84,7 @@ export default function AdminProductEditor() {
 
         <button
           onClick={handleSave}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-purple text-white text-xs font-semibold hover:bg-brand-plum transition shadow-sm"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md min-h-[44px]"
         >
           <Save className="w-4 h-4" />
           <span>Save and publish</span>

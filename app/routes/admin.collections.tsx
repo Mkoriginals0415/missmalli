@@ -172,7 +172,7 @@ export default function AdminCollectionsPage() {
   return (
     <div className="space-y-6 max-w-6xl pb-12">
       {/* Top Header & Sticky Save Controls */}
-      <div className="bg-white rounded-2xl p-6 border border-brand-deepPlum/15 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-4 z-30 backdrop-blur-md bg-white/95">
+      <div className="bg-white rounded-2xl p-4 sm:p-6 border border-brand-deepPlum/15 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-14 md:top-4 z-30 backdrop-blur-md bg-white/95">
         <div>
           <div className="flex items-center gap-2">
             <span className="px-2.5 py-0.5 rounded-full bg-brand-plum/10 text-brand-plum font-bold text-[11px] tracking-wide uppercase">
@@ -181,7 +181,7 @@ export default function AdminCollectionsPage() {
             <span className="text-brand-deepPlum/40">•</span>
             <span className="text-xs font-semibold text-brand-deepPlum/70">Storefront Curator</span>
           </div>
-          <h1 className="text-2xl font-bold text-brand-deepPlum mt-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-brand-deepPlum mt-1">
             Collections, Promotions & Layout Order
           </h1>
           <p className="text-xs text-brand-deepPlum/70 font-medium">
@@ -189,11 +189,11 @@ export default function AdminCollectionsPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3 self-start md:self-auto">
+        <div className="flex items-center gap-2.5 w-full md:w-auto">
           <Link
             to="/"
             target="_blank"
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-brand-deepPlum/20 text-brand-deepPlum text-xs font-bold hover:bg-brand-ivory transition"
+            className="flex-1 md:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-brand-deepPlum/20 text-brand-deepPlum text-xs font-bold hover:bg-brand-ivory transition min-h-[44px]"
           >
             <span>Preview Store</span>
             <ExternalLink className="w-3.5 h-3.5" />
@@ -203,10 +203,10 @@ export default function AdminCollectionsPage() {
             type="button"
             onClick={handleSaveAll}
             disabled={isSaving}
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md disabled:opacity-50"
+            className="flex-1 md:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md disabled:opacity-50 min-h-[44px]"
           >
             <Save className="w-4 h-4" />
-            <span>{isSaving ? "Saving Live Changes..." : "Publish Live Changes"}</span>
+            <span>{isSaving ? "Saving..." : "Publish Live Changes"}</span>
           </button>
         </div>
       </div>
@@ -420,73 +420,30 @@ export default function AdminCollectionsPage() {
               return (
                 <div
                   key={col.id || idx}
-                  className="flex items-center justify-between p-3.5 rounded-2xl bg-brand-ivory/60 border border-brand-deepPlum/15 transition hover:shadow-xs"
+                  className="p-3.5 sm:p-4 rounded-2xl bg-brand-ivory/60 border border-brand-deepPlum/15 transition hover:shadow-xs space-y-3"
                 >
-                  {/* Left: Thumbnail & Name */}
-                  <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-xl overflow-hidden bg-white border border-brand-deepPlum/10 shrink-0">
-                      <img src={col.image} alt={col.name} className="w-full h-full object-cover" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-xs text-brand-deepPlum">{col.name}</span>
-                        <span className="text-[11px] font-semibold text-brand-plum">({col.count})</span>
+                  {/* Top: Thumbnail, Name, and Visibility Status Toggle */}
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-12 h-12 rounded-xl overflow-hidden bg-white border border-brand-deepPlum/10 shrink-0">
+                        <img src={col.image} alt={col.name} className="w-full h-full object-cover" />
                       </div>
-                      <span className="text-[10px] text-brand-deepPlum/60 font-mono block">
-                        /sarees?collection={col.slug}
-                      </span>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-xs sm:text-sm text-brand-deepPlum truncate">{col.name}</span>
+                          <span className="text-[11px] font-semibold text-brand-plum shrink-0">({col.count})</span>
+                        </div>
+                        <span className="text-[10px] text-brand-deepPlum/60 font-mono block truncate">
+                          /sarees?collection={col.slug}
+                        </span>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Right: Controls & High-Contrast Balanced Button */}
-                  <div className="flex items-center gap-2">
-                    {/* Move Up */}
-                    <button
-                      type="button"
-                      disabled={idx === 0}
-                      onClick={() => moveCollection(idx, "up")}
-                      className="p-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-plum hover:text-white transition disabled:opacity-20"
-                      title="Move Up"
-                    >
-                      <ArrowUp className="w-3.5 h-3.5" />
-                    </button>
-
-                    {/* Move Down */}
-                    <button
-                      type="button"
-                      disabled={idx === categories.items.length - 1}
-                      onClick={() => moveCollection(idx, "down")}
-                      className="p-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-plum hover:text-white transition disabled:opacity-20"
-                      title="Move Down"
-                    >
-                      <ArrowDown className="w-3.5 h-3.5" />
-                    </button>
-
-                    {/* Edit button */}
-                    <button
-                      type="button"
-                      onClick={() => setEditingItem(col)}
-                      className="p-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-deepPlum hover:text-white transition"
-                      title="Edit Collection"
-                    >
-                      <Edit2 className="w-3.5 h-3.5" />
-                    </button>
-
-                    {/* Delete button */}
-                    <button
-                      type="button"
-                      onClick={() => deleteCollection(col.id)}
-                      className="p-1.5 rounded-lg bg-white border border-red-200 text-red-600 hover:bg-red-600 hover:text-white transition"
-                      title="Delete Collection"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-
-                    {/* High-Contrast Balanced "On Home" / "Hidden" Toggle Button */}
+                    {/* High-Contrast "On home" / "Hidden" Toggle Button */}
                     <button
                       type="button"
                       onClick={() => toggleCollectionOnHome(col.id)}
-                      className={`text-xs font-bold px-3 py-1.5 rounded-full border transition flex items-center gap-1.5 shadow-2xs ${
+                      className={`text-xs font-bold px-3 py-1.5 rounded-full border transition flex items-center gap-1.5 shadow-2xs shrink-0 min-h-[36px] ${
                         isOnHome
                           ? "bg-brand-deepPlum text-white border-brand-deepPlum hover:bg-brand-plum"
                           : "bg-gray-100 text-brand-deepPlum border-gray-300 hover:bg-gray-200"
@@ -494,16 +451,63 @@ export default function AdminCollectionsPage() {
                     >
                       {isOnHome ? (
                         <>
-                          <Check className="w-3 h-3 text-emerald-300 stroke-[3]" />
+                          <Check className="w-3.5 h-3.5 text-emerald-300 stroke-[3]" />
                           <span>On home</span>
                         </>
                       ) : (
                         <>
-                          <EyeOff className="w-3 h-3 text-gray-500" />
+                          <EyeOff className="w-3.5 h-3.5 text-gray-500" />
                           <span>Hidden</span>
                         </>
                       )}
                     </button>
+                  </div>
+
+                  {/* Bottom: Responsive Action Controls */}
+                  <div className="flex items-center justify-between pt-2 border-t border-brand-deepPlum/10">
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        disabled={idx === 0}
+                        onClick={() => moveCollection(idx, "up")}
+                        className="px-2.5 py-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-plum hover:text-white transition disabled:opacity-20 text-xs font-semibold flex items-center gap-1 min-h-[36px]"
+                        title="Move Up"
+                      >
+                        <ArrowUp className="w-3.5 h-3.5" />
+                        <span className="text-[10.5px]">Up</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={idx === categories.items.length - 1}
+                        onClick={() => moveCollection(idx, "down")}
+                        className="px-2.5 py-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-plum hover:text-white transition disabled:opacity-20 text-xs font-semibold flex items-center gap-1 min-h-[36px]"
+                        title="Move Down"
+                      >
+                        <ArrowDown className="w-3.5 h-3.5" />
+                        <span className="text-[10.5px]">Down</span>
+                      </button>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setEditingItem(col)}
+                        className="px-3 py-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-deepPlum hover:text-white transition text-xs font-semibold flex items-center gap-1 min-h-[36px]"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                        <span>Edit</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => deleteCollection(col.id)}
+                        className="p-2 rounded-lg bg-white border border-red-200 text-red-600 hover:bg-red-600 hover:text-white transition min-w-[36px] min-h-[36px] flex items-center justify-center"
+                        title="Delete Collection"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
