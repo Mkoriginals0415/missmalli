@@ -1,4 +1,4 @@
-import type { LinksFunction, MetaFunction } from "@remix-run/cloudflare";
+import { json, type LinksFunction, type MetaFunction, type LoaderFunctionArgs } from "@remix-run/cloudflare";
 import {
   Links,
   Meta,
@@ -7,9 +7,28 @@ import {
   ScrollRestoration,
   useRouteError,
   isRouteErrorResponse,
+  useRouteLoaderData,
   Link,
 } from "@remix-run/react";
 import stylesheet from "~/styles/app.css?url";
+import { getStoreSettings } from "~/db/d1.server";
+import { DEFAULT_THEME_COLORS, StoreThemeColors } from "~/db/mock-data";
+
+export async function loader({ context }: LoaderFunctionArgs) {
+  const env = (context as any)?.cloudflare?.env;
+  const settings = await getStoreSettings(env);
+  let themeColors: StoreThemeColors = DEFAULT_THEME_COLORS;
+
+  try {
+    if (settings.theme_colors) {
+      themeColors = { ...DEFAULT_THEME_COLORS, ...JSON.parse(settings.theme_colors) };
+    }
+  } catch (e) {
+    // Fallback to default
+  }
+
+  return json({ themeColors });
+}
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
@@ -26,12 +45,29 @@ export const meta: MetaFunction = () => {
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const data = useRouteLoaderData<typeof loader>("root");
+  const themeColors = data?.themeColors || DEFAULT_THEME_COLORS;
+
   return (
     <html lang="en" className="h-full bg-brand-ivory">
       <head>
         <meta charSet="utf-8" />
         <Meta />
         <Links />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              :root {
+                --color-brand-plum: ${themeColors.primaryPlum};
+                --color-brand-deep-plum: ${themeColors.deepPlum};
+                --color-brand-ivory: ${themeColors.ivoryCanvas};
+                --color-brand-gold: ${themeColors.accentGold};
+                --color-brand-lilac: ${themeColors.accentLilac};
+                --color-brand-blush: ${themeColors.accentBlush};
+              }
+            `,
+          }}
+        />
       </head>
       <body className="h-full bg-brand-ivory text-brand-dark">
         {children}

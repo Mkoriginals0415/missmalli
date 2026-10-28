@@ -13,6 +13,7 @@ export interface SeedProduct {
   discount?: string;
   badge?: "New" | "Bestseller" | "-15%" | "-20%";
   occasion?: "Wedding" | "Festive" | "Daily";
+  status?: "live" | "draft";
   description: string;
   images: string[];
   variants: Array<{
@@ -524,9 +525,29 @@ export const INITIAL_HOMEPAGE_CONTENT: HomepageContent = {
   reviewLocation: "Hyderabad",
 };
 
+export interface StoreThemeColors {
+  primaryPlum: string;    // Royal plum primary
+  deepPlum: string;       // Deep plum footer & buttons
+  ivoryCanvas: string;    // Soft canvas background
+  accentGold: string;     // Zari gold accent
+  accentLilac: string;    // Lilac secondary accent
+  accentBlush: string;    // Blush pink accent
+}
+
+export const DEFAULT_THEME_COLORS: StoreThemeColors = {
+  primaryPlum: "#5B2A6E",
+  deepPlum: "#2A1235",
+  ivoryCanvas: "#FBF8F2",
+  accentGold: "#B8923A",
+  accentLilac: "#C9B6E4",
+  accentBlush: "#E8B4C4",
+};
+
 export const INITIAL_SETTINGS = {
   seller_whatsapp_number: "919876543210",
   buy_now_message_template: "Hi Miss Malli, I'd like to order: {saree} (Product ID: {code})\nPrice: ₹{price}\nRequest #{request}\nLink: {link}",
   reserve_hours: "24",
   auto_expire_unanswered: "true",
+  notify_email: "orders@missmalli.com",
+  theme_colors: JSON.stringify(DEFAULT_THEME_COLORS),
 };

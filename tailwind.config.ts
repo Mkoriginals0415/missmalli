@@ -6,17 +6,17 @@ export default {
     extend: {
       colors: {
         brand: {
-          ivory: "#FBF8F2",     // Soft cream canvas
-          warmWhite: "#FBF8F2", // Legacy alias
-          plum: "#5B2A6E",      // Royal plum primary
-          purple: "#5B2A6E",    // Legacy alias
-          deepPlum: "#2A1235",  // Deep plum footer & dark text
-          dark: "#2A1235",      // Legacy alias
-          lilac: "#C9B6E4",     // Lilac accent
-          lavender: "#C9B6E4",  // Legacy alias
-          blush: "#E8B4C4",     // Blush pink accent
-          gold: "#B8923A",      // Zari gold accent
-          ink: "#111111",       // Ink dark typography
+          ivory: "var(--color-brand-ivory, #FBF8F2)",
+          warmWhite: "var(--color-brand-ivory, #FBF8F2)",
+          plum: "var(--color-brand-plum, #5B2A6E)",
+          purple: "var(--color-brand-plum, #5B2A6E)",
+          deepPlum: "var(--color-brand-deep-plum, #2A1235)",
+          dark: "var(--color-brand-deep-plum, #2A1235)",
+          lilac: "var(--color-brand-lilac, #C9B6E4)",
+          lavender: "var(--color-brand-lilac, #C9B6E4)",
+          blush: "var(--color-brand-blush, #E8B4C4)",
+          gold: "var(--color-brand-gold, #B8923A)",
+          ink: "#111111",
         },
       },
       fontFamily: {

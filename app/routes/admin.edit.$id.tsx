@@ -179,7 +179,7 @@ export default function AdminProductEditor() {
                 <label className="font-semibold text-brand-dark block mb-1">Collection</label>
                 <select
                   value={collection}
-                  onChange={(e) => setCollection(e.target.value)}
+                  onChange={(e) => setCollection(e.target.value as any)}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-brand-lavender/40 text-brand-dark focus:ring-1 focus:ring-brand-purple"
                 >
                   <option value="silk">Pure Silk</option>
@@ -208,6 +208,69 @@ export default function AdminProductEditor() {
                 onChange={(e) => setDescription(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-brand-lavender/40 text-brand-dark focus:ring-1 focus:ring-brand-purple"
               />
+            </div>
+
+            {/* Saree Variants & Color Swatches */}
+            <div className="pt-3 border-t border-brand-deepPlum/10 space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-bold text-xs text-brand-deepPlum">Color Variants & Swatches</h4>
+                  <p className="text-[10px] text-brand-deepPlum/60">Customize color swatches and hex codes for this saree</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setVariants([...variants, { id: Date.now(), colorName: "New Color", colorHex: "#5B2A6E", blouseOption: "with", stockCount: 2 }])}
+                  className="text-xs font-bold text-brand-plum hover:underline flex items-center gap-1"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Add Color
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                {variants.map((v, i) => (
+                  <div key={v.id || i} className="flex items-center gap-2 p-2.5 rounded-xl bg-brand-ivory border border-brand-deepPlum/10">
+                    <input
+                      type="color"
+                      value={v.colorHex}
+                      onChange={(e) => {
+                        const next = [...variants];
+                        next[i].colorHex = e.target.value;
+                        setVariants(next);
+                      }}
+                      className="w-8 h-8 rounded-lg cursor-pointer border border-brand-deepPlum/20 bg-white p-0.5 shrink-0"
+                    />
+                    <input
+                      type="text"
+                      value={v.colorName}
+                      onChange={(e) => {
+                        const next = [...variants];
+                        next[i].colorName = e.target.value;
+                        setVariants(next);
+                      }}
+                      placeholder="Color Name"
+                      className="flex-1 px-2.5 py-1 rounded-lg border border-brand-deepPlum/20 text-xs font-bold"
+                    />
+                    <input
+                      type="text"
+                      value={v.colorHex}
+                      onChange={(e) => {
+                        const next = [...variants];
+                        next[i].colorHex = e.target.value;
+                        setVariants(next);
+                      }}
+                      placeholder="#Hex"
+                      className="w-20 px-2 py-1 rounded-lg border border-brand-deepPlum/20 text-xs font-mono uppercase"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setVariants(variants.filter((_, idx) => idx !== i))}
+                      className="p-1 text-red-600 hover:bg-red-50 rounded"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>

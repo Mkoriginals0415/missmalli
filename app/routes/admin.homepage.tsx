@@ -15,7 +15,8 @@ import {
   Sparkles,
   Layers,
   Star,
-  Upload
+  Upload,
+  Palette
 } from "lucide-react";
 import { getHomepageContent, updateHomepageContent } from "~/db/d1.server";
 import { HomepageContent, CollectionItem, TestimonialItem, HomepageSection } from "~/db/mock-data";
@@ -50,7 +51,7 @@ export default function AdminHomepageEditor() {
   const fetcher = useFetcher<typeof action>();
 
   const [activeTab, setActiveTab] = useState<
-    "order" | "hero" | "categories" | "newArrivals" | "promotion" | "artisan" | "testimonials" | "trustBadges"
+    "order" | "hero" | "categories" | "newArrivals" | "promotion" | "artisan" | "testimonials" | "trustBadges" | "colors"
   >("order");
 
   // State managed as full structured config
@@ -241,6 +242,7 @@ export default function AdminHomepageEditor() {
           { id: "artisan", label: "6. Artisan Story", icon: Layers },
           { id: "testimonials", label: "7. Testimonials", icon: Star },
           { id: "trustBadges", label: "8. Trust Badges", icon: CheckCircle2 },
+          { id: "colors", label: "9. Brand Colors & Theme", icon: Palette },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -1112,6 +1114,43 @@ export default function AdminHomepageEditor() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================
+          TAB 9: BRAND COLORS & THEME
+         ======================================================== */}
+      {activeTab === "colors" && (
+        <div className="bg-white rounded-[22px] p-6 border border-brand-deepPlum/15 shadow-sm space-y-4">
+          <div className="flex items-center gap-3 border-b border-brand-deepPlum/10 pb-4">
+            <div className="w-10 h-10 rounded-xl bg-brand-plum/10 text-brand-plum flex items-center justify-center">
+              <Palette className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-bold text-base text-brand-deepPlum">
+                Storefront Brand & Theme Palette
+              </h3>
+              <p className="text-xs text-brand-deepPlum/70 font-medium">
+                Customize primary plum, buttons, canvas ivory, and zari gold accents
+              </p>
+            </div>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-brand-ivory/60 border border-brand-deepPlum/15 space-y-4">
+            <p className="text-xs text-brand-deepPlum/80 leading-relaxed font-medium">
+              You can customize the store's full color palette (Primary Plum, Deep Plum, Ivory Canvas, Zari Gold, Lilac, and Blush) with real-time color pickers and curated luxury schemes.
+            </p>
+
+            <div className="flex items-center gap-3 pt-2">
+              <Link
+                to="/admin/settings"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md"
+              >
+                <Palette className="w-4 h-4 text-brand-lilac" />
+                <span>Open Theme Colors Editor in Settings →</span>
+              </Link>
+            </div>
           </div>
         </div>
       )}

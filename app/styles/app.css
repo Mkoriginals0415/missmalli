@@ -4,6 +4,15 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-brand-ivory: #FBF8F2;
+  --color-brand-plum: #5B2A6E;
+  --color-brand-deep-plum: #2A1235;
+  --color-brand-lilac: #C9B6E4;
+  --color-brand-blush: #E8B4C4;
+  --color-brand-gold: #B8923A;
+}
+
 @layer base {
   body {
     @apply bg-brand-ivory text-brand-ink font-sans antialiased selection:bg-brand-lilac selection:text-brand-deepPlum;
