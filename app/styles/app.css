@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-brand-ivory text-brand-dark font-sans antialiased selection:bg-brand-blush selection:text-brand-plum;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif text-brand-plum;
+  }
+}
+
+/* Custom scrollbar and snap utilities */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.snap-y-mandatory {
+  scroll-snap-type: y mandatory;
+}
+.snap-start {
+  scroll-snap-align: start;
+}
+.snap-x-mandatory {
+  scroll-snap-type: x mandatory;
+}
+
+/* Mobile 9:16 container framing on desktop */
+.app-container {
+  @apply mx-auto w-full max-w-md min-h-screen bg-brand-warmWhite relative flex flex-col md:max-w-4xl md:border-x md:border-brand-lavender/30 md:shadow-xl;
+}
