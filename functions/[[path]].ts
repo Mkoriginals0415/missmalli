@@ -1,4 +1,5 @@
 import { createRequestHandler } from "@remix-run/cloudflare";
+// @ts-ignore
 import * as build from "../build/server";
 
 const handleRequest = createRequestHandler(build as any);
