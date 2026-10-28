@@ -381,7 +381,7 @@ export default function HomePage() {
                   </div>
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-                    {categories.items.map((cat, idx) => (
+                    {categories.items.filter((cat) => cat.onHome !== false).map((cat, idx) => (
                       <Link
                         key={cat.id || idx}
                         to={`/sarees?collection=${cat.slug}`}

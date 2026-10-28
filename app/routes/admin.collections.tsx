@@ -1,142 +1,720 @@
 import { useState } from "react";
-import { Plus, GripVertical, Check, Eye, EyeOff } from "lucide-react";
+import { json, type LoaderFunctionArgs, type ActionFunctionArgs } from "@remix-run/cloudflare";
+import { useLoaderData, useFetcher, Link } from "@remix-run/react";
+import { 
+  Plus, 
+  ArrowUp, 
+  ArrowDown, 
+  Check, 
+  Eye, 
+  EyeOff, 
+  Save, 
+  CheckCircle2, 
+  Trash2, 
+  ExternalLink,
+  Edit2,
+  X,
+  Sparkles,
+  Layers
+} from "lucide-react";
+import { getHomepageContent, updateHomepageContent } from "~/db/d1.server";
+import { HomepageContent, CollectionItem, HomepageSection } from "~/db/mock-data";
+
+export async function loader({ context }: LoaderFunctionArgs) {
+  const env = (context as any)?.cloudflare?.env;
+  const content = await getHomepageContent(env);
+  return json({ content });
+}
+
+export async function action({ request, context }: ActionFunctionArgs) {
+  const env = (context as any)?.cloudflare?.env;
+  const formData = await request.formData();
+  const rawJson = formData.get("homepageJson");
+
+  if (!rawJson || typeof rawJson !== "string") {
+    return json({ success: false, error: "Invalid payload" }, { status: 400 });
+  }
+
+  try {
+    const parsedData = JSON.parse(rawJson) as HomepageContent;
+    const updated = await updateHomepageContent(parsedData, env);
+    return json({ success: true, content: updated });
+  } catch (err: any) {
+    return json({ success: false, error: err.message || "Failed to update" }, { status: 400 });
+  }
+}
 
 export default function AdminCollectionsPage() {
-  const [collections, setCollections] = useState([
-    { id: 1, name: "Silk", count: 24, onHome: true },
-    { id: 2, name: "Festive", count: 18, onHome: true },
-    { id: 3, name: "Cotton", count: 12, onHome: false },
-    { id: 4, name: "Bridal Heirloom", count: 16, onHome: true },
-  ]);
+  const { content } = useLoaderData<typeof loader>();
+  const fetcher = useFetcher<typeof action>();
 
-  const [promotions, setPromotions] = useState([
-    {
-      id: 1,
-      title: "Festive offer",
-      text: "Complimentary Fall & Pico on all Pure Silks",
-      collection: "Festive collection",
-      dates: "Active · Ends Diwali 2026",
-      isActive: true,
-    },
-  ]);
+  const [categories, setCategories] = useState(content.categories);
+  const [sections, setSections] = useState<HomepageSection[]>(content.sections);
+  const [promotion, setPromotion] = useState(content.promotion);
 
-  const homeLayout = [
-    "1. Hero Banner ('Find your festive saree')",
-    "2. Categories Grid",
-    "3. New Arrivals",
-    "4. Festive Offer Strip",
-  ];
+  // Edit Collection Modal/Drawer State
+  const [editingItem, setEditingItem] = useState<CollectionItem | null>(null);
+  const [isAddingNew, setIsAddingNew] = useState(false);
+  const [newCollectionName, setNewCollectionName] = useState("");
+  const [newCollectionCount, setNewCollectionCount] = useState("50+ styles");
+  const [newCollectionSlug, setNewCollectionSlug] = useState("");
+  const [newCollectionImage, setNewCollectionImage] = useState(
+    "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80"
+  );
+
+  const isSaving = fetcher.state === "submitting";
+  const isSaved = fetcher.data?.success;
+
+  // Toggle collection onHome status
+  const toggleCollectionOnHome = (id: string) => {
+    const updatedItems = categories.items.map((item) => {
+      if (item.id === id) {
+        const nextState = item.onHome === false ? true : false;
+        return { ...item, onHome: nextState };
+      }
+      return item;
+    });
+    setCategories({ ...categories, items: updatedItems });
+  };
+
+  // Move Collection Up / Down
+  const moveCollection = (idx: number, direction: "up" | "down") => {
+    const targetIdx = direction === "up" ? idx - 1 : idx + 1;
+    if (targetIdx < 0 || targetIdx >= categories.items.length) return;
+
+    const items = [...categories.items];
+    const [moved] = items.splice(idx, 1);
+    items.splice(targetIdx, 0, moved);
+    setCategories({ ...categories, items });
+  };
+
+  // Delete Collection
+  const deleteCollection = (id: string) => {
+    setCategories({
+      ...categories,
+      items: categories.items.filter((c) => c.id !== id),
+    });
+  };
+
+  // Add New Collection
+  const handleCreateCollection = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCollectionName.trim()) return;
+
+    const slug = newCollectionSlug.trim() || newCollectionName.toLowerCase().replace(/\s+/g, "-");
+    const newItem: CollectionItem = {
+      id: `cat_${Date.now()}`,
+      name: newCollectionName.trim(),
+      count: newCollectionCount.trim() || "40+ styles",
+      slug,
+      image: newCollectionImage.trim(),
+      onHome: true,
+    };
+
+    setCategories({
+      ...categories,
+      items: [...categories.items, newItem],
+    });
+
+    setNewCollectionName("");
+    setNewCollectionSlug("");
+    setIsAddingNew(false);
+  };
+
+  // Save Editing Collection
+  const handleUpdateEditingCollection = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingItem) return;
+
+    setCategories({
+      ...categories,
+      items: categories.items.map((c) => (c.id === editingItem.id ? editingItem : c)),
+    });
+    setEditingItem(null);
+  };
+
+  // Move Homepage Section Up / Down
+  const moveSection = (index: number, direction: "up" | "down") => {
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= sections.length) return;
+
+    const updated = [...sections];
+    const [moved] = updated.splice(index, 1);
+    updated.splice(targetIndex, 0, moved);
+    setSections(updated);
+  };
+
+  const toggleSectionEnabled = (index: number) => {
+    const updated = [...sections];
+    updated[index].enabled = !updated[index].enabled;
+    setSections(updated);
+  };
+
+  // Global Save
+  const handleSaveAll = () => {
+    const fullPayload: HomepageContent = {
+      ...content,
+      sections,
+      categories,
+      promotion,
+      categoriesTitle: categories.title,
+      festiveTitle: promotion.title,
+      festiveSubtitle: promotion.subtitle,
+      festiveDiscount: promotion.discountTag,
+    };
+
+    const formData = new FormData();
+    formData.append("homepageJson", JSON.stringify(fullPayload));
+    fetcher.submit(formData, { method: "post" });
+  };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-serif font-bold text-brand-plum">
-          Collections & Layout
-        </h1>
-        <p className="text-xs text-brand-dark/60">
-          Curate homepage sections, promotional offers, and collection visibility
-        </p>
+    <div className="space-y-6 max-w-6xl pb-12">
+      {/* Top Header & Sticky Save Controls */}
+      <div className="bg-white rounded-2xl p-6 border border-brand-deepPlum/15 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-4 z-30 backdrop-blur-md bg-white/95">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-full bg-brand-plum/10 text-brand-plum font-bold text-[11px] tracking-wide uppercase">
+              Admin Manager
+            </span>
+            <span className="text-brand-deepPlum/40">•</span>
+            <span className="text-xs font-semibold text-brand-deepPlum/70">Storefront Curator</span>
+          </div>
+          <h1 className="text-2xl font-bold text-brand-deepPlum mt-1">
+            Collections, Promotions & Layout Order
+          </h1>
+          <p className="text-xs text-brand-deepPlum/70 font-medium">
+            Curate homepage category visibility, promotional offers, and section display order live
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3 self-start md:self-auto">
+          <Link
+            to="/"
+            target="_blank"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-brand-deepPlum/20 text-brand-deepPlum text-xs font-bold hover:bg-brand-ivory transition"
+          >
+            <span>Preview Store</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </Link>
+
+          <button
+            type="button"
+            onClick={handleSaveAll}
+            disabled={isSaving}
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md disabled:opacity-50"
+          >
+            <Save className="w-4 h-4" />
+            <span>{isSaving ? "Saving Live Changes..." : "Publish Live Changes"}</span>
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Collections Manager */}
-        <div className="bg-white rounded-3xl p-5 border border-brand-lavender/30 shadow-sm space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-brand-lavender/20">
-            <h3 className="font-serif font-bold text-sm text-brand-plum">Collections</h3>
+      {isSaved && (
+        <div className="p-4 rounded-2xl bg-emerald-100 border border-emerald-300 text-emerald-900 text-xs font-semibold flex items-center gap-2 shadow-xs animate-in fade-in">
+          <CheckCircle2 className="w-4 h-4 text-emerald-700" />
+          <span>All collections, promotions, and section ordering were saved successfully!</span>
+        </div>
+      )}
+
+      {/* Main Grid: Collections Manager (Left) + Promotions & Offers (Right) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        {/* ========================================================
+            COLLECTIONS MANAGER
+           ======================================================== */}
+        <div className="bg-white rounded-[22px] p-6 border border-brand-deepPlum/15 shadow-sm space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-brand-deepPlum/10">
+            <div>
+              <h3 className="font-bold text-base text-brand-deepPlum">Collections</h3>
+              <p className="text-[11px] text-brand-deepPlum/70">
+                Toggle visibility on homepage or reorder display sequence
+              </p>
+            </div>
             <button
-              onClick={() => {
-                const name = prompt("Enter new collection name:");
-                if (name) setCollections([...collections, { id: Date.now(), name, count: 0, onHome: true }]);
-              }}
-              className="text-xs font-semibold text-brand-purple hover:underline flex items-center gap-1"
+              type="button"
+              onClick={() => setIsAddingNew(true)}
+              className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-xs"
             >
-              <Plus className="w-3.5 h-3.5" /> New collection
+              <Plus className="w-3.5 h-3.5" />
+              <span>New Collection</span>
             </button>
           </div>
 
-          <div className="space-y-2">
-            {collections.map((col) => (
-              <div
-                key={col.id}
-                className="flex items-center justify-between p-3 rounded-2xl bg-brand-ivory/60 border border-brand-lavender/20"
-              >
-                <div className="flex items-center gap-2">
-                  <GripVertical className="w-4 h-4 text-brand-dark/40 cursor-grab" />
-                  <span className="font-serif font-bold text-xs text-brand-dark">{col.name}</span>
-                  <span className="text-[11px] text-brand-dark/50">({col.count})</span>
-                </div>
-
+          {/* Add New Collection Form Modal/Inline */}
+          {isAddingNew && (
+            <form
+              onSubmit={handleCreateCollection}
+              className="p-4 rounded-2xl bg-brand-ivory border border-brand-deepPlum/20 space-y-3"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-brand-deepPlum">Add New Collection</span>
                 <button
-                  onClick={() => {
-                    setCollections(
-                      collections.map((c) => (c.id === col.id ? { ...c, onHome: !c.onHome } : c))
-                    );
-                  }}
-                  className={`text-[11px] font-semibold px-2.5 py-1 rounded-full border transition ${
-                    col.onHome
-                      ? "bg-brand-purple text-white border-brand-purple"
-                      : "bg-white text-brand-dark/60 border-brand-lavender/40"
-                  }`}
+                  type="button"
+                  onClick={() => setIsAddingNew(false)}
+                  className="p-1 rounded-lg text-brand-deepPlum/60 hover:text-brand-deepPlum"
                 >
-                  {col.onHome ? "On home" : "Hidden"}
+                  <X className="w-4 h-4" />
                 </button>
               </div>
-            ))}
+
+              <div className="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label className="text-[10px] font-bold uppercase text-brand-deepPlum/70 block mb-1">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Georgette Sarees"
+                    value={newCollectionName}
+                    onChange={(e) => setNewCollectionName(e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-lg border border-brand-deepPlum/20 text-xs font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold uppercase text-brand-deepPlum/70 block mb-1">
+                    Count Label
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 60+ styles"
+                    value={newCollectionCount}
+                    onChange={(e) => setNewCollectionCount(e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-lg border border-brand-deepPlum/20 text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label className="text-[10px] font-bold uppercase text-brand-deepPlum/70 block mb-1">
+                    Slug / URL Path
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. georgette"
+                    value={newCollectionSlug}
+                    onChange={(e) => setNewCollectionSlug(e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-lg border border-brand-deepPlum/20 text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold uppercase text-brand-deepPlum/70 block mb-1">
+                    Image URL
+                  </label>
+                  <input
+                    type="text"
+                    value={newCollectionImage}
+                    onChange={(e) => setNewCollectionImage(e.target.value)}
+                    className="w-full px-3 py-1.5 rounded-lg border border-brand-deepPlum/20 text-[11px]"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setIsAddingNew(false)}
+                  className="px-3 py-1.5 rounded-lg border border-brand-deepPlum/20 text-xs font-semibold text-brand-deepPlum"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 rounded-lg bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum shadow-xs"
+                >
+                  Create Collection
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* Edit Existing Collection Modal */}
+          {editingItem && (
+            <form
+              onSubmit={handleUpdateEditingCollection}
+              className="p-4 rounded-2xl bg-brand-ivory border border-brand-deepPlum/20 space-y-3"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-brand-deepPlum">
+                  Edit Collection: {editingItem.name}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setEditingItem(null)}
+                  className="p-1 rounded-lg text-brand-deepPlum/60 hover:text-brand-deepPlum"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label className="text-[10px] font-bold uppercase text-brand-deepPlum/70 block mb-1">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={editingItem.name}
+                    onChange={(e) => setEditingItem({ ...editingItem, name: e.target.value })}
+                    className="w-full px-3 py-1.5 rounded-lg border border-brand-deepPlum/20 text-xs font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold uppercase text-brand-deepPlum/70 block mb-1">
+                    Count Label
+                  </label>
+                  <input
+                    type="text"
+                    value={editingItem.count}
+                    onChange={(e) => setEditingItem({ ...editingItem, count: e.target.value })}
+                    className="w-full px-3 py-1.5 rounded-lg border border-brand-deepPlum/20 text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label className="text-[10px] font-bold uppercase text-brand-deepPlum/70 block mb-1">
+                    Slug
+                  </label>
+                  <input
+                    type="text"
+                    value={editingItem.slug}
+                    onChange={(e) => setEditingItem({ ...editingItem, slug: e.target.value })}
+                    className="w-full px-3 py-1.5 rounded-lg border border-brand-deepPlum/20 text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold uppercase text-brand-deepPlum/70 block mb-1">
+                    Image URL
+                  </label>
+                  <input
+                    type="text"
+                    value={editingItem.image}
+                    onChange={(e) => setEditingItem({ ...editingItem, image: e.target.value })}
+                    className="w-full px-3 py-1.5 rounded-lg border border-brand-deepPlum/20 text-[11px]"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setEditingItem(null)}
+                  className="px-3 py-1.5 rounded-lg border border-brand-deepPlum/20 text-xs font-semibold text-brand-deepPlum"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 rounded-lg bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum shadow-xs"
+                >
+                  Update Collection
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* Collections List */}
+          <div className="space-y-2.5">
+            {categories.items.map((col, idx) => {
+              const isOnHome = col.onHome !== false;
+
+              return (
+                <div
+                  key={col.id || idx}
+                  className="flex items-center justify-between p-3.5 rounded-2xl bg-brand-ivory/60 border border-brand-deepPlum/15 transition hover:shadow-xs"
+                >
+                  {/* Left: Thumbnail & Name */}
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-xl overflow-hidden bg-white border border-brand-deepPlum/10 shrink-0">
+                      <img src={col.image} alt={col.name} className="w-full h-full object-cover" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-xs text-brand-deepPlum">{col.name}</span>
+                        <span className="text-[11px] font-semibold text-brand-plum">({col.count})</span>
+                      </div>
+                      <span className="text-[10px] text-brand-deepPlum/60 font-mono block">
+                        /sarees?collection={col.slug}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Right: Controls & High-Contrast Balanced Button */}
+                  <div className="flex items-center gap-2">
+                    {/* Move Up */}
+                    <button
+                      type="button"
+                      disabled={idx === 0}
+                      onClick={() => moveCollection(idx, "up")}
+                      className="p-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-plum hover:text-white transition disabled:opacity-20"
+                      title="Move Up"
+                    >
+                      <ArrowUp className="w-3.5 h-3.5" />
+                    </button>
+
+                    {/* Move Down */}
+                    <button
+                      type="button"
+                      disabled={idx === categories.items.length - 1}
+                      onClick={() => moveCollection(idx, "down")}
+                      className="p-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-plum hover:text-white transition disabled:opacity-20"
+                      title="Move Down"
+                    >
+                      <ArrowDown className="w-3.5 h-3.5" />
+                    </button>
+
+                    {/* Edit button */}
+                    <button
+                      type="button"
+                      onClick={() => setEditingItem(col)}
+                      className="p-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-deepPlum hover:text-white transition"
+                      title="Edit Collection"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                    </button>
+
+                    {/* Delete button */}
+                    <button
+                      type="button"
+                      onClick={() => deleteCollection(col.id)}
+                      className="p-1.5 rounded-lg bg-white border border-red-200 text-red-600 hover:bg-red-600 hover:text-white transition"
+                      title="Delete Collection"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+
+                    {/* High-Contrast Balanced "On Home" / "Hidden" Toggle Button */}
+                    <button
+                      type="button"
+                      onClick={() => toggleCollectionOnHome(col.id)}
+                      className={`text-xs font-bold px-3 py-1.5 rounded-full border transition flex items-center gap-1.5 shadow-2xs ${
+                        isOnHome
+                          ? "bg-brand-deepPlum text-white border-brand-deepPlum hover:bg-brand-plum"
+                          : "bg-gray-100 text-brand-deepPlum border-gray-300 hover:bg-gray-200"
+                      }`}
+                    >
+                      {isOnHome ? (
+                        <>
+                          <Check className="w-3 h-3 text-emerald-300 stroke-[3]" />
+                          <span>On home</span>
+                        </>
+                      ) : (
+                        <>
+                          <EyeOff className="w-3 h-3 text-gray-500" />
+                          <span>Hidden</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* Promotions Manager */}
-        <div className="bg-white rounded-3xl p-5 border border-brand-lavender/30 shadow-sm space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-brand-lavender/20">
-            <h3 className="font-serif font-bold text-sm text-brand-plum">Promotions</h3>
-            <button
-              onClick={() => {
-                const title = prompt("Enter promotion title:");
-                if (title) setPromotions([...promotions, { id: Date.now(), title, text: "Special festive discount", collection: "All collections", dates: "Active now", isActive: true }]);
-              }}
-              className="text-xs font-semibold text-brand-purple hover:underline flex items-center gap-1"
-            >
-              <Plus className="w-3.5 h-3.5" /> New offer
-            </button>
+        {/* ========================================================
+            PROMOTIONS & OFFERS MANAGER
+           ======================================================== */}
+        <div className="bg-white rounded-[22px] p-6 border border-brand-deepPlum/15 shadow-sm space-y-4">
+          <div className="pb-3 border-b border-brand-deepPlum/10">
+            <h3 className="font-bold text-base text-brand-deepPlum">Promotions & Festive Offers</h3>
+            <p className="text-[11px] text-brand-deepPlum/70">
+              Customize headline, promo banner discount, and coupon code
+            </p>
           </div>
 
           <div className="space-y-3">
-            {promotions.map((p) => (
-              <div
-                key={p.id}
-                className="p-3.5 rounded-2xl bg-brand-ivory/60 border border-brand-gold/40 space-y-1.5"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-serif font-bold text-xs text-brand-plum">{p.title}</span>
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
-                    Active
+            <div>
+              <label className="text-xs font-bold text-brand-deepPlum block mb-1">
+                Promotion Headline
+              </label>
+              <input
+                type="text"
+                value={promotion.title}
+                onChange={(e) => setPromotion({ ...promotion, title: e.target.value })}
+                className="w-full px-3.5 py-2 rounded-xl border border-brand-deepPlum/20 text-xs font-bold text-brand-deepPlum"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-bold text-brand-deepPlum block mb-1">
+                  Discount Tag Badge
+                </label>
+                <input
+                  type="text"
+                  value={promotion.discountTag}
+                  onChange={(e) => setPromotion({ ...promotion, discountTag: e.target.value })}
+                  className="w-full px-3.5 py-2 rounded-xl border border-brand-deepPlum/20 text-xs font-semibold"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-brand-deepPlum block mb-1">
+                  Coupon Code
+                </label>
+                <input
+                  type="text"
+                  value={promotion.couponCode}
+                  onChange={(e) => setPromotion({ ...promotion, couponCode: e.target.value })}
+                  className="w-full px-3.5 py-2 rounded-xl border border-brand-deepPlum/20 text-xs font-bold font-mono"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-brand-deepPlum block mb-1">
+                Offer Subtitle & Description
+              </label>
+              <textarea
+                rows={2}
+                value={promotion.subtitle}
+                onChange={(e) => setPromotion({ ...promotion, subtitle: e.target.value })}
+                className="w-full px-3.5 py-2 rounded-xl border border-brand-deepPlum/20 text-xs"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-bold text-brand-deepPlum block mb-1">
+                  Button Text
+                </label>
+                <input
+                  type="text"
+                  value={promotion.buttonText}
+                  onChange={(e) => setPromotion({ ...promotion, buttonText: e.target.value })}
+                  className="w-full px-3.5 py-2 rounded-xl border border-brand-deepPlum/20 text-xs font-semibold"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-brand-deepPlum block mb-1">
+                  Button Link URL
+                </label>
+                <input
+                  type="text"
+                  value={promotion.buttonLink}
+                  onChange={(e) => setPromotion({ ...promotion, buttonLink: e.target.value })}
+                  className="w-full px-3.5 py-2 rounded-xl border border-brand-deepPlum/20 text-xs"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-brand-deepPlum block mb-1">
+                Banner Graphic URL
+              </label>
+              <input
+                type="text"
+                value={promotion.image}
+                onChange={(e) => setPromotion({ ...promotion, image: e.target.value })}
+                className="w-full px-3.5 py-2 rounded-xl border border-brand-deepPlum/20 text-xs"
+              />
+            </div>
+
+            {/* Banner Live Preview */}
+            <div className="pt-2">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-brand-deepPlum/60 block mb-1.5">
+                Banner Live Preview
+              </span>
+              <div className="p-4 rounded-2xl bg-brand-plum text-white flex items-center justify-between gap-4 shadow-md">
+                <div className="space-y-1">
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-brand-gold bg-black/20 px-2 py-0.5 rounded-full">
+                    {promotion.discountTag}
                   </span>
+                  <h4 className="text-xs font-bold">{promotion.title}</h4>
+                  <p className="text-[10px] text-brand-lilac line-clamp-1">{promotion.subtitle}</p>
                 </div>
-                <p className="text-xs text-brand-dark/80">{p.text}</p>
-                <div className="text-[11px] text-brand-dark/60 flex justify-between pt-1">
-                  <span>Applies to: {p.collection}</span>
-                  <span>{p.dates}</span>
+                <div className="w-16 h-12 rounded-lg overflow-hidden bg-white/20 shrink-0">
+                  <img src={promotion.image} alt="Promo preview" className="w-full h-full object-cover" />
                 </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Home Page Layout Order */}
-      <div className="bg-white rounded-3xl p-5 border border-brand-lavender/30 shadow-sm space-y-3">
-        <h3 className="font-serif font-bold text-sm text-brand-plum">Home Page Section Order</h3>
-        <p className="text-xs text-brand-dark/60">
-          Order of elements displayed to customers visiting the store homepage
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5 pt-1">
-          {homeLayout.map((item, idx) => (
+      {/* ========================================================
+          HOMEPAGE SECTION ORDER MANAGER
+         ======================================================== */}
+      <div className="bg-white rounded-[22px] p-6 border border-brand-deepPlum/15 shadow-sm space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-brand-deepPlum/10">
+          <div>
+            <h3 className="font-bold text-base text-brand-deepPlum">
+              Homepage Section Display Order
+            </h3>
+            <p className="text-xs text-brand-deepPlum/70 font-medium">
+              Order of sections displayed to customers visiting your store. Use Up / Down buttons to rearrange.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleSaveAll}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-xs"
+          >
+            <Save className="w-3.5 h-3.5" />
+            <span>Save Order</span>
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {sections.map((sec, idx) => (
             <div
-              key={idx}
-              className="p-3 rounded-2xl bg-[#FAF8F5] border border-brand-lavender/30 text-xs font-medium text-brand-dark flex items-center gap-2"
+              key={sec.id}
+              className={`p-3.5 rounded-2xl border transition flex items-center justify-between gap-3 ${
+                sec.enabled
+                  ? "bg-brand-ivory/60 border-brand-deepPlum/15"
+                  : "bg-gray-100/60 border-gray-300 opacity-60"
+              }`}
             >
-              <GripVertical className="w-3.5 h-3.5 text-brand-purple" />
-              <span>{item}</span>
+              <div className="flex items-center gap-2.5">
+                <span className="w-6 h-6 rounded-lg bg-brand-deepPlum text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                  {idx + 1}
+                </span>
+                <div>
+                  <h4 className="text-xs font-bold text-brand-deepPlum">{sec.name}</h4>
+                  <span className="text-[10px] text-brand-deepPlum/60 font-semibold uppercase">
+                    ID: {sec.id}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  disabled={idx === 0}
+                  onClick={() => moveSection(idx, "up")}
+                  className="p-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-plum hover:text-white transition disabled:opacity-20"
+                  title="Move Up"
+                >
+                  <ArrowUp className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  disabled={idx === sections.length - 1}
+                  onClick={() => moveSection(idx, "down")}
+                  className="p-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-plum hover:text-white transition disabled:opacity-20"
+                  title="Move Down"
+                >
+                  <ArrowDown className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => toggleSectionEnabled(idx)}
+                  className={`text-[11px] font-bold px-2.5 py-1 rounded-full border transition flex items-center gap-1 ${
+                    sec.enabled
+                      ? "bg-emerald-100 text-emerald-900 border-emerald-300"
+                      : "bg-gray-200 text-gray-700 border-gray-300"
+                  }`}
+                >
+                  {sec.enabled ? <Eye className="w-3 h-3 text-emerald-700" /> : <EyeOff className="w-3 h-3" />}
+                  <span>{sec.enabled ? "Visible" : "Hidden"}</span>
+                </button>
+              </div>
             </div>
           ))}
         </div>

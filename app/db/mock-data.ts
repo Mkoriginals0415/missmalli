@@ -245,6 +245,7 @@ export interface CollectionItem {
   count: string;
   slug: string;
   image: string;
+  onHome?: boolean;
 }
 
 export interface TestimonialItem {
@@ -391,6 +392,7 @@ export const INITIAL_HOMEPAGE_CONTENT: HomepageContent = {
         count: "240+ styles",
         slug: "sarees",
         image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80",
+        onHome: true,
       },
       {
         id: "cat_2",
@@ -398,6 +400,7 @@ export const INITIAL_HOMEPAGE_CONTENT: HomepageContent = {
         count: "120+ styles",
         slug: "dresses",
         image: "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=600&q=80",
+        onHome: true,
       },
       {
         id: "cat_3",
@@ -405,6 +408,7 @@ export const INITIAL_HOMEPAGE_CONTENT: HomepageContent = {
         count: "90+ styles",
         slug: "materials",
         image: "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=600&q=80",
+        onHome: true,
       },
       {
         id: "cat_4",
@@ -412,6 +416,7 @@ export const INITIAL_HOMEPAGE_CONTENT: HomepageContent = {
         count: "40+ styles",
         slug: "exclusive",
         image: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=600&q=80",
+        onHome: true,
       },
     ],
   },
