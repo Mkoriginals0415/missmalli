@@ -3,6 +3,7 @@ export interface WhatsAppOrderPayload {
   requestNumber: string;
   requestUrl: string;
   items: Array<{
+    code?: string;
     name: string;
     variantDetails: string;
     price: number;
@@ -12,34 +13,39 @@ export interface WhatsAppOrderPayload {
 
 export function generateWhatsAppBuyUrl(payload: WhatsAppOrderPayload): string {
   const { sellerPhone, requestNumber, requestUrl, items, totalAmount } = payload;
-  
-  // Format phone: remove non-digits
   const cleanPhone = sellerPhone.replace(/\D/g, "");
-  
+
   let message = "";
   if (items.length === 1) {
     const item = items[0];
-    message = `Hi Miss Malli, I'd like to buy this saree. Request ${requestNumber}\n\n` +
-      `*${item.name}*\n` +
-      `₹ ${item.price.toLocaleString("en-IN")} · ${item.variantDetails}\n\n` +
-      `Details & status: ${requestUrl}`;
+    const codeStr = item.code ? `[Product ID: #${item.code}]` : "";
+    message = `Hi Miss Malli, I would like to order this drape.\n\n` +
+      `✨ *${item.name}* ${codeStr}\n` +
+      `💰 *₹ ${item.price.toLocaleString("en-IN")}*\n` +
+      `🎨 Variant: ${item.variantDetails}\n` +
+      `🔖 Request: ${requestNumber}\n\n` +
+      `View item & live status:\n${requestUrl}`;
   } else {
     const itemList = items
-      .map((item, idx) => `${idx + 1}. *${item.name}* (${item.variantDetails}) - ₹ ${item.price.toLocaleString("en-IN")}`)
-      .join("\n");
-      
-    message = `Hi Miss Malli, I'd like to buy these sarees. Request ${requestNumber}\n\n` +
+      .map((item, idx) => {
+        const codeStr = item.code ? `(#${item.code})` : "";
+        return `${idx + 1}. *${item.name}* ${codeStr}\n   ₹ ${item.price.toLocaleString("en-IN")} · ${item.variantDetails}`;
+      })
+      .join("\n\n");
+
+    message = `Hi Miss Malli, I would like to order these pieces.\n\n` +
+      `🔖 *Request ${requestNumber} (${items.length} items)*\n\n` +
       `${itemList}\n\n` +
-      `*Total: ₹ ${totalAmount.toLocaleString("en-IN")}*\n\n` +
-      `Details & status: ${requestUrl}`;
+      `*Total Amount: ₹ ${totalAmount.toLocaleString("en-IN")}*\n\n` +
+      `View order & live status:\n${requestUrl}`;
   }
 
-  const encodedMessage = encodeURIComponent(message);
-  return `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
+  return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
 }
 
-export function generateWhatsAppQuestionUrl(sellerPhone: string, productName: string, productUrl: string): string {
+export function generateWhatsAppQuestionUrl(sellerPhone: string, productName: string, productCode?: string): string {
   const cleanPhone = sellerPhone.replace(/\D/g, "");
-  const message = `Hi Miss Malli, I have a question about this saree: *${productName}*\n${productUrl}`;
+  const codeStr = productCode ? `(#${productCode})` : "";
+  const message = `Hi Miss Malli, I have an inquiry about *${productName}* ${codeStr}.\nCould you please help me with details and styling advice?`;
   return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
 }

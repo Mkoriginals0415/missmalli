@@ -6,23 +6,22 @@ export default {
     extend: {
       colors: {
         brand: {
-          purple: "#713D8C",
-          plum: "#51265F",
-          lavender: "#B59AD9",
-          blush: "#E8A0C2",
-          rose: "#D879A8",
-          gold: "#C99A48",
-          warmWhite: "#FFFEFC",
-          ivory: "#FAF5F0",
-          dark: "#302735",
+          ivory: "#FBF8F2",     // Soft cream canvas
+          plum: "#5B2A6E",      // Royal plum primary
+          deepPlum: "#2A1235",  // Deep plum footer & dark text
+          lilac: "#C9B6E4",     // Lilac accent
+          blush: "#E8B4C4",     // Blush pink accent
+          gold: "#B8923A",      // Zari gold accent
+          ink: "#111111",       // Ink dark typography
         },
       },
       fontFamily: {
+        sans: ['"Poppins"', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
         serif: ['"Playfair Display"', 'Georgia', 'serif'],
-        sans: ['"Lato"', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
-      aspectRatio: {
-        '9/16': '9 / 16',
+      borderRadius: {
+        'card': '22px',
+        'pill': '30px',
       },
     },
   },

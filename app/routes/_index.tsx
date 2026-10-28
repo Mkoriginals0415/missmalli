@@ -1,181 +1,530 @@
+import { useState } from "react";
 import { json, type LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { useLoaderData, Link } from "@remix-run/react";
-import { ArrowRight, Sparkles, ShieldCheck, Truck, RefreshCw } from "lucide-react";
-import { Header } from "~/components/layout/Header";
-import { BottomNav } from "~/components/layout/BottomNav";
-import { getAllProducts, getStoreSettings } from "~/db/d1.server";
+import { 
+  Play, 
+  ArrowRight, 
+  Heart, 
+  Sparkles, 
+  ChevronRight,
+  Eye,
+  MessageCircle,
+  Star
+} from "lucide-react";
+import { Navbar } from "~/components/layout/Navbar";
+import { Footer } from "~/components/layout/Footer";
+import { QuickViewModal } from "~/components/product/QuickViewModal";
+import { INITIAL_PRODUCTS, SeedProduct } from "~/db/mock-data";
+import { useSavedSarees } from "~/hooks/useLocalStorage";
 
 export async function loader({ context }: LoaderFunctionArgs) {
-  const env = (context as any)?.cloudflare?.env;
-  const products = await getAllProducts(env);
-  const settings = await getStoreSettings(env);
-
   return json({
-    products: products.slice(0, 6),
-    settings,
+    products: INITIAL_PRODUCTS,
+    newArrivals: INITIAL_PRODUCTS.slice(0, 4),
   });
 }
 
 export default function HomePage() {
-  const { products } = useLoaderData<typeof loader>();
+  const { products, newArrivals } = useLoaderData<typeof loader>();
+  const [quickViewProduct, setQuickViewProduct] = useState<SeedProduct | null>(null);
+  const { isSaved, toggleSave } = useSavedSarees();
 
   const categories = [
-    { name: "Pure Silk", slug: "silk", count: "24 sarees", image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80" },
-    { name: "Festive Specials", slug: "festive", count: "18 sarees", image: "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=600&q=80" },
-    { name: "Cotton Silk", slug: "cotton", count: "12 sarees", image: "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=600&q=80" },
-    { name: "Bridal Heirloom", slug: "silk", count: "16 sarees", image: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=600&q=80" },
+    {
+      name: "Sarees",
+      count: "240+ styles",
+      slug: "sarees",
+      bgColor: "bg-brand-blush/60",
+      image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80",
+    },
+    {
+      name: "Dresses",
+      count: "120+ styles",
+      slug: "dresses",
+      bgColor: "bg-brand-plum/40",
+      image: "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=600&q=80",
+    },
+    {
+      name: "Dress Materials",
+      count: "90+ styles",
+      slug: "materials",
+      bgColor: "bg-brand-gold/40",
+      image: "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=600&q=80",
+    },
+    {
+      name: "Exclusive",
+      count: "40+ styles",
+      slug: "exclusive",
+      bgColor: "bg-brand-lilac/60",
+      image: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=600&q=80",
+    },
+  ];
+
+  const testimonials = [
+    {
+      quote: "Beautiful fabric and the zari work is exquisite. Felt like a piece of art.",
+      author: "Rafi H.",
+      city: "Hyderabad",
+    },
+    {
+      quote: "The drape and pure silk texture surpassed my expectations. Ordering on WhatsApp was so seamless!",
+      author: "Anjali S.",
+      city: "Chennai",
+    },
+    {
+      quote: "Heirloom grade Banarasi. Fast delivery and the personal WhatsApp assistance was incredible.",
+      author: "Meera K.",
+      city: "Bengaluru",
+    },
   ];
 
   return (
-    <div className="min-h-screen bg-brand-warmWhite flex flex-col pb-20">
-      <Header />
+    <div className="min-h-screen bg-brand-ivory flex flex-col font-sans selection:bg-brand-lilac selection:text-brand-deepPlum">
+      <Navbar />
 
-      <main className="flex-1 max-w-4xl mx-auto w-full px-4 pt-4 space-y-6">
-        {/* Screen 1 / W1 Hero Banner */}
-        <div className="relative rounded-3xl overflow-hidden shadow-md bg-gradient-to-r from-brand-plum to-brand-purple text-white p-6 sm:p-8">
-          <div className="max-w-md space-y-3 relative z-10">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-gold/30 text-brand-ivory text-xs font-semibold tracking-wider uppercase backdrop-blur-sm">
-              <Sparkles className="w-3.5 h-3.5 text-brand-gold" />
-              Festive Edit 2026
-            </span>
-            <h1 className="text-3xl sm:text-4xl font-serif font-bold text-white leading-tight">
-              Find your festive saree
-            </h1>
-            <p className="text-sm text-brand-lavender/90 font-sans">
-              Hand-woven Banarasi, Kanjivaram and wild Tussar silks. Handpicked for your moments.
-            </p>
-            <div className="pt-2">
-              <Link
-                to="/feed"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-warmWhite text-brand-plum font-semibold text-sm hover:bg-brand-ivory transition shadow-lg"
-              >
-                <span>Explore Saree Feed</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+      <main className="flex-1 space-y-16 sm:space-y-24">
+        {/* =========================================================
+            HERO SECTION (From new design.jpg & new design.pdf Page 01)
+           ========================================================= */}
+        <section className="relative max-w-7xl mx-auto px-4 sm:px-8 pt-8 sm:pt-14 pb-8">
+          {/* Top Hero Badges: Circular Artisan Badge + Heading + Avatar Cluster */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-10">
+            {/* Circular Rotating Badge: "Learn about our artisans" */}
+            <div className="hidden lg:flex items-center gap-3">
+              <div className="relative w-20 h-20 flex items-center justify-center">
+                <svg className="w-full h-full animate-[spin_12s_linear_infinite]" viewBox="0 0 100 100">
+                  <path
+                    id="circlePath"
+                    d="M 50, 50 m -36, 0 a 36,36 0 1,1 72,0 a 36,36 0 1,1 -72,0"
+                    fill="none"
+                  />
+                  <text className="text-[9.5px] uppercase tracking-[0.25em] font-bold fill-brand-deepPlum">
+                    <textPath xlinkHref="#circlePath">
+                      Learn about our artisans •
+                    </textPath>
+                  </text>
+                </svg>
+                <div className="absolute inset-0 m-auto w-9 h-9 rounded-full bg-brand-deepPlum text-white flex items-center justify-center shadow-md">
+                  <Play className="w-3.5 h-3.5 fill-white ml-0.5" />
+                </div>
+              </div>
+            </div>
+
+            {/* Central Hero Headline */}
+            <div className="text-center max-w-3xl mx-auto">
+              <div className="inline-flex items-center gap-2 mb-2 text-brand-gold text-xs font-bold uppercase tracking-widest">
+                <Sparkles className="w-4 h-4" />
+                <span>Handwoven With Love</span>
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-brand-deepPlum leading-[1.12]">
+                Elevate Your Grace With Heritage Drape
+              </h1>
+            </div>
+
+            {/* Social Proof Avatar Cluster */}
+            <div className="hidden lg:flex items-center gap-2">
+              <div className="flex -space-x-2.5">
+                <img
+                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
+                  alt="Customer"
+                  className="w-9 h-9 rounded-full border-2 border-brand-ivory object-cover shadow-sm"
+                />
+                <img
+                  src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80"
+                  alt="Customer"
+                  className="w-9 h-9 rounded-full border-2 border-brand-ivory object-cover shadow-sm"
+                />
+                <img
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80"
+                  alt="Customer"
+                  className="w-9 h-9 rounded-full border-2 border-brand-ivory object-cover shadow-sm"
+                />
+              </div>
+              <div className="w-8 h-8 rounded-full bg-brand-deepPlum text-white text-xs font-bold flex items-center justify-center shadow-sm">
+                +
+              </div>
             </div>
           </div>
 
-          <div className="absolute right-0 bottom-0 top-0 w-1/3 opacity-25 sm:opacity-40 mix-blend-overlay pointer-events-none bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-brand-gold via-transparent to-transparent" />
-        </div>
+          {/* 5-Column Notched Hero Cards Gallery (Signature new design layout) */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 items-center">
+            {/* Column 1: Pink Saree Top + Zari Texture Bottom */}
+            <div className="flex flex-col gap-4">
+              <div className="relative aspect-[3/4] notched-tl overflow-hidden bg-brand-lilac/30 shadow-md group">
+                <img
+                  src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80"
+                  alt="Rani Pink Saree"
+                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                />
+              </div>
+              <div className="relative aspect-[4/3] rounded-[22px] overflow-hidden bg-brand-blush/30 shadow-sm group">
+                <img
+                  src="https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=800&q=80"
+                  alt="Zari Textile"
+                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                />
+              </div>
+            </div>
 
-        {/* Shop By Category */}
-        <section className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-serif font-bold text-brand-plum">Shop by category</h2>
-            <Link to="/shop" className="text-xs text-brand-purple font-semibold hover:underline">
-              View all
-            </Link>
+            {/* Column 2: Tall Arched Lavender Saree */}
+            <div className="relative aspect-[9/16] sm:aspect-[3/5] notched-arch overflow-hidden bg-brand-lilac/40 shadow-lg group">
+              <img
+                src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80"
+                alt="Lavender Georgette"
+                className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/60 via-transparent to-transparent flex items-end p-4">
+                <span className="text-white text-xs font-serif italic">Pure Lilac Handloom</span>
+              </div>
+            </div>
+
+            {/* Column 3: Center Gold Tissue with "Explore Collections" Pill */}
+            <div className="flex flex-col items-center gap-3">
+              <div className="relative w-full aspect-[4/5] rounded-[22px] overflow-hidden bg-brand-gold/20 shadow-md group border border-brand-gold/30">
+                <img
+                  src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=800&q=80"
+                  alt="Gold Tissue Silk"
+                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                />
+              </div>
+              <Link
+                to="/sarees"
+                className="w-full py-3.5 px-6 rounded-full bg-brand-deepPlum text-white text-xs font-semibold hover:bg-brand-plum transition shadow-lg flex items-center justify-center gap-2 group"
+              >
+                <span>Explore Collections</span>
+                <span className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition">↗</span>
+              </Link>
+            </div>
+
+            {/* Column 4: Arched Plum Kurta/Drape */}
+            <div className="relative aspect-[9/16] sm:aspect-[3/5] notched-arch overflow-hidden bg-brand-plum/30 shadow-lg group hidden sm:block">
+              <img
+                src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80"
+                alt="Plum Kurta"
+                className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/60 via-transparent to-transparent flex items-end p-4">
+                <span className="text-white text-xs font-serif italic">Zari Kurta Ensemble</span>
+              </div>
+            </div>
+
+            {/* Column 5: Bridal Veil Top + Rani Pink Bottom */}
+            <div className="flex flex-col gap-4 hidden lg:flex">
+              <div className="relative aspect-[4/3] notched-tr overflow-hidden bg-brand-blush/30 shadow-md group">
+                <img
+                  src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=800&q=80"
+                  alt="Bridal Veil"
+                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                />
+              </div>
+              <div className="relative aspect-[3/4] rounded-[22px] overflow-hidden bg-brand-lilac/30 shadow-sm group">
+                <img
+                  src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=800&q=80"
+                  alt="Drape"
+                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                />
+              </div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {/* Bottom Hero Review & Saree Link Strip */}
+          <div className="mt-12 pt-6 border-t border-brand-lilac/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            {/* Left Quote */}
+            <div className="flex items-start gap-3 max-w-xl">
+              <span className="text-4xl font-serif text-brand-plum leading-none">“</span>
+              <div>
+                <p className="text-xs sm:text-sm text-brand-deepPlum/80 leading-relaxed font-sans">
+                  miss malli is a piece of art... handwoven typography review it piece of art.... loved the saree!
+                </p>
+                <div className="mt-1.5 flex items-center gap-2">
+                  <span className="font-serif italic font-bold text-sm text-brand-deepPlum bg-yellow-200/60 px-2 py-0.5 rounded">
+                    Rafi H.
+                  </span>
+                  <span className="text-[11px] text-brand-deepPlum/50">Verified Buyer</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Tag */}
+            <Link
+              to="/sarees"
+              className="flex items-center gap-3 text-brand-deepPlum hover:text-brand-plum transition group"
+            >
+              <div>
+                <span className="text-2xl font-bold font-sans">01</span>
+                <span className="text-xs text-brand-deepPlum/50 ml-1">/ Sarees</span>
+                <h3 className="text-sm font-bold tracking-tight">Drape Your Way With Traditional Crafts</h3>
+              </div>
+              <div className="w-9 h-9 rounded-full bg-brand-ivory border border-brand-deepPlum/30 flex items-center justify-center group-hover:bg-brand-deepPlum group-hover:text-white transition">
+                <ArrowRight className="w-4 h-4" />
+              </div>
+            </Link>
+          </div>
+        </section>
+
+        {/* =========================================================
+            SHOP BY CATEGORY: "Find Your Drape" (Page 01)
+           ========================================================= */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-8 space-y-6">
+          <div className="text-center space-y-1">
+            <span className="text-[11px] font-bold tracking-widest uppercase text-brand-gold">
+              Shop by Category
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-bold text-brand-deepPlum">
+              Find Your Drape
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             {categories.map((cat) => (
               <Link
                 key={cat.name}
-                to={`/feed?collection=${cat.slug}`}
-                className="group relative rounded-2xl overflow-hidden aspect-[4/5] bg-brand-ivory shadow-sm border border-brand-lavender/20 flex flex-col justify-end p-3 transition hover:shadow-md"
+                to={`/sarees?collection=${cat.slug}`}
+                className="group relative rounded-[22px] overflow-hidden aspect-[3/4] bg-white border border-brand-lilac/30 shadow-sm hover:shadow-lg transition flex flex-col justify-end p-5"
               >
                 <img
                   src={cat.image}
                   alt={cat.name}
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                <div className="relative z-10 text-white">
-                  <h3 className="font-serif text-sm font-bold">{cat.name}</h3>
-                  <span className="text-[11px] text-white/80">{cat.count}</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/85 via-brand-deepPlum/20 to-transparent" />
+                <div className="relative z-10 text-white space-y-0.5">
+                  <h3 className="font-sans text-base sm:text-lg font-bold">{cat.name}</h3>
+                  <p className="text-xs text-brand-lilac">{cat.count}</p>
                 </div>
               </Link>
             ))}
           </div>
         </section>
 
-        {/* New Arrivals */}
-        <section className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-serif font-bold text-brand-plum">New arrivals</h2>
-            <Link to="/shop" className="text-xs text-brand-purple font-semibold hover:underline">
-              See all
+        {/* =========================================================
+            NEW ARRIVALS: "Fresh From The Loom" (Page 01)
+           ========================================================= */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-8 space-y-6">
+          <div className="flex items-end justify-between">
+            <div>
+              <span className="text-[11px] font-bold tracking-widest uppercase text-brand-gold">
+                New Arrivals
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-bold text-brand-deepPlum">
+                Fresh From The Loom
+              </h2>
+            </div>
+            <Link
+              to="/sarees"
+              className="text-xs font-semibold text-brand-plum hover:underline flex items-center gap-1"
+            >
+              <span>View all</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5">
-            {products.map((saree) => (
-              <Link
-                key={saree.id}
-                to={`/p/${saree.slug}`}
-                className="group bg-white rounded-2xl overflow-hidden border border-brand-lavender/20 shadow-sm hover:shadow-md transition flex flex-col"
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+            {newArrivals.map((product) => (
+              <div
+                key={product.id}
+                className="group bg-white rounded-[22px] overflow-hidden border border-brand-lilac/30 shadow-sm hover:shadow-md transition flex flex-col justify-between"
               >
-                <div className="aspect-[3/4] relative bg-brand-ivory overflow-hidden">
+                {/* Image Box */}
+                <div className="relative aspect-[3/4] bg-brand-lilac/10 overflow-hidden">
                   <img
-                    src={saree.images[0]}
-                    alt={saree.name}
-                    className="w-full h-full object-cover group-hover:scale-102 transition duration-300"
+                    src={product.images[0]}
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                   />
-                  <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded-full bg-black/60 text-white text-[10px] backdrop-blur-sm">
-                    In stock
-                  </span>
-                </div>
-                <div className="p-3 flex-1 flex flex-col justify-between">
-                  <h3 className="font-serif text-xs sm:text-sm font-semibold text-brand-dark line-clamp-1 group-hover:text-brand-purple transition">
-                    {saree.name}
-                  </h3>
-                  <div className="flex items-center justify-between mt-1.5">
-                    <span className="text-xs sm:text-sm font-bold text-brand-plum">
-                      ₹ {saree.price.toLocaleString("en-IN")}
-                    </span>
-                    <span className="text-[10px] text-brand-purple font-medium group-hover:underline">
-                      Buy now →
+
+                  {/* Top Badges */}
+                  <div className="absolute top-3 left-3 flex flex-col gap-1">
+                    {product.badge && (
+                      <span className="px-2.5 py-0.5 rounded-full bg-brand-deepPlum text-white text-[10px] font-bold shadow-sm">
+                        {product.badge}
+                      </span>
+                    )}
+                    <span className="px-2 py-0.5 rounded-full bg-white/90 backdrop-blur-sm text-brand-deepPlum text-[9px] font-bold">
+                      #{product.code}
                     </span>
                   </div>
+
+                  {/* Wishlist Button */}
+                  <button
+                    onClick={() => toggleSave(product.id)}
+                    className="absolute top-3 right-3 p-2 rounded-full bg-white/90 backdrop-blur-sm text-brand-deepPlum hover:text-brand-plum transition shadow-sm"
+                    aria-label="Wishlist"
+                  >
+                    <Heart
+                      className={`w-4 h-4 ${isSaved(product.id) ? "fill-brand-blush text-brand-plum" : ""}`}
+                    />
+                  </button>
+
+                  {/* Quick View Button on Hover */}
+                  <div className="absolute inset-x-3 bottom-3 opacity-0 group-hover:opacity-100 transition duration-200">
+                    <button
+                      onClick={() => setQuickViewProduct(product)}
+                      className="w-full py-2 rounded-full bg-white/95 backdrop-blur-md text-brand-deepPlum text-xs font-semibold shadow-md hover:bg-brand-deepPlum hover:text-white transition flex items-center justify-center gap-1.5"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>quick view +</span>
+                    </button>
+                  </div>
                 </div>
-              </Link>
+
+                {/* Details */}
+                <div className="p-4 space-y-1.5">
+                  <Link to={`/p/${product.slug}`} className="block group-hover:text-brand-plum">
+                    <h3 className="font-sans text-xs sm:text-sm font-semibold text-brand-deepPlum line-clamp-1">
+                      {product.name}
+                    </h3>
+                  </Link>
+                  <p className="text-[11px] text-brand-deepPlum/60">{product.fabric}</p>
+                  <div className="flex items-center justify-between pt-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs sm:text-sm font-bold text-brand-deepPlum">
+                        ₹ {product.price.toLocaleString("en-IN")}
+                      </span>
+                      {product.originalPrice && (
+                        <span className="text-[11px] text-brand-deepPlum/40 line-through">
+                          ₹ {product.originalPrice.toLocaleString("en-IN")}
+                        </span>
+                      )}
+                    </div>
+                    <Link
+                      to={`/p/${product.slug}`}
+                      className="text-[11px] font-bold text-brand-plum hover:underline"
+                    >
+                      Buy Now
+                    </Link>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </section>
 
-        {/* Festive Offer Banner */}
-        <section className="rounded-2xl p-4 sm:p-5 bg-brand-ivory border border-brand-gold/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-brand-gold uppercase tracking-wider">Festive offer</span>
-              <span className="text-[11px] bg-brand-gold/20 text-brand-plum px-2 py-0.5 rounded-full font-medium">Limited Period</span>
+        {/* =========================================================
+            FESTIVE EDIT 2026 PROMOTION BANNER (Page 01)
+           ========================================================= */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-8">
+          <div className="rounded-[28px] overflow-hidden bg-brand-plum text-white p-6 sm:p-12 relative flex flex-col sm:flex-row items-center justify-between gap-8 shadow-xl">
+            <div className="space-y-3 max-w-lg z-10">
+              <span className="text-[11px] font-bold tracking-widest uppercase text-brand-gold">
+                Festive Edit · 2026
+              </span>
+              <h2 className="text-3xl sm:text-5xl font-bold leading-tight">
+                Flat 30% off<br />on Silk Sarees
+              </h2>
+              <p className="text-xs sm:text-sm text-brand-lilac leading-relaxed">
+                Handcrafted pure Katan, Kanjivaram and wild Tussar silks. Order directly on WhatsApp with complimentary fall, pico and express delivery.
+              </p>
+              <div className="pt-2">
+                <Link
+                  to="/sarees?filter=festive"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-ivory text-brand-deepPlum font-semibold text-xs hover:bg-white transition shadow-md"
+                >
+                  <span>Shop the Sale</span>
+                  <span>↗</span>
+                </Link>
+              </div>
             </div>
-            <h3 className="font-serif text-base sm:text-lg font-bold text-brand-plum">
-              Complimentary Fall & Pico on all Pure Silks
-            </h3>
-            <p className="text-xs text-brand-dark/70">
-              Orders placed directly on WhatsApp include complimentary saree finishing and express shipping.
-            </p>
+
+            <div className="w-full sm:w-80 aspect-[4/3] rounded-[22px] bg-brand-gold/30 overflow-hidden relative border border-brand-gold/40 shadow-inner">
+              <img
+                src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=800&q=80"
+                alt="Festive Silk Offer"
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
-          <Link
-            to="/feed"
-            className="self-start sm:self-auto px-5 py-2.5 rounded-full bg-brand-purple text-white text-xs font-semibold hover:bg-brand-plum transition whitespace-nowrap shadow-sm"
-          >
-            Shop the Collection
-          </Link>
         </section>
 
-        {/* Store Trust Badges */}
-        <section className="grid grid-cols-3 gap-2 py-4 border-t border-brand-lavender/20 text-center">
-          <div className="flex flex-col items-center gap-1.5 p-2">
-            <ShieldCheck className="w-5 h-5 text-brand-purple" />
-            <span className="text-xs font-bold text-brand-dark">100% Authentic</span>
-            <span className="text-[10px] text-brand-dark/60">Certified Handloom</span>
+        {/* =========================================================
+            OUR ARTISANS SPOTLIGHT (Page 01)
+           ========================================================= */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-8">
+          <div className="rounded-[28px] p-6 sm:p-12 bg-white border border-brand-lilac/30 shadow-sm flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="space-y-4 max-w-md">
+              <span className="text-[11px] font-bold tracking-widest uppercase text-brand-gold">
+                Our Artisans
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-bold text-brand-deepPlum leading-tight">
+                Woven by hands,<br />worn with pride
+              </h2>
+              <p className="text-xs sm:text-sm text-brand-deepPlum/70 leading-relaxed">
+                Each saree is crafted by master weavers from Kanchipuram, Varanasi and Pochampally. Every weave honors centuries of loom heritage.
+              </p>
+              <div className="pt-2">
+                <a
+                  href="https://wa.me/919876543210?text=Hi%20Miss%20Malli%2C%20tell%20me%20about%20your%20artisans"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-brand-deepPlum text-brand-deepPlum text-xs font-semibold hover:bg-brand-deepPlum hover:text-white transition"
+                >
+                  <Play className="w-3.5 h-3.5 fill-current" />
+                  <span>Chat With Our Concierge</span>
+                </a>
+              </div>
+            </div>
+
+            <div className="w-full md:w-1/2 aspect-[16/9] rounded-[22px] overflow-hidden bg-brand-lilac/20 shadow-md relative">
+              <img
+                src="https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=1000&q=80"
+                alt="Master Artisan at Loom"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                <div className="w-14 h-14 rounded-full bg-white/90 backdrop-blur-md text-brand-deepPlum flex items-center justify-center shadow-lg">
+                  <Play className="w-5 h-5 fill-brand-deepPlum ml-0.5" />
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col items-center gap-1.5 p-2">
-            <Truck className="w-5 h-5 text-brand-purple" />
-            <span className="text-xs font-bold text-brand-dark">Express Shipping</span>
-            <span className="text-[10px] text-brand-dark/60">Dispatched in 24h</span>
+        </section>
+
+        {/* =========================================================
+            LOVED BY OUR CUSTOMERS (Page 01)
+           ========================================================= */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-8 space-y-6">
+          <div className="text-center space-y-1">
+            <h2 className="text-2xl sm:text-4xl font-bold text-brand-deepPlum">
+              Loved by Our Customers
+            </h2>
+            <p className="text-xs text-brand-deepPlum/60">Real reviews from our WhatsApp saree collectors</p>
           </div>
-          <div className="flex flex-col items-center gap-1.5 p-2">
-            <RefreshCw className="w-5 h-5 text-brand-purple" />
-            <span className="text-xs font-bold text-brand-dark">Direct Support</span>
-            <span className="text-[10px] text-brand-dark/60">WhatsApp Concierge</span>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map((t, idx) => (
+              <div
+                key={idx}
+                className="p-6 rounded-[22px] bg-white border border-brand-lilac/30 shadow-sm space-y-3 flex flex-col justify-between"
+              >
+                <div className="space-y-2">
+                  <div className="flex text-amber-500">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-amber-400 stroke-amber-400" />
+                    ))}
+                  </div>
+                  <p className="text-xs sm:text-sm text-brand-deepPlum/80 leading-relaxed font-sans">
+                    "{t.quote}"
+                  </p>
+                </div>
+                <div className="pt-3 border-t border-brand-lilac/20">
+                  <span className="font-bold text-xs text-brand-deepPlum block">— {t.author}</span>
+                  <span className="text-[11px] text-brand-deepPlum/50">{t.city}</span>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
       </main>
 
-      <BottomNav />
+      <Footer />
+
+      {/* Quick View Modal */}
+      <QuickViewModal
+        product={quickViewProduct}
+        isOpen={!!quickViewProduct}
+        onClose={() => setQuickViewProduct(null)}
+      />
     </div>
   );
 }

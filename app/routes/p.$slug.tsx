@@ -1,27 +1,38 @@
 import { useState } from "react";
 import { json, type LoaderFunctionArgs, type MetaFunction } from "@remix-run/cloudflare";
-import { useLoaderData, Link } from "@remix-run/react";
-import { Heart, Share2, MessageCircle, ChevronDown, ChevronUp, ShoppingBag } from "lucide-react";
-import { Header } from "~/components/layout/Header";
-import { BottomNav } from "~/components/layout/BottomNav";
-import { BuyNowSheet } from "~/components/product/BuyNowSheet";
-import { getProductBySlug, getStoreSettings } from "~/db/d1.server";
-import { useSavedSarees, useBag } from "~/hooks/useLocalStorage";
-import { generateWhatsAppQuestionUrl } from "~/utils/whatsapp";
+import { useLoaderData, Link, useNavigate } from "@remix-run/react";
+import { 
+  Heart, 
+  Share2, 
+  MessageCircle, 
+  ShoppingBag, 
+  ChevronDown, 
+  ChevronUp, 
+  Truck, 
+  RotateCcw, 
+  Award, 
+  Minus, 
+  Plus, 
+  Star,
+  Check
+} from "lucide-react";
+import { Navbar } from "~/components/layout/Navbar";
+import { Footer } from "~/components/layout/Footer";
+import { INITIAL_PRODUCTS, ACCESSORIES, SeedProduct } from "~/db/mock-data";
+import { useSavedSarees, useBag, useMyRequests } from "~/hooks/useLocalStorage";
+import { generateWhatsAppBuyUrl, generateWhatsAppQuestionUrl } from "~/utils/whatsapp";
 
 export async function loader({ params, context }: LoaderFunctionArgs) {
-  const env = (context as any)?.cloudflare?.env;
   const slug = params.slug;
-  if (!slug) throw new Response("Not Found", { status: 404 });
-
-  const product = await getProductBySlug(slug, env);
-  if (!product) throw new Response("Product Not Found", { status: 404 });
-
-  const settings = await getStoreSettings(env);
+  const product = INITIAL_PRODUCTS.find((p) => p.slug === slug);
+  if (!product) {
+    throw new Response("Product Not Found", { status: 404 });
+  }
 
   return json({
     product,
-    sellerPhone: settings.seller_whatsapp_number || "919876543210",
+    accessories: ACCESSORIES,
+    sellerPhone: "919876543210",
   });
 }
 
@@ -31,49 +42,127 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   }
 
   const { product } = data;
-  const coverImage = product.images[0] || "/brand/logo.png";
-  const title = `${product.name} · ₹ ${product.price.toLocaleString("en-IN")} | Miss Malli`;
-  const description = `${product.fabric}. Handcrafted authentic Indian saree. Order directly with seller on WhatsApp.`;
+  const title = `${product.name} (#${product.code}) · ₹ ${product.price.toLocaleString("en-IN")} | Miss Malli`;
+  const description = `${product.fabric}. ${product.description}`;
+  const image = product.images[0] || "/brand/logo.png";
 
   return [
     { title },
     { name: "description", content: description },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
-    { property: "og:image", content: coverImage },
+    { property: "og:image", content: image },
     { property: "og:type", content: "product" },
     { property: "twitter:card", content: "summary_large_image" },
     { property: "twitter:title", content: title },
     { property: "twitter:description", content: description },
-    { property: "twitter:image", content: coverImage },
+    { property: "twitter:image", content: image },
   ];
 };
 
 export default function ProductDetailPage() {
-  const { product, sellerPhone } = useLoaderData<typeof loader>();
+  const { product, accessories, sellerPhone } = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
+
   const [activePhoto, setActivePhoto] = useState(0);
-  const [buyNowOpen, setBuyNowOpen] = useState(false);
+  const [selectedColor, setSelectedColor] = useState(product.variants[0]?.colorName || "Original");
+  const [blouseOption, setBlouseOption] = useState<"with" | "without">("with");
+  const [quantity, setQuantity] = useState(1);
+  const [pincode, setPincode] = useState("");
+  const [deliveryMessage, setDeliveryMessage] = useState<string | null>(null);
+
+  // Accordion open states
   const [detailsOpen, setDetailsOpen] = useState(true);
+  const [fabricOpen, setFabricOpen] = useState(false);
   const [shippingOpen, setShippingOpen] = useState(false);
 
   const { isSaved, toggleSave } = useSavedSarees();
   const { addToBag } = useBag();
+  const { addRequest } = useMyRequests();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleShare = async () => {
-    const url = window.location.href;
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `Miss Malli - ${product.name}`,
-          text: `Check out ${product.name} on Miss Malli!`,
-          url,
-        });
-      } catch {
-        // cancelled
-      }
+  const handlePincodeCheck = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pincode.length === 6) {
+      setDeliveryMessage("✓ Express delivery available in 2–4 business days with complimentary shipping.");
     } else {
-      navigator.clipboard.writeText(url);
-      alert("Product link copied to clipboard!");
+      setDeliveryMessage("Please enter a valid 6-digit Indian postal code.");
+    }
+  };
+
+  const handleBuyNow = async () => {
+    setIsSubmitting(true);
+    try {
+      const variantDetails = `${selectedColor} · ${blouseOption === "with" ? "With blouse" : "Without blouse"}${quantity > 1 ? ` · Qty: ${quantity}` : ""}`;
+      const totalAmount = product.price * quantity;
+
+      const payload = {
+        source: "buy_now",
+        totalAmount,
+        items: [
+          {
+            code: product.code,
+            productId: product.id,
+            productName: product.name,
+            variantDetails,
+            price: product.price,
+            imageUrl: product.images[0],
+          },
+        ],
+      };
+
+      const res = await fetch("/api/requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error("Failed to create request");
+
+      const data = (await res.json()) as {
+        requestId: number;
+        requestNumber: string;
+        secretToken: string;
+        requestUrl: string;
+      };
+
+      addRequest({
+        requestId: data.requestId,
+        requestNumber: data.requestNumber,
+        secretToken: data.secretToken,
+        itemsCount: quantity,
+        totalAmount,
+        summaryText: `${product.name} (#${product.code})`,
+        status: "needs_reply",
+        createdAt: new Date().toISOString(),
+      });
+
+      const whatsappUrl = generateWhatsAppBuyUrl({
+        sellerPhone,
+        requestNumber: data.requestNumber,
+        requestUrl: data.requestUrl,
+        items: [
+          {
+            code: product.code,
+            name: product.name,
+            variantDetails,
+            price: totalAmount,
+          },
+        ],
+        totalAmount,
+      });
+
+      window.open(whatsappUrl, "_blank");
+      navigate(
+        `/request-created?number=${encodeURIComponent(data.requestNumber)}&token=${encodeURIComponent(
+          data.secretToken
+        )}&url=${encodeURIComponent(data.requestUrl)}`
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Error processing WhatsApp order. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -82,109 +171,150 @@ export default function ProductDetailPage() {
       productId: product.id,
       name: product.name,
       slug: product.slug,
-      colorName: product.variants[0]?.colorName || "Original",
-      colorHex: product.variants[0]?.colorHex || "#713D8C",
-      blouseOption: "with",
-      price: product.price,
+      colorName: selectedColor,
+      colorHex: product.variants[0]?.colorHex || "#5B2A6E",
+      blouseOption,
+      price: product.price * quantity,
       imageUrl: product.images[0],
     });
-    alert(`Added ${product.name} to your bag!`);
+    alert(`Added ${quantity}x ${product.name} (#${product.code}) to your bag!`);
   };
 
-  const currentUrl = typeof window !== "undefined" ? window.location.href : "";
-  const whatsappAskUrl = generateWhatsAppQuestionUrl(sellerPhone, product.name, currentUrl);
+  const handleShare = () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      navigator.share({
+        title: product.name,
+        text: `Check out ${product.name} on Miss Malli!`,
+        url,
+      });
+    } else {
+      navigator.clipboard.writeText(url);
+      alert("Product link copied to clipboard!");
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-brand-warmWhite flex flex-col pb-24">
-      <Header showBack={true} />
+    <div className="min-h-screen bg-brand-ivory flex flex-col font-sans">
+      <Navbar />
 
-      <main className="flex-1 max-w-4xl mx-auto w-full px-4 pt-4">
-        {/* Breadcrumb (Screen W4) */}
-        <div className="text-xs text-brand-dark/60 mb-3 flex items-center gap-1.5">
-          <Link to="/" className="hover:text-brand-purple">Home</Link>
-          <span>›</span>
-          <Link to={`/shop?collection=${product.collectionSlug}`} className="hover:text-brand-purple capitalize">
-            {product.collectionName}
-          </Link>
-          <span>›</span>
-          <span className="text-brand-plum font-medium truncate max-w-[200px]">{product.name}</span>
-        </div>
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 space-y-16">
+        {/* Breadcrumb */}
+        <nav className="text-xs text-brand-deepPlum/60 flex items-center gap-1.5">
+          <Link to="/" className="hover:text-brand-plum">Home</Link>
+          <span>/</span>
+          <Link to="/sarees" className="hover:text-brand-plum">Sarees</Link>
+          <span>/</span>
+          <span className="text-brand-deepPlum font-semibold truncate max-w-xs">{product.name}</span>
+        </nav>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-          {/* Photos Section */}
-          <div className="space-y-3">
-            <div className="relative aspect-[3/4] rounded-3xl overflow-hidden bg-brand-ivory border border-brand-lavender/30 shadow-sm">
+        {/* Product Details Section (Page 03) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-start">
+          {/* Left: Thumbnail Column + Main Zoom Image */}
+          <div className="lg:col-span-7 flex flex-col-reverse sm:flex-row gap-4 items-start">
+            {/* Thumbnails */}
+            <div className="flex sm:flex-col gap-3 overflow-x-auto sm:overflow-visible shrink-0 pb-2 sm:pb-0">
+              {product.images.map((img, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActivePhoto(idx)}
+                  className={`w-16 sm:w-20 aspect-[3/4] rounded-[16px] overflow-hidden border-2 transition ${
+                    activePhoto === idx
+                      ? "border-brand-plum shadow-md scale-95"
+                      : "border-transparent opacity-70 hover:opacity-100"
+                  }`}
+                >
+                  <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+
+            {/* Main Image with Zoom on Hover */}
+            <div className="relative flex-1 aspect-[3/4] w-full rounded-[28px] overflow-hidden bg-brand-lilac/20 shadow-md group">
               <img
                 src={product.images[activePhoto] || product.images[0]}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover group-hover:scale-110 transition duration-500 ease-out"
               />
-              <div className="absolute top-3 right-3 flex flex-col gap-2">
-                <button
-                  onClick={() => toggleSave(product.id)}
-                  className="p-2.5 rounded-full bg-white/80 backdrop-blur-md text-brand-dark hover:text-brand-rose transition shadow-sm"
-                  aria-label="Save saree"
-                >
-                  <Heart className={`w-5 h-5 ${isSaved(product.id) ? "fill-brand-rose text-brand-rose" : ""}`} />
-                </button>
-                <button
-                  onClick={handleShare}
-                  className="p-2.5 rounded-full bg-white/80 backdrop-blur-md text-brand-dark hover:text-brand-purple transition shadow-sm"
-                  aria-label="Share saree"
-                >
-                  <Share2 className="w-5 h-5" />
-                </button>
-              </div>
+              <span className="absolute bottom-4 left-4 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md text-white text-[11px] font-sans">
+                main image · zoom on hover
+              </span>
+              <button
+                onClick={handleShare}
+                className="absolute top-4 right-4 p-2.5 rounded-full bg-white/80 backdrop-blur-md text-brand-deepPlum hover:bg-white transition shadow-sm"
+                title="Share"
+              >
+                <Share2 className="w-4 h-4" />
+              </button>
             </div>
-
-            {/* Thumbnail selector */}
-            {product.images.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                {product.images.map((img, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setActivePhoto(idx)}
-                    className={`relative w-16 h-20 rounded-xl overflow-hidden border-2 transition ${
-                      activePhoto === idx ? "border-brand-purple scale-95" : "border-transparent opacity-70 hover:opacity-100"
-                    }`}
-                  >
-                    <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
 
-          {/* Details & Buy Section */}
-          <div className="space-y-5">
+          {/* Right: Product Info & Buy Controls */}
+          <div className="lg:col-span-5 space-y-6">
             <div>
-              <span className="text-xs font-semibold text-brand-purple uppercase tracking-wider">
-                {product.collectionName}
-              </span>
-              <h1 className="text-2xl sm:text-3xl font-serif font-bold text-brand-plum mt-1">
-                {product.name}
-              </h1>
-              <div className="flex items-center gap-3 mt-2">
-                <span className="text-2xl font-bold text-brand-dark">
-                  ₹ {product.price.toLocaleString("en-IN")}
-                </span>
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">
-                  In stock
+              <div className="flex items-center gap-2">
+                {product.badge && (
+                  <span className="text-[11px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-brand-plum/10 text-brand-plum">
+                    {product.badge}
+                  </span>
+                )}
+                <span className="text-[11px] font-bold text-brand-deepPlum/60">
+                  Product ID: #{product.code}
                 </span>
               </div>
+
+              <h1 className="text-2xl sm:text-3xl font-bold text-brand-deepPlum mt-2 leading-tight">
+                {product.name}
+              </h1>
+
+              {/* Rating */}
+              <div className="flex items-center gap-2 mt-2">
+                <div className="flex text-amber-500">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-3.5 h-3.5 fill-amber-400 stroke-amber-400" />
+                  ))}
+                </div>
+                <span className="text-xs text-brand-deepPlum/70 font-medium">4.8 (126 reviews)</span>
+              </div>
+
+              {/* Price Row */}
+              <div className="flex items-baseline gap-3 mt-3">
+                <span className="text-2xl sm:text-3xl font-bold text-brand-deepPlum">
+                  ₹ {product.price.toLocaleString("en-IN")}
+                </span>
+                {product.originalPrice && (
+                  <span className="text-base text-brand-deepPlum/40 line-through">
+                    ₹ {product.originalPrice.toLocaleString("en-IN")}
+                  </span>
+                )}
+                {product.discount && (
+                  <span className="px-2.5 py-0.5 rounded-full bg-brand-blush/50 text-brand-deepPlum font-bold text-xs">
+                    {product.discount}
+                  </span>
+                )}
+              </div>
+
+              <p className="text-xs text-brand-deepPlum/80 leading-relaxed mt-3">
+                {product.description}
+              </p>
             </div>
 
-            {/* Colors Preview */}
+            {/* Colour Selector */}
             {product.variants.length > 0 && (
               <div>
-                <label className="text-xs uppercase tracking-wider text-brand-dark/60 font-semibold block mb-2">
-                  Available Shades
+                <label className="text-xs font-bold uppercase tracking-wider text-brand-deepPlum/70 block mb-2">
+                  Colour: <span className="text-brand-deepPlum">{selectedColor}</span>
                 </label>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   {product.variants.map((v) => (
-                    <span
+                    <button
                       key={v.id}
-                      className="w-7 h-7 rounded-full border-2 border-white shadow-sm ring-1 ring-brand-lavender/40"
+                      onClick={() => setSelectedColor(v.colorName)}
+                      className={`w-8 h-8 rounded-full border-2 transition ${
+                        selectedColor === v.colorName
+                          ? "border-brand-plum scale-110 shadow-md ring-2 ring-brand-plum/30"
+                          : "border-white hover:opacity-80"
+                      }`}
                       style={{ backgroundColor: v.colorHex }}
                       title={v.colorName}
                     />
@@ -193,94 +323,260 @@ export default function ProductDetailPage() {
               </div>
             )}
 
-            {/* Actions (Buy now & Add to bag) */}
-            <div className="space-y-2 pt-2">
-              <button
-                onClick={() => setBuyNowOpen(true)}
-                className="w-full py-4 px-6 rounded-full bg-brand-purple text-white font-semibold text-base hover:bg-brand-plum transition shadow-md flex items-center justify-center gap-2"
-              >
-                <MessageCircle className="w-5 h-5" />
-                Buy now on WhatsApp
-              </button>
-
-              <div className="grid grid-cols-2 gap-2">
+            {/* Blouse Option */}
+            <div>
+              <label className="text-xs font-bold uppercase tracking-wider text-brand-deepPlum/70 block mb-2">
+                Blouse Piece
+              </label>
+              <div className="flex gap-3">
                 <button
-                  onClick={handleAddToBag}
-                  className="py-3 px-4 rounded-full border border-brand-purple text-brand-purple font-medium text-xs hover:bg-brand-purple hover:text-white transition flex items-center justify-center gap-1.5"
+                  onClick={() => setBlouseOption("with")}
+                  className={`flex-1 py-2 text-xs font-semibold rounded-xl border transition ${
+                    blouseOption === "with"
+                      ? "bg-brand-deepPlum text-white border-brand-deepPlum shadow-sm"
+                      : "bg-white text-brand-deepPlum border-brand-lilac/40 hover:bg-brand-ivory"
+                  }`}
                 >
-                  <ShoppingBag className="w-4 h-4" />
-                  Add to bag
+                  With Blouse Piece
                 </button>
-
-                <a
-                  href={whatsappAskUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="py-3 px-4 rounded-full border border-brand-lavender/50 text-brand-dark/80 font-medium text-xs hover:bg-brand-ivory transition flex items-center justify-center gap-1.5"
+                <button
+                  onClick={() => setBlouseOption("without")}
+                  className={`flex-1 py-2 text-xs font-semibold rounded-xl border transition ${
+                    blouseOption === "without"
+                      ? "bg-brand-deepPlum text-white border-brand-deepPlum shadow-sm"
+                      : "bg-white text-brand-deepPlum border-brand-lilac/40 hover:bg-brand-ivory"
+                  }`}
                 >
-                  <MessageCircle className="w-4 h-4 text-emerald-600" />
-                  Ask question
-                </a>
+                  Without Blouse
+                </button>
               </div>
             </div>
 
-            {/* Details and Care Accordion */}
-            <div className="border-t border-brand-lavender/30 pt-4 space-y-3 text-sm">
+            {/* Quantity & Add to Bag & Wishlist Row (Page 03) */}
+            <div className="flex items-center gap-3 pt-2">
+              <div className="flex items-center justify-between border border-brand-lilac/50 rounded-full bg-white px-3 py-2 w-28">
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="text-brand-deepPlum hover:text-brand-plum"
+                >
+                  <Minus className="w-3.5 h-3.5" />
+                </button>
+                <span className="font-bold text-xs">{quantity}</span>
+                <button
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="text-brand-deepPlum hover:text-brand-plum"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
               <button
-                onClick={() => setDetailsOpen(!detailsOpen)}
-                className="flex items-center justify-between w-full text-left font-serif font-bold text-brand-plum"
+                onClick={handleAddToBag}
+                className="flex-1 py-3 px-6 rounded-full bg-brand-plum text-white font-semibold text-xs hover:bg-brand-deepPlum transition shadow-md flex items-center justify-center gap-2"
               >
-                <span>Details and care</span>
-                {detailsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                <ShoppingBag className="w-4 h-4" />
+                <span>Add to Bag</span>
               </button>
 
-              {detailsOpen && (
-                <div className="space-y-2 text-xs sm:text-sm text-brand-dark/80 pt-1 leading-relaxed">
-                  <p><strong className="text-brand-dark">Fabric:</strong> {product.fabric}</p>
-                  <p><strong className="text-brand-dark">Length:</strong> {product.length || "5.5 meters saree + 0.8 meter blouse piece"}</p>
-                  <p><strong className="text-brand-dark">Care:</strong> {product.care}</p>
-                  <p className="pt-1 text-brand-dark/70">{product.description}</p>
-                </div>
-              )}
+              <button
+                onClick={() => toggleSave(product.id)}
+                className={`p-3 rounded-full border border-brand-lilac/50 transition ${
+                  isSaved(product.id) ? "bg-brand-blush text-brand-plum border-brand-plum" : "bg-white text-brand-deepPlum"
+                }`}
+              >
+                <Heart className={`w-4 h-4 ${isSaved(product.id) ? "fill-brand-plum" : ""}`} />
+              </button>
             </div>
 
-            {/* Shipping Accordion */}
-            <div className="border-t border-brand-lavender/30 pt-3 text-sm">
+            {/* Buy Now on WhatsApp Button (Black pill from design) */}
+            <div>
               <button
-                onClick={() => setShippingOpen(!shippingOpen)}
-                className="flex items-center justify-between w-full text-left font-serif font-bold text-brand-plum"
+                onClick={handleBuyNow}
+                disabled={isSubmitting}
+                className="w-full py-3.5 px-6 rounded-full bg-brand-deepPlum text-white font-semibold text-xs hover:bg-brand-plum transition shadow-lg flex items-center justify-center gap-2.5 disabled:opacity-50"
               >
-                <span>Shipping and returns</span>
-                {shippingOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                <MessageCircle className="w-4 h-4 text-emerald-400" />
+                <span>Buy Now on WhatsApp (#{product.code})</span>
               </button>
+              <p className="text-[11px] text-center text-brand-deepPlum/60 mt-1.5">
+                Generates a private request link and opens seller WhatsApp.
+              </p>
+            </div>
 
-              {shippingOpen && (
-                <div className="space-y-1.5 text-xs text-brand-dark/70 pt-2">
-                  <p>• Complimentary express shipping across India.</p>
-                  <p>• Dispatched within 24-48 business hours with tracking ID.</p>
-                  <p>• 7-day hassle-free exchange policy for unstitched pieces.</p>
-                </div>
+            {/* Pincode Check */}
+            <form onSubmit={handlePincodeCheck} className="space-y-1.5 pt-2">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  maxLength={6}
+                  value={pincode}
+                  onChange={(e) => setPincode(e.target.value)}
+                  placeholder="Enter pincode · Check delivery"
+                  className="flex-1 px-4 py-2.5 rounded-full bg-white border border-brand-lilac/40 text-xs text-brand-deepPlum placeholder:text-brand-deepPlum/40 focus:outline-none focus:border-brand-plum"
+                />
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 rounded-full bg-white border border-brand-deepPlum text-brand-deepPlum text-xs font-semibold hover:bg-brand-deepPlum hover:text-white transition"
+                >
+                  Check
+                </button>
+              </div>
+              {deliveryMessage && (
+                <p className="text-[11px] text-brand-deepPlum/80 px-2 font-medium">
+                  {deliveryMessage}
+                </p>
               )}
+            </form>
+
+            {/* Value Props Row (Page 03) */}
+            <div className="flex flex-wrap items-center gap-4 py-3 border-y border-brand-lilac/30 text-[11px] text-brand-deepPlum/80">
+              <span className="flex items-center gap-1.5">
+                <Truck className="w-4 h-4 text-brand-plum" />
+                Free shipping over ₹2,999
+              </span>
+              <span className="flex items-center gap-1.5">
+                <RotateCcw className="w-4 h-4 text-brand-plum" />
+                7-day returns
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Award className="w-4 h-4 text-brand-gold" />
+                Silk Mark certified
+              </span>
+            </div>
+
+            {/* Accordions (Details, Fabric & Care, Shipping) */}
+            <div className="space-y-2 pt-1">
+              <div className="border-b border-brand-lilac/20 pb-2">
+                <button
+                  onClick={() => setDetailsOpen(!detailsOpen)}
+                  className="flex items-center justify-between w-full text-left font-bold text-xs text-brand-deepPlum py-1"
+                >
+                  <span>Details</span>
+                  {detailsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </button>
+                {detailsOpen && (
+                  <p className="text-xs text-brand-deepPlum/70 pt-1 leading-relaxed">
+                    Length: {product.length}. Includes matching unstitched running blouse piece. Each drape undergoes thorough handloom quality check prior to dispatch.
+                  </p>
+                )}
+              </div>
+
+              <div className="border-b border-brand-lilac/20 pb-2">
+                <button
+                  onClick={() => setFabricOpen(!fabricOpen)}
+                  className="flex items-center justify-between w-full text-left font-bold text-xs text-brand-deepPlum py-1"
+                >
+                  <span>Fabric & Care</span>
+                  {fabricOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </button>
+                {fabricOpen && (
+                  <p className="text-xs text-brand-deepPlum/70 pt-1 leading-relaxed">
+                    Fabric: {product.fabric}. Care: {product.care}
+                  </p>
+                )}
+              </div>
+
+              <div className="pb-2">
+                <button
+                  onClick={() => setShippingOpen(!shippingOpen)}
+                  className="flex items-center justify-between w-full text-left font-bold text-xs text-brand-deepPlum py-1"
+                >
+                  <span>Shipping</span>
+                  {shippingOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                </button>
+                {shippingOpen && (
+                  <p className="text-xs text-brand-deepPlum/70 pt-1 leading-relaxed">
+                    All prepaid orders are dispatched within 24-48 business hours with express BlueDart or Delhivery tracking.
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>
+
+        {/* =========================================================
+            COMPLETE THE LOOK (Page 03)
+           ========================================================= */}
+        <section className="space-y-6 pt-8 border-t border-brand-lilac/40">
+          <h2 className="text-2xl font-bold text-brand-deepPlum">
+            Complete the Look
+          </h2>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
+            {accessories.map((acc) => (
+              <div
+                key={acc.id}
+                className="bg-white rounded-[22px] overflow-hidden border border-brand-lilac/30 shadow-sm p-3.5 space-y-2 flex flex-col justify-between"
+              >
+                <div className="relative aspect-square rounded-[16px] overflow-hidden bg-brand-lilac/10">
+                  <img src={acc.image} alt={acc.name} className="w-full h-full object-cover" />
+                  <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-brand-deepPlum text-white text-[9px] font-bold">
+                    #{acc.code}
+                  </span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-xs text-brand-deepPlum truncate">{acc.name}</h3>
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="text-xs font-bold text-brand-deepPlum">
+                      ₹ {acc.price.toLocaleString("en-IN")}
+                    </span>
+                    <button
+                      onClick={() => {
+                        addToBag({
+                          productId: acc.id,
+                          name: acc.name,
+                          slug: "accessory",
+                          colorName: "Standard",
+                          colorHex: "#5B2A6E",
+                          blouseOption: "without",
+                          price: acc.price,
+                          imageUrl: acc.image,
+                        });
+                        alert(`Added ${acc.name} to bag!`);
+                      }}
+                      className="text-[11px] font-bold text-brand-plum hover:underline"
+                    >
+                      + Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* =========================================================
+            CUSTOMER REVIEWS (Page 03)
+           ========================================================= */}
+        <section className="space-y-6 pt-4">
+          <h2 className="text-2xl font-bold text-brand-deepPlum">
+            Customer Reviews
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[1, 2, 3].map((idx) => (
+              <div
+                key={idx}
+                className="p-5 rounded-[22px] bg-white border border-brand-lilac/30 shadow-sm space-y-2"
+              >
+                <div className="flex text-amber-500">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-3.5 h-3.5 fill-amber-400 stroke-amber-400" />
+                  ))}
+                </div>
+                <p className="text-xs text-brand-deepPlum/80 leading-relaxed">
+                  "Gorgeous colour, exactly as pictured. The golden zari sheen is subtle and heirloom quality."
+                </p>
+                <span className="text-[11px] text-brand-deepPlum/50 block font-medium">
+                  — Verified buyer
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
       </main>
 
-      <BuyNowSheet
-        isOpen={buyNowOpen}
-        onClose={() => setBuyNowOpen(false)}
-        product={{
-          id: product.id,
-          name: product.name,
-          slug: product.slug,
-          price: product.price,
-          coverImage: product.images[0],
-          variants: product.variants,
-        }}
-        sellerPhone={sellerPhone}
-      />
-
-      <BottomNav />
+      <Footer />
     </div>
   );
 }

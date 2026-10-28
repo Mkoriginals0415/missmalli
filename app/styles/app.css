@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,35 +6,42 @@
 
 @layer base {
   body {
-    @apply bg-brand-ivory text-brand-dark font-sans antialiased selection:bg-brand-blush selection:text-brand-plum;
+    @apply bg-brand-ivory text-brand-ink font-sans antialiased selection:bg-brand-lilac selection:text-brand-deepPlum;
     -webkit-tap-highlight-color: transparent;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif text-brand-plum;
+    @apply font-sans tracking-tight text-brand-deepPlum;
   }
 }
 
-/* Custom scrollbar and snap utilities */
+/* Custom notched card corners as in hero */
+.notched-tl {
+  border-top-left-radius: 48px;
+  border-top-right-radius: 22px;
+  border-bottom-left-radius: 22px;
+  border-bottom-right-radius: 22px;
+}
+
+.notched-tr {
+  border-top-left-radius: 22px;
+  border-top-right-radius: 48px;
+  border-bottom-left-radius: 22px;
+  border-bottom-right-radius: 22px;
+}
+
+.notched-arch {
+  border-top-left-radius: 48px;
+  border-top-right-radius: 48px;
+  border-bottom-left-radius: 22px;
+  border-bottom-right-radius: 22px;
+}
+
+/* Custom scrollbars */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-
-.snap-y-mandatory {
-  scroll-snap-type: y mandatory;
-}
-.snap-start {
-  scroll-snap-align: start;
-}
-.snap-x-mandatory {
-  scroll-snap-type: x mandatory;
-}
-
-/* Mobile 9:16 container framing on desktop */
-.app-container {
-  @apply mx-auto w-full max-w-md min-h-screen bg-brand-warmWhite relative flex flex-col md:max-w-4xl md:border-x md:border-brand-lavender/30 md:shadow-xl;
 }

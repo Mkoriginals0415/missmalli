@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { json, type LoaderFunctionArgs, type MetaFunction } from "@remix-run/cloudflare";
 import { useLoaderData, useFetcher, Link } from "@remix-run/react";
-import { MessageCircle, CheckCircle2, Clock, Truck, Check, Copy, ArrowLeft, ExternalLink } from "lucide-react";
-import { Header } from "~/components/layout/Header";
+import { MessageCircle, Truck, Check, ArrowLeft, ExternalLink } from "lucide-react";
+import { Navbar } from "~/components/layout/Navbar";
+import { Footer } from "~/components/layout/Footer";
 import { getRequestByTokenOrNumber, getStoreSettings } from "~/db/d1.server";
 
 export async function loader({ params, request, context }: LoaderFunctionArgs) {
@@ -14,8 +15,6 @@ export async function loader({ params, request, context }: LoaderFunctionArgs) {
   if (!req) throw new Response("Request Not Found", { status: 404 });
 
   const settings = await getStoreSettings(env);
-
-  // Check admin cookie or query param
   const url = new URL(request.url);
   const isAdminView = url.searchParams.get("view") === "admin" || request.headers.get("cookie")?.includes("mm_admin=authenticated");
 
@@ -28,26 +27,26 @@ export async function loader({ params, request, context }: LoaderFunctionArgs) {
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data?.request) {
-    return [{ title: "Request Details | Miss Malli" }, { name: "robots", content: "noindex, nofollow" }];
+    return [{ title: "Order Tracker | Miss Malli" }, { name: "robots", content: "noindex, nofollow" }];
   }
 
   const { request } = data;
   const firstItem = request.items?.[0];
-  const title = `${request.requestNumber}: ${firstItem ? firstItem.productName : "Saree Order"}`;
-  const description = `₹ ${request.totalAmount.toLocaleString("en-IN")} · ${firstItem?.variantDetails || "Direct WhatsApp Request"}`;
+  const title = `Order ${request.requestNumber}: ${firstItem ? firstItem.productName : "Saree Order"}`;
+  const description = `₹ ${request.totalAmount.toLocaleString("en-IN")} · ${firstItem?.variantDetails || "Direct WhatsApp Order"}`;
   const image = firstItem?.imageUrl || "/brand/logo.png";
 
   return [
     { title: `${title} | Miss Malli` },
     { name: "description", content: description },
-    { name: "robots", content: "noindex, nofollow" }, // Private URL, kept out of search
+    { name: "robots", content: "noindex, nofollow" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:image", content: image },
   ];
 };
 
-export default function RequestStatusPage() {
+export default function RequestTrackerPage() {
   const { request, isAdminView, sellerPhone } = useLoaderData<typeof loader>();
   const fetcher = useFetcher();
 
@@ -57,7 +56,6 @@ export default function RequestStatusPage() {
   const [isPaymentReceived, setIsPaymentReceived] = useState(request.isPaymentReceived === 1);
   const [quickReplyCopied, setQuickReplyCopied] = useState<string | null>(null);
 
-  // Status mapping
   const steps = [
     { key: "sent", label: "Sent" },
     { key: "replied", label: "Replied" },
@@ -102,81 +100,76 @@ export default function RequestStatusPage() {
   )}`;
 
   return (
-    <div className="min-h-screen bg-brand-warmWhite flex flex-col pb-20">
-      <Header />
+    <div className="min-h-screen bg-brand-ivory flex flex-col font-sans">
+      <Navbar />
 
-      <main className="flex-1 max-w-xl mx-auto w-full px-4 pt-4 space-y-5">
-        {/* Top Header Bar */}
+      <main className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-8 py-8 space-y-6">
+        {/* Header Bar */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Link to="/my-requests" className="p-1 -ml-1 text-brand-dark/60 hover:text-brand-purple">
+          <div className="flex items-center gap-3">
+            <Link to="/my-requests" className="p-1.5 -ml-1 text-brand-deepPlum/60 hover:text-brand-plum">
               <ArrowLeft className="w-5 h-5" />
             </Link>
-            <h1 className="font-serif text-xl sm:text-2xl font-bold text-brand-plum">
-              Request {request.requestNumber}
-            </h1>
+            <div>
+              <h1 className="text-2xl font-bold text-brand-deepPlum">
+                Order {request.requestNumber}
+              </h1>
+              <p className="text-xs text-brand-deepPlum/60">
+                Created: {new Date(request.createdAt).toLocaleDateString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+              </p>
+            </div>
           </div>
 
-          {/* Toggle between Customer and Admin views */}
           <Link
             to={isAdminView ? `/r/${request.secretToken}` : `/r/${request.secretToken}?view=admin`}
-            className="text-xs font-semibold px-3 py-1 rounded-full bg-brand-lavender/30 text-brand-plum hover:bg-brand-lavender/50 transition"
+            className="text-xs font-semibold px-4 py-1.5 rounded-full bg-brand-lilac/30 text-brand-deepPlum hover:bg-brand-lilac/50 transition"
           >
             {isAdminView ? "👁️ Customer View" : "🛠️ Admin View"}
           </Link>
         </div>
 
-        {/* =========================================
-            ADMIN VIEW (Screen A2 from wireframes)
-           ========================================= */}
-        {isAdminView ? (
-          <div className="bg-brand-ivory/80 rounded-3xl p-5 border border-brand-purple/30 shadow-md space-y-5">
-            <div className="flex items-center justify-between pb-3 border-b border-brand-lavender/40">
-              <span className="text-xs uppercase tracking-wider font-bold text-brand-purple">
-                Admin Control Panel
+        {/* ADMIN VIEW CONTROLS */}
+        {isAdminView && (
+          <div className="bg-brand-plum/10 rounded-[28px] p-6 border border-brand-plum/30 space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-brand-plum/20">
+              <span className="text-xs uppercase tracking-wider font-bold text-brand-plum">
+                Admin Order Control
               </span>
               <a
                 href={customerWhatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-3 py-1.5 rounded-full bg-emerald-600 text-white text-xs font-medium flex items-center gap-1.5 hover:bg-emerald-700 transition"
+                className="px-4 py-1.5 rounded-full bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition"
               >
-                <MessageCircle className="w-3.5 h-3.5" />
-                Open WhatsApp chat
+                Chat with Customer
               </a>
             </div>
 
-            {/* Quick Replies Buttons */}
-            <div>
-              <label className="text-xs font-semibold text-brand-dark/70 block mb-2 uppercase tracking-wider">
+            {/* Quick Replies */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-brand-deepPlum/70 block uppercase tracking-wider">
                 Quick Reply Macros
               </label>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => copyQuickReply("Hi! Yes, it's available. Please share your delivery address and I'll send payment details.", "Available")}
-                  className="px-3 py-1.5 rounded-xl bg-white border border-brand-lavender/40 text-xs font-medium text-brand-dark hover:bg-brand-purple hover:text-white transition"
+                  className="px-3 py-1.5 rounded-xl bg-white border border-brand-lilac/40 text-xs font-medium text-brand-deepPlum hover:bg-brand-plum hover:text-white transition"
                 >
                   {quickReplyCopied === "Available" ? "✓ Copied" : "Available"}
                 </button>
                 <button
-                  onClick={() => copyQuickReply("Sorry, this piece was just reserved. Would you like to see similar sarees in this fabric?", "Not available")}
-                  className="px-3 py-1.5 rounded-xl bg-white border border-brand-lavender/40 text-xs font-medium text-brand-dark hover:bg-brand-purple hover:text-white transition"
-                >
-                  {quickReplyCopied === "Not available" ? "✓ Copied" : "Not available"}
-                </button>
-                <button
                   onClick={() => copyQuickReply(`Payment details for Request ${request.requestNumber}:\nTotal: ₹ ${request.totalAmount.toLocaleString("en-IN")}\nUPI: orders@missmalli (GPay/PhonePe)`, "Payment details")}
-                  className="px-3 py-1.5 rounded-xl bg-white border border-brand-lavender/40 text-xs font-medium text-brand-dark hover:bg-brand-purple hover:text-white transition"
+                  className="px-3 py-1.5 rounded-xl bg-white border border-brand-lilac/40 text-xs font-medium text-brand-deepPlum hover:bg-brand-plum hover:text-white transition"
                 >
                   {quickReplyCopied === "Payment details" ? "✓ Copied" : "Payment details"}
                 </button>
               </div>
             </div>
 
-            {/* Status Selector Buttons */}
+            {/* Status Selectors */}
             <div>
-              <label className="text-xs font-semibold text-brand-dark/70 block mb-2 uppercase tracking-wider">
-                Update Order Status
+              <label className="text-xs font-bold text-brand-deepPlum/70 block mb-2 uppercase tracking-wider">
+                Status
               </label>
               <div className="grid grid-cols-3 gap-2">
                 {(["replied", "confirmed", "dispatched"] as const).map((s) => (
@@ -185,8 +178,8 @@ export default function RequestStatusPage() {
                     onClick={() => handleAdminUpdate(s)}
                     className={`py-2 text-xs font-semibold rounded-xl capitalize border transition ${
                       status === s
-                        ? "bg-brand-purple text-white border-brand-purple shadow-sm"
-                        : "bg-white text-brand-dark border-brand-lavender/40 hover:bg-brand-warmWhite"
+                        ? "bg-brand-deepPlum text-white border-brand-deepPlum shadow-sm"
+                        : "bg-white text-brand-deepPlum border-brand-lilac/40 hover:bg-brand-ivory"
                     }`}
                   >
                     {s}
@@ -195,27 +188,10 @@ export default function RequestStatusPage() {
               </div>
             </div>
 
-            {/* Checkbox: Payment Received */}
-            <div className="flex items-center gap-2 pt-1">
-              <input
-                type="checkbox"
-                id="paymentReceived"
-                checked={isPaymentReceived}
-                onChange={(e) => {
-                  setIsPaymentReceived(e.target.checked);
-                  handleAdminUpdate(status);
-                }}
-                className="w-4 h-4 accent-brand-purple rounded"
-              />
-              <label htmlFor="paymentReceived" className="text-xs font-semibold text-brand-dark cursor-pointer">
-                Payment received (Internal record)
-              </label>
-            </div>
-
             {/* Tracking Note */}
             <div>
-              <label className="text-xs font-semibold text-brand-dark/70 block mb-1">
-                Courier / Tracking Note
+              <label className="text-xs font-bold text-brand-deepPlum/70 block mb-1">
+                Tracking Note
               </label>
               <div className="flex gap-2">
                 <input
@@ -223,42 +199,27 @@ export default function RequestStatusPage() {
                   value={trackingNote}
                   onChange={(e) => setTrackingNote(e.target.value)}
                   placeholder="e.g. BlueDart #BL9281928"
-                  className="flex-1 px-3 py-2 bg-white rounded-xl border border-brand-lavender/40 text-xs focus:ring-1 focus:ring-brand-purple"
+                  className="flex-1 px-3 py-2 bg-white rounded-xl border border-brand-lilac/40 text-xs text-brand-deepPlum"
                 />
                 <button
                   onClick={() => handleAdminUpdate(status)}
-                  className="px-4 py-2 bg-brand-purple text-white rounded-xl text-xs font-medium"
+                  className="px-4 py-2 bg-brand-deepPlum text-white rounded-xl text-xs font-medium"
                 >
                   Save
                 </button>
               </div>
             </div>
-
-            {/* Cancel Order */}
-            <div className="pt-3 border-t border-brand-lavender/30 flex justify-between items-center">
-              <button
-                onClick={() => handleAdminUpdate("closed")}
-                className="text-xs text-red-600 font-medium hover:underline"
-              >
-                Cancel and release stock
-              </button>
-              <span className="text-[11px] text-brand-dark/50">
-                Created: {new Date(request.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </span>
-            </div>
           </div>
-        ) : null}
+        )}
 
-        {/* =============================================
-            CUSTOMER VIEW (Screen 12 from wireframes)
-           ============================================= */}
-        <div className="bg-white rounded-3xl p-5 border border-brand-lavender/30 shadow-sm space-y-5">
-          {/* Status Stepper Progress Bar */}
+        {/* CUSTOMER VIEW TRACKER */}
+        <div className="bg-white rounded-[28px] p-6 sm:p-8 border border-brand-lilac/30 shadow-sm space-y-6">
+          {/* Status Stepper */}
           <div className="py-2">
             <div className="flex items-center justify-between relative">
-              <div className="absolute top-1/2 left-4 right-4 h-0.5 bg-brand-lavender/40 -translate-y-1/2 -z-0" />
+              <div className="absolute top-1/2 left-4 right-4 h-0.5 bg-brand-lilac/30 -translate-y-1/2 -z-0" />
               <div
-                className="absolute top-1/2 left-4 h-0.5 bg-brand-purple -translate-y-1/2 -z-0 transition-all duration-300"
+                className="absolute top-1/2 left-4 h-0.5 bg-brand-plum -translate-y-1/2 -z-0 transition-all duration-300"
                 style={{ width: `${(activeIndex / 3) * 85}%` }}
               />
 
@@ -269,17 +230,17 @@ export default function RequestStatusPage() {
                 return (
                   <div key={step.key} className="flex flex-col items-center z-10">
                     <div
-                      className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition ${
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition ${
                         isCompleted
-                          ? "bg-brand-purple text-white shadow-sm"
-                          : "bg-brand-ivory text-brand-dark/40 border border-brand-lavender/50"
+                          ? "bg-brand-plum text-white shadow-md"
+                          : "bg-brand-ivory text-brand-deepPlum/40 border border-brand-lilac/40"
                       }`}
                     >
-                      {isCompleted ? <Check className="w-3.5 h-3.5" /> : idx + 1}
+                      {isCompleted ? <Check className="w-4 h-4" /> : idx + 1}
                     </div>
                     <span
-                      className={`text-[11px] mt-1.5 font-medium ${
-                        isCurrent ? "text-brand-purple font-bold" : "text-brand-dark/60"
+                      className={`text-xs mt-2 font-medium ${
+                        isCurrent ? "text-brand-plum font-bold" : "text-brand-deepPlum/60"
                       }`}
                     >
                       {step.label}
@@ -290,26 +251,29 @@ export default function RequestStatusPage() {
             </div>
           </div>
 
-          {/* Saree Items List */}
-          <div className="border-t border-brand-lavender/20 pt-4 space-y-3">
-            <span className="text-xs uppercase tracking-wider text-brand-dark/60 font-semibold block">
-              Items (Price locked at request time)
+          {/* Saree Items */}
+          <div className="border-t border-brand-lilac/20 pt-6 space-y-3">
+            <span className="text-xs uppercase tracking-wider text-brand-deepPlum/60 font-bold block">
+              Drapes in this order (Price locked at request time)
             </span>
 
             {request.items.map((item: any) => (
-              <div key={item.id} className="flex gap-3.5 items-center p-3 rounded-2xl bg-brand-ivory/60 border border-brand-lavender/20">
+              <div
+                key={item.id}
+                className="flex gap-4 items-center p-4 rounded-[20px] bg-brand-ivory/60 border border-brand-lilac/20"
+              >
                 {item.imageUrl && (
                   <img
                     src={item.imageUrl}
                     alt={item.productName}
-                    className="w-16 h-20 rounded-xl object-cover"
+                    className="w-16 h-20 rounded-[14px] object-cover"
                   />
                 )}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-serif text-sm font-bold text-brand-dark truncate">
+                  <h3 className="font-bold text-sm text-brand-deepPlum truncate">
                     {item.productName}
                   </h3>
-                  <p className="text-xs text-brand-dark/70 mt-0.5">
+                  <p className="text-xs text-brand-deepPlum/60 mt-0.5">
                     {item.variantDetails}
                   </p>
                   <p className="text-xs font-bold text-brand-plum mt-1">
@@ -320,29 +284,28 @@ export default function RequestStatusPage() {
             ))}
           </div>
 
-          {/* Pricing Note */}
-          <div className="p-3.5 rounded-2xl bg-brand-ivory border border-brand-gold/30 text-xs text-brand-dark/80 leading-relaxed">
-            💬 <strong>Final price, delivery and payment</strong> are confirmed directly in your WhatsApp chat with the seller.
+          {/* Notice Box */}
+          <div className="p-4 rounded-[20px] bg-brand-lilac/20 border border-brand-lilac/30 text-xs text-brand-deepPlum leading-relaxed">
+            💬 <strong>Final price, delivery address, and payment</strong> are confirmed directly in your WhatsApp chat with the seller.
           </div>
 
-          {/* Tracking Note (if dispatched) */}
           {trackingNote && (
-            <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
-              <Truck className="w-4 h-4 shrink-0 text-emerald-600" />
-              <span><strong>Tracking:</strong> {trackingNote}</span>
+            <div className="p-4 rounded-[20px] bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2.5">
+              <Truck className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span><strong>Tracking ID:</strong> {trackingNote}</span>
             </div>
           )}
 
-          {/* Customer Action Buttons */}
-          <div className="space-y-2 pt-2">
+          {/* Actions */}
+          <div className="space-y-3 pt-2">
             <a
               href={customerWhatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full py-3.5 px-4 rounded-full bg-emerald-600 text-white font-semibold text-xs flex items-center justify-center gap-2 hover:bg-emerald-700 transition shadow-sm"
+              className="w-full py-3.5 px-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-md transition"
             >
               <MessageCircle className="w-4 h-4" />
-              Message seller on WhatsApp
+              <span>Message Seller on WhatsApp</span>
             </a>
 
             <button
@@ -351,13 +314,15 @@ export default function RequestStatusPage() {
                   handleAdminUpdate("closed");
                 }
               }}
-              className="w-full py-2.5 text-xs text-brand-dark/60 hover:text-red-600 transition"
+              className="w-full py-2 text-xs text-brand-deepPlum/50 hover:text-red-500 transition"
             >
               Cancel request
             </button>
           </div>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }

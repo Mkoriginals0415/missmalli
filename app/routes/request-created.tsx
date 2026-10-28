@@ -1,8 +1,8 @@
 import { useSearchParams, Link } from "@remix-run/react";
-import { CheckCircle2, MessageCircle, Copy, Check, ArrowRight } from "lucide-react";
+import { Check, MessageCircle, Copy, ArrowRight, ShoppingBag } from "lucide-react";
 import { useState } from "react";
-import { Header } from "~/components/layout/Header";
-import { BottomNav } from "~/components/layout/BottomNav";
+import { Navbar } from "~/components/layout/Navbar";
+import { Footer } from "~/components/layout/Footer";
 
 export default function RequestCreatedPage() {
   const [searchParams] = useSearchParams();
@@ -12,7 +12,7 @@ export default function RequestCreatedPage() {
 
   const [copied, setCopied] = useState(false);
 
-  const messageText = `Hi Miss Malli, I'd like to buy this saree. Request ${requestNumber}\nDetails: ${requestUrl}`;
+  const messageText = `Hi Miss Malli, I would like to order. Request ${requestNumber}\nDetails & live status: ${requestUrl}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(messageText);
@@ -21,56 +21,71 @@ export default function RequestCreatedPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-warmWhite flex flex-col pb-20">
-      <Header />
+    <div className="min-h-screen bg-brand-ivory flex flex-col font-sans">
+      <Navbar />
 
-      <main className="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-md mx-auto">
-        <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mb-4">
-          <CheckCircle2 className="w-9 h-9" />
+      <main className="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-lg mx-auto py-16">
+        <div className="w-16 h-16 rounded-full bg-brand-plum text-white flex items-center justify-center mb-6 shadow-md">
+          <Check className="w-8 h-8 stroke-[3]" />
         </div>
 
-        <h1 className="font-serif text-2xl font-bold text-brand-plum">
-          Request {requestNumber} created
+        <h1 className="text-3xl font-bold text-brand-deepPlum">
+          Thank you!
         </h1>
 
-        <p className="text-xs sm:text-sm text-brand-dark/70 mt-2 max-w-xs leading-relaxed">
-          Tap below to chat with the seller. Your saree's photo and order details go with the message.
+        <p className="text-sm font-semibold text-brand-plum mt-1">
+          Request {requestNumber} is ready for WhatsApp confirmation.
         </p>
 
-        <div className="w-full mt-6 space-y-3">
+        <p className="text-xs text-brand-deepPlum/70 mt-3 max-w-sm leading-relaxed">
+          Tap below to send your order details directly to the seller on WhatsApp. Delivery address and final payment are agreed in your chat.
+        </p>
+
+        <div className="w-full mt-8 space-y-3">
           <a
             href={`https://wa.me/919876543210?text=${encodeURIComponent(messageText)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full py-4 px-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg transition"
+            className="w-full py-4 px-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-lg transition"
           >
-            <MessageCircle className="w-5 h-5" />
-            Open WhatsApp
+            <MessageCircle className="w-4 h-4" />
+            <span>Open WhatsApp to Confirm</span>
           </a>
 
           <button
             onClick={handleCopy}
-            className="w-full py-3 px-4 rounded-full border border-brand-lavender/60 text-brand-dark/80 font-medium text-xs hover:bg-brand-ivory transition flex items-center justify-center gap-2"
+            className="w-full py-3 px-4 rounded-full border border-brand-lilac/50 text-brand-deepPlum font-medium text-xs hover:bg-white transition flex items-center justify-center gap-2"
           >
             {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-            {copied ? "Message Copied!" : "WhatsApp didn't open? Copy message"}
+            <span>{copied ? "Message Copied!" : "WhatsApp didn't open? Copy message"}</span>
           </button>
 
-          <Link
-            to={secretToken ? `/r/${secretToken}` : "/my-requests"}
-            className="block text-xs font-semibold text-brand-purple hover:underline pt-2 flex items-center justify-center gap-1"
-          >
-            <span>View request status</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          <div className="flex items-center justify-center gap-4 pt-4">
+            <Link
+              to={secretToken ? `/r/${secretToken}` : "/my-requests"}
+              className="text-xs font-semibold text-brand-plum hover:underline flex items-center gap-1"
+            >
+              <span>Track Order</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+
+            <span className="text-brand-deepPlum/30">|</span>
+
+            <Link
+              to="/sarees"
+              className="text-xs font-semibold text-brand-deepPlum/70 hover:text-brand-plum"
+            >
+              Continue Shopping
+            </Link>
+          </div>
         </div>
 
-        <p className="text-[11px] text-brand-dark/50 mt-8">
-          🔒 Nothing is charged on this site. You agree on final payment in chat.
+        <p className="text-[11px] text-brand-deepPlum/50 mt-10">
+          🔒 Nothing is charged on this site.
         </p>
       </main>
 
-      <BottomNav />
+      <Footer />
     </div>
   );
 }
