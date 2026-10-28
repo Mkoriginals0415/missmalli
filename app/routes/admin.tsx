@@ -44,37 +44,52 @@ export default function AdminLayout() {
           MOBILE ADMIN TOP HEADER (Unified Sticky Navigation)
          ------------------------------------------------------------- */}
       <header className="md:hidden sticky top-0 z-40 bg-white border-b border-brand-deepPlum/15 shadow-xs">
-        {/* Top bar */}
-        <div className="px-4 py-2.5 flex items-center justify-between border-b border-brand-deepPlum/10">
-          <div className="flex items-center gap-3">
+        {/* Top bar with mathematically centered logo */}
+        <div className="px-3 py-2 flex items-center justify-between border-b border-brand-deepPlum/10 relative">
+          {/* Left: Mobile Drawer Hamburger */}
+          <div className="flex items-center justify-start w-12 shrink-0">
             <button
+              type="button"
               onClick={() => setMobileDrawerOpen(true)}
-              className="p-2 -ml-2 text-brand-deepPlum hover:text-brand-plum rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center relative"
+              className="p-2 text-brand-deepPlum hover:text-brand-plum rounded-lg min-w-[40px] min-h-[40px] flex items-center justify-center relative active:scale-95 transition"
               aria-label="Open Admin Menu"
             >
               <Menu className="w-5 h-5 stroke-[2.2]" />
               {needsReplyCount > 0 && (
-                <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-brand-plum" />
+                <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-brand-plum ring-2 ring-white" />
               )}
             </button>
+          </div>
 
-            <Link to="/admin" className="flex items-center gap-2">
-              <img src="/brand/logo.png" alt="Miss Malli" className="h-7 w-auto object-contain" />
-              <span className="text-[10px] tracking-widest uppercase font-extrabold text-brand-plum bg-brand-plum/10 px-2 py-0.5 rounded-full">
-                Admin
-              </span>
+          {/* Center: Perfectly Centered Brand Logo & Admin Pill */}
+          <div className="flex-1 flex items-center justify-center min-w-0">
+            <Link to="/admin" className="flex items-center gap-2 px-2 py-1 rounded-xl hover:bg-brand-deepPlum/5 transition">
+              <img
+                src="/brand/logo.png"
+                alt="Miss Malli"
+                className="h-7 w-7 rounded-full object-cover ring-1 ring-brand-deepPlum/15 shrink-0 shadow-2xs"
+              />
+              <div className="flex flex-col items-start leading-tight">
+                <span className="font-serif font-bold text-[12.5px] tracking-wide text-brand-deepPlum">
+                  MISS MALLI
+                </span>
+                <span className="text-[8.5px] tracking-widest uppercase font-extrabold text-brand-plum">
+                  ADMIN PORTAL
+                </span>
+              </div>
             </Link>
           </div>
 
-          <div className="flex items-center gap-2">
+          {/* Right: Quick Link to Public Store */}
+          <div className="flex items-center justify-end w-12 shrink-0">
             <Link
               to="/"
               target="_blank"
-              className="p-2 rounded-lg text-brand-deepPlum/70 hover:text-brand-plum flex items-center gap-1 text-xs font-bold"
+              className="p-2 rounded-lg text-brand-deepPlum/70 hover:text-brand-plum min-w-[40px] min-h-[40px] flex items-center justify-center active:scale-95 transition"
               title="View Live Store"
+              aria-label="View Customer Store"
             >
               <Store className="w-4 h-4" />
-              <span className="hidden xs:inline">Store</span>
             </Link>
           </div>
         </div>
@@ -125,11 +140,16 @@ export default function AdminLayout() {
           <div className="fixed inset-y-0 left-0 w-[80%] max-w-xs bg-white shadow-2xl z-10 flex flex-col justify-between overflow-y-auto border-r border-brand-deepPlum/15 animate-in slide-in-from-left duration-200">
             <div>
               <div className="p-4 flex items-center justify-between border-b border-brand-deepPlum/10">
-                <div className="flex items-center gap-2">
-                  <img src="/brand/logo.png" alt="Miss Malli" className="h-8 w-auto object-contain" />
-                  <span className="text-[10px] tracking-widest uppercase font-extrabold text-brand-plum bg-brand-plum/10 px-2 py-0.5 rounded-full">
-                    Admin
-                  </span>
+                <div className="flex items-center gap-2.5">
+                  <img src="/brand/logo.png" alt="Miss Malli" className="h-9 w-9 rounded-full object-cover ring-1 ring-brand-deepPlum/15 shadow-2xs" />
+                  <div>
+                    <span className="font-serif font-bold text-sm tracking-wide text-brand-deepPlum block leading-tight">
+                      MISS MALLI
+                    </span>
+                    <span className="text-[9.5px] tracking-widest uppercase font-extrabold text-brand-plum block">
+                      SELLER ADMIN
+                    </span>
+                  </div>
                 </div>
                 <button
                   onClick={() => setMobileDrawerOpen(false)}
@@ -196,14 +216,17 @@ export default function AdminLayout() {
         <div>
           {/* Admin Header */}
           <div className="flex items-center justify-between pb-4 border-b border-brand-deepPlum/10">
-            <div>
-              <Link to="/" className="flex items-center gap-2">
-                <img src="/brand/logo.png" alt="Miss Malli" className="h-9 w-auto object-contain" />
-              </Link>
-              <span className="text-[10px] tracking-widest uppercase font-extrabold text-brand-plum bg-brand-plum/10 px-2 py-0.5 rounded-full inline-block mt-2">
-                Seller Admin
-              </span>
-            </div>
+            <Link to="/" className="flex items-center gap-2.5">
+              <img src="/brand/logo.png" alt="Miss Malli" className="h-10 w-10 rounded-full object-cover ring-1 ring-brand-deepPlum/15 shadow-2xs" />
+              <div>
+                <span className="font-serif font-bold text-sm tracking-wide text-brand-deepPlum block leading-tight">
+                  MISS MALLI
+                </span>
+                <span className="text-[10px] tracking-widest uppercase font-extrabold text-brand-plum block">
+                  SELLER ADMIN
+                </span>
+              </div>
+            </Link>
 
             <Link
               to="/"

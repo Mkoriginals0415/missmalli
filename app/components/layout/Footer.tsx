@@ -30,7 +30,12 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10">
           {/* Brand Info */}
           <div className="lg:col-span-1 space-y-4">
-            <Link to="/" className="inline-block">
+            <Link to="/" className="inline-flex items-center gap-3">
+              <img
+                src="/brand/logo.png"
+                alt="Miss Malli"
+                className="h-10 w-10 rounded-full object-cover ring-2 ring-white/10 shrink-0"
+              />
               <span className="font-serif italic text-3xl text-brand-ivory tracking-tight">
                 miss malli
               </span>

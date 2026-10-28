@@ -22,9 +22,9 @@ export function Navbar() {
   return (
     <>
       <header className="sticky top-0 z-40 bg-brand-ivory/95 backdrop-blur-md border-b border-brand-lilac/30 transition-all shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 h-16 sm:h-20 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 h-16 sm:h-20 flex items-center justify-between relative">
           {/* Mobile Hamburger Button */}
-          <div className="flex items-center gap-2 lg:hidden">
+          <div className="flex items-center lg:hidden w-12 shrink-0">
             <button
               onClick={() => setMobileMenuOpen(true)}
               className="p-2 -ml-2 text-brand-deepPlum hover:text-brand-plum rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center transition"
@@ -34,12 +34,23 @@ export function Navbar() {
             </button>
           </div>
 
-          {/* Real Brand Logo Image from workspace */}
-          <Link to="/" className="flex items-center group py-1">
+          {/* Mobile Dead-Centered Logo */}
+          <div className="lg:hidden absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-auto">
+            <Link to="/" className="flex items-center py-1">
+              <img
+                src="/brand/logo.png"
+                alt="Miss Malli"
+                className="h-9 w-auto object-contain hover:opacity-95 transition"
+              />
+            </Link>
+          </div>
+
+          {/* Desktop Brand Logo */}
+          <Link to="/" className="hidden lg:flex items-center group py-1">
             <img
               src="/brand/logo.png"
               alt="Miss Malli"
-              className="h-8 sm:h-11 w-auto object-contain hover:opacity-95 transition"
+              className="h-11 w-auto object-contain hover:opacity-95 transition"
             />
           </Link>
 
@@ -120,11 +131,21 @@ export function Navbar() {
             <div>
               {/* Header inside Drawer */}
               <div className="p-5 flex items-center justify-between border-b border-brand-lilac/30">
-                <img
-                  src="/brand/logo.png"
-                  alt="Miss Malli"
-                  className="h-8 w-auto object-contain"
-                />
+                <div className="flex items-center gap-2.5">
+                  <img
+                    src="/brand/logo.png"
+                    alt="Miss Malli"
+                    className="h-9 w-9 rounded-full object-cover ring-1 ring-brand-deepPlum/15 shadow-2xs"
+                  />
+                  <div>
+                    <span className="font-serif font-bold text-base tracking-wide text-brand-deepPlum block leading-tight">
+                      MISS MALLI
+                    </span>
+                    <span className="text-[10px] tracking-widest uppercase font-semibold text-brand-plum block">
+                      HERITAGE SILKS
+                    </span>
+                  </div>
+                </div>
                 <button
                   onClick={() => setMobileMenuOpen(false)}
                   className="p-2 -mr-2 text-brand-deepPlum hover:text-brand-plum rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center"

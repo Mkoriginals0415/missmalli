@@ -22,12 +22,12 @@ export function Header({ title, showBack, onBack, hideNavLinks = false }: Header
       </div>
 
       {/* Main Header Row */}
-      <div className="flex items-center justify-between px-4 py-2.5 max-w-4xl mx-auto">
-        <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between px-4 py-2.5 max-w-4xl mx-auto relative">
+        <div className="flex items-center gap-3 w-12 shrink-0">
           {showBack ? (
             <button
               onClick={onBack || (() => window.history.back())}
-              className="p-1 -ml-1 text-brand-dark/80 hover:text-brand-purple"
+              className="p-1 -ml-1 text-brand-dark/80 hover:text-brand-purple min-w-[36px] min-h-[36px] flex items-center justify-center"
               aria-label="Go back"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -35,12 +35,15 @@ export function Header({ title, showBack, onBack, hideNavLinks = false }: Header
               </svg>
             </button>
           ) : null}
+        </div>
 
+        {/* Centered Brand Logo */}
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-auto">
           <Link to="/" className="flex items-center gap-2">
             <img
               src="/brand/logo.png"
               alt="Miss Malli"
-              className="h-10 w-auto object-contain"
+              className="h-9 w-auto object-contain"
             />
           </Link>
         </div>
