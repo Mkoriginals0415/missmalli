@@ -1,6 +1,6 @@
 export interface SeedProduct {
   id: number;
-  code: string; // Product ID used for WhatsApp orders (e.g. #MM-SK01)
+  code: string;
   name: string;
   slug: string;
   collectionSlug: "sarees" | "dresses" | "materials" | "exclusive";
@@ -232,6 +232,36 @@ export const ACCESSORIES = [
   { id: 103, code: "ACC-03", name: "Silk Velvet Potli Bag", price: 1499, image: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=400&q=80" },
   { id: 104, code: "ACC-04", name: "Pure Silk Satin Petticoat", price: 799, image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=400&q=80" },
 ];
+
+export interface HomepageContent {
+  heroTitle: string;
+  heroButtonText: string;
+  categoriesTitle: string;
+  newArrivalsTitle: string;
+  festiveTitle: string;
+  festiveSubtitle: string;
+  festiveDiscount: string;
+  artisanTitle: string;
+  artisanDescription: string;
+  reviewQuote: string;
+  reviewAuthor: string;
+  reviewLocation: string;
+}
+
+export const INITIAL_HOMEPAGE_CONTENT: HomepageContent = {
+  heroTitle: "Elevate Your Grace With Heritage Drape",
+  heroButtonText: "Explore Collections",
+  categoriesTitle: "Find Your Drape",
+  newArrivalsTitle: "Fresh From The Loom",
+  festiveTitle: "Flat 30% off on Silk Sarees",
+  festiveSubtitle: "Handcrafted pure Katan, Kanjivaram and wild Tussar silks. Order directly on WhatsApp with complimentary fall, pico and express delivery.",
+  festiveDiscount: "Festive Edit · 2026",
+  artisanTitle: "Woven by hands, worn with pride",
+  artisanDescription: "Each saree is crafted by master weavers from Kanchipuram, Varanasi and Pochampally. Every weave honors centuries of loom heritage.",
+  reviewQuote: "miss malli is a piece of art... handwoven typography review it piece of art.... loved the saree!",
+  reviewAuthor: "Rafi H.",
+  reviewLocation: "Hyderabad",
+};
 
 export const INITIAL_SETTINGS = {
   seller_whatsapp_number: "919876543210",
