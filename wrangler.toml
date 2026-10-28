@@ -5,4 +5,4 @@ pages_build_output_dir = "./build/client"
 [[d1_databases]]
 binding = "DB"
 database_name = "miss-malli-db"
-database_id = "local-miss-malli-d1"
+database_id = "ca79ce10-b736-4c0c-9ce2-00173e9d6b1a"
