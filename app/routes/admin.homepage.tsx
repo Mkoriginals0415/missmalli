@@ -267,7 +267,7 @@ export default function AdminHomepageEditor() {
           TAB 1: SECTION REORDERING & VISIBILITY
          ======================================================== */}
       {activeTab === "order" && (
-        <div className="bg-white rounded-[22px] p-6 border border-brand-deepPlum/15 shadow-sm space-y-6">
+        <div className="bg-white rounded-2xl sm:rounded-[22px] p-3.5 sm:p-6 border border-brand-deepPlum/15 shadow-sm space-y-6">
           <div>
             <h3 className="font-bold text-base text-brand-deepPlum">
               Section Layout & Display Order
@@ -281,54 +281,33 @@ export default function AdminHomepageEditor() {
             {sections.map((section, idx) => (
               <div
                 key={section.id}
-                className={`p-4 rounded-2xl border transition flex items-center justify-between gap-4 ${
+                className={`p-3.5 sm:p-4 rounded-2xl border transition space-y-3 ${
                   section.enabled
                     ? "bg-brand-ivory/60 border-brand-deepPlum/15"
                     : "bg-gray-100/60 border-gray-300 opacity-60"
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <span className="w-7 h-7 rounded-lg bg-brand-deepPlum text-white text-xs font-bold flex items-center justify-center">
-                    {idx + 1}
-                  </span>
-                  <div>
-                    <h4 className="text-xs font-bold text-brand-deepPlum">
-                      {section.name}
-                    </h4>
-                    <span className="text-[10px] text-brand-deepPlum/60 font-semibold uppercase">
-                      ID: {section.id} · {section.enabled ? "Visible" : "Hidden"}
+                {/* Top Row: Number + Section Name + Enabled Status */}
+                <div className="flex items-start justify-between gap-2.5">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="w-6 h-6 rounded-lg bg-brand-deepPlum text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                      {idx + 1}
                     </span>
+                    <div className="min-w-0">
+                      <h4 className="text-xs sm:text-sm font-bold text-brand-deepPlum truncate">
+                        {section.name}
+                      </h4>
+                      <span className="text-[10px] text-brand-deepPlum/60 font-semibold uppercase block truncate">
+                        ID: {section.id}
+                      </span>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex items-center gap-2">
-                  {/* Move Up */}
-                  <button
-                    type="button"
-                    disabled={idx === 0}
-                    onClick={() => moveSection(idx, "up")}
-                    className="p-2 rounded-xl bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-plum hover:text-white transition disabled:opacity-30"
-                    title="Move Up"
-                  >
-                    <ArrowUp className="w-3.5 h-3.5" />
-                  </button>
-
-                  {/* Move Down */}
-                  <button
-                    type="button"
-                    disabled={idx === sections.length - 1}
-                    onClick={() => moveSection(idx, "down")}
-                    className="p-2 rounded-xl bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-plum hover:text-white transition disabled:opacity-30"
-                    title="Move Down"
-                  >
-                    <ArrowDown className="w-3.5 h-3.5" />
-                  </button>
-
-                  {/* Toggle Enabled */}
+                  {/* Toggle Enabled Badge */}
                   <button
                     type="button"
                     onClick={() => toggleSectionEnabled(idx)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition border ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold transition border shrink-0 min-h-[34px] ${
                       section.enabled
                         ? "bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100"
                         : "bg-gray-200 text-gray-700 border-gray-300 hover:bg-gray-300"
@@ -346,14 +325,44 @@ export default function AdminHomepageEditor() {
                       </>
                     )}
                   </button>
+                </div>
+
+                {/* Bottom Row: Reorder Up/Down + Edit Content button */}
+                <div className="flex items-center justify-between pt-2 border-t border-brand-deepPlum/10">
+                  <div className="flex items-center gap-1.5">
+                    {/* Move Up */}
+                    <button
+                      type="button"
+                      disabled={idx === 0}
+                      onClick={() => moveSection(idx, "up")}
+                      className="px-2.5 py-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-plum hover:text-white transition disabled:opacity-30 text-xs font-semibold flex items-center gap-1 min-h-[36px]"
+                      title="Move Up"
+                    >
+                      <ArrowUp className="w-3.5 h-3.5" />
+                      <span className="text-[10.5px]">Up</span>
+                    </button>
+
+                    {/* Move Down */}
+                    <button
+                      type="button"
+                      disabled={idx === sections.length - 1}
+                      onClick={() => moveSection(idx, "down")}
+                      className="px-2.5 py-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-plum hover:text-white transition disabled:opacity-30 text-xs font-semibold flex items-center gap-1 min-h-[36px]"
+                      title="Move Down"
+                    >
+                      <ArrowDown className="w-3.5 h-3.5" />
+                      <span className="text-[10.5px]">Down</span>
+                    </button>
+                  </div>
 
                   {/* Quick Edit Link */}
                   <button
                     type="button"
                     onClick={() => setActiveTab(section.id as any)}
-                    className="px-3 py-1.5 rounded-xl bg-brand-deepPlum/10 text-brand-deepPlum text-xs font-bold hover:bg-brand-deepPlum hover:text-white transition"
+                    className="px-3.5 py-1.5 rounded-xl bg-brand-deepPlum/10 text-brand-deepPlum text-xs font-bold hover:bg-brand-deepPlum hover:text-white transition min-h-[36px] flex items-center gap-1"
                   >
-                    Edit Content →
+                    <span>Edit Content</span>
+                    <span>→</span>
                   </button>
                 </div>
               </div>
@@ -366,7 +375,7 @@ export default function AdminHomepageEditor() {
           TAB 2: HERO SECTION & IMAGES
          ======================================================== */}
       {activeTab === "hero" && (
-        <div className="bg-white rounded-[22px] p-6 border border-brand-deepPlum/15 shadow-sm space-y-6">
+        <div className="bg-white rounded-2xl sm:rounded-[22px] p-3.5 sm:p-6 border border-brand-deepPlum/15 shadow-sm space-y-6">
           <div className="border-b border-brand-deepPlum/10 pb-4">
             <h3 className="font-bold text-base text-brand-deepPlum">
               Hero Section & Showcase Images
@@ -553,7 +562,7 @@ export default function AdminHomepageEditor() {
           TAB 3: COLLECTIONS / CATEGORIES & LAYOUT
          ======================================================== */}
       {activeTab === "categories" && (
-        <div className="bg-white rounded-[22px] p-6 border border-brand-deepPlum/15 shadow-sm space-y-6">
+        <div className="bg-white rounded-2xl sm:rounded-[22px] p-3.5 sm:p-6 border border-brand-deepPlum/15 shadow-sm space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-brand-deepPlum/10 pb-4">
             <div>
               <h3 className="font-bold text-base text-brand-deepPlum">
@@ -698,7 +707,7 @@ export default function AdminHomepageEditor() {
           TAB 4: NEW ARRIVALS
          ======================================================== */}
       {activeTab === "newArrivals" && (
-        <div className="bg-white rounded-[22px] p-6 border border-brand-deepPlum/15 shadow-sm space-y-4">
+        <div className="bg-white rounded-2xl sm:rounded-[22px] p-3.5 sm:p-6 border border-brand-deepPlum/15 shadow-sm space-y-4">
           <div className="border-b border-brand-deepPlum/10 pb-4">
             <h3 className="font-bold text-base text-brand-deepPlum">
               New Arrivals Showcase Settings
@@ -767,7 +776,7 @@ export default function AdminHomepageEditor() {
           TAB 5: FESTIVE / PROMOTIONS
          ======================================================== */}
       {activeTab === "promotion" && (
-        <div className="bg-white rounded-[22px] p-6 border border-brand-deepPlum/15 shadow-sm space-y-6">
+        <div className="bg-white rounded-2xl sm:rounded-[22px] p-3.5 sm:p-6 border border-brand-deepPlum/15 shadow-sm space-y-6">
           <div className="border-b border-brand-deepPlum/10 pb-4">
             <h3 className="font-bold text-base text-brand-deepPlum">
               Festive Edit Promotion Banner
@@ -855,7 +864,7 @@ export default function AdminHomepageEditor() {
           TAB 6: ARTISAN STORY
          ======================================================== */}
       {activeTab === "artisan" && (
-        <div className="bg-white rounded-[22px] p-6 border border-brand-deepPlum/15 shadow-sm space-y-4">
+        <div className="bg-white rounded-2xl sm:rounded-[22px] p-3.5 sm:p-6 border border-brand-deepPlum/15 shadow-sm space-y-4">
           <div className="border-b border-brand-deepPlum/10 pb-4">
             <h3 className="font-bold text-base text-brand-deepPlum">
               Master Weavers & Artisan Heritage Section
@@ -919,7 +928,7 @@ export default function AdminHomepageEditor() {
           TAB 7: TESTIMONIALS
          ======================================================== */}
       {activeTab === "testimonials" && (
-        <div className="bg-white rounded-[22px] p-6 border border-brand-deepPlum/15 shadow-sm space-y-6">
+        <div className="bg-white rounded-2xl sm:rounded-[22px] p-3.5 sm:p-6 border border-brand-deepPlum/15 shadow-sm space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-brand-deepPlum/10 pb-4">
             <div>
               <h3 className="font-bold text-base text-brand-deepPlum">
@@ -1068,7 +1077,7 @@ export default function AdminHomepageEditor() {
           TAB 8: TRUST BADGES
          ======================================================== */}
       {activeTab === "trustBadges" && (
-        <div className="bg-white rounded-[22px] p-6 border border-brand-deepPlum/15 shadow-sm space-y-4">
+        <div className="bg-white rounded-2xl sm:rounded-[22px] p-3.5 sm:p-6 border border-brand-deepPlum/15 shadow-sm space-y-4">
           <div className="border-b border-brand-deepPlum/10 pb-4">
             <h3 className="font-bold text-base text-brand-deepPlum">
               Brand Guarantees & Trust Badges
@@ -1122,7 +1131,7 @@ export default function AdminHomepageEditor() {
           TAB 9: BRAND COLORS & THEME
          ======================================================== */}
       {activeTab === "colors" && (
-        <div className="bg-white rounded-[22px] p-6 border border-brand-deepPlum/15 shadow-sm space-y-4">
+        <div className="bg-white rounded-2xl sm:rounded-[22px] p-3.5 sm:p-6 border border-brand-deepPlum/15 shadow-sm space-y-4">
           <div className="flex items-center gap-3 border-b border-brand-deepPlum/10 pb-4">
             <div className="w-10 h-10 rounded-xl bg-brand-plum/10 text-brand-plum flex items-center justify-center">
               <Palette className="w-5 h-5" />

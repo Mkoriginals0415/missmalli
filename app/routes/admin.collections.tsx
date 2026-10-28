@@ -662,47 +662,30 @@ export default function AdminCollectionsPage() {
           {sections.map((sec, idx) => (
             <div
               key={sec.id}
-              className={`p-3.5 rounded-2xl border transition flex items-center justify-between gap-3 ${
+              className={`p-3.5 sm:p-4 rounded-2xl border transition space-y-2.5 ${
                 sec.enabled
                   ? "bg-brand-ivory/60 border-brand-deepPlum/15"
                   : "bg-gray-100/60 border-gray-300 opacity-60"
               }`}
             >
-              <div className="flex items-center gap-2.5">
-                <span className="w-6 h-6 rounded-lg bg-brand-deepPlum text-white text-[11px] font-bold flex items-center justify-center shrink-0">
-                  {idx + 1}
-                </span>
-                <div>
-                  <h4 className="text-xs font-bold text-brand-deepPlum">{sec.name}</h4>
-                  <span className="text-[10px] text-brand-deepPlum/60 font-semibold uppercase">
-                    ID: {sec.id}
+              {/* Top: Name & Visibility */}
+              <div className="flex items-center justify-between gap-2.5">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span className="w-6 h-6 rounded-lg bg-brand-deepPlum text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                    {idx + 1}
                   </span>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-bold text-brand-deepPlum truncate">{sec.name}</h4>
+                    <span className="text-[10px] text-brand-deepPlum/60 font-semibold uppercase block truncate">
+                      ID: {sec.id}
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  disabled={idx === 0}
-                  onClick={() => moveSection(idx, "up")}
-                  className="p-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-plum hover:text-white transition disabled:opacity-20"
-                  title="Move Up"
-                >
-                  <ArrowUp className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  type="button"
-                  disabled={idx === sections.length - 1}
-                  onClick={() => moveSection(idx, "down")}
-                  className="p-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-plum hover:text-white transition disabled:opacity-20"
-                  title="Move Down"
-                >
-                  <ArrowDown className="w-3.5 h-3.5" />
-                </button>
                 <button
                   type="button"
                   onClick={() => toggleSectionEnabled(idx)}
-                  className={`text-[11px] font-bold px-2.5 py-1 rounded-full border transition flex items-center gap-1 ${
+                  className={`text-[11px] font-bold px-3 py-1 rounded-full border transition flex items-center gap-1 shrink-0 ${
                     sec.enabled
                       ? "bg-emerald-100 text-emerald-900 border-emerald-300"
                       : "bg-gray-200 text-gray-700 border-gray-300"
@@ -710,6 +693,30 @@ export default function AdminCollectionsPage() {
                 >
                   {sec.enabled ? <Eye className="w-3 h-3 text-emerald-700" /> : <EyeOff className="w-3 h-3" />}
                   <span>{sec.enabled ? "Visible" : "Hidden"}</span>
+                </button>
+              </div>
+
+              {/* Bottom: Reorder Toolbar */}
+              <div className="flex items-center justify-start gap-2 pt-1 border-t border-brand-deepPlum/10">
+                <button
+                  type="button"
+                  disabled={idx === 0}
+                  onClick={() => moveSection(idx, "up")}
+                  className="px-3 py-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-plum hover:text-white transition disabled:opacity-20 text-xs font-semibold flex items-center gap-1 min-h-[34px]"
+                  title="Move Up"
+                >
+                  <ArrowUp className="w-3.5 h-3.5" />
+                  <span className="text-[10.5px]">Move Up</span>
+                </button>
+                <button
+                  type="button"
+                  disabled={idx === sections.length - 1}
+                  onClick={() => moveSection(idx, "down")}
+                  className="px-3 py-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-plum hover:text-white transition disabled:opacity-20 text-xs font-semibold flex items-center gap-1 min-h-[34px]"
+                  title="Move Down"
+                >
+                  <ArrowDown className="w-3.5 h-3.5" />
+                  <span className="text-[10.5px]">Move Down</span>
                 </button>
               </div>
             </div>
