@@ -41,75 +41,76 @@ export default function AdminLayout() {
   return (
     <div className="min-h-screen bg-[#F5F2EB] text-brand-deepPlum flex flex-col md:flex-row font-sans">
       {/* -------------------------------------------------------------
-          MOBILE ADMIN TOP BAR (Visible only on < md screens)
+          MOBILE ADMIN TOP HEADER (Unified Sticky Navigation)
          ------------------------------------------------------------- */}
-      <div className="md:hidden sticky top-0 z-40 bg-white border-b border-brand-deepPlum/15 px-4 py-3 flex items-center justify-between shadow-xs">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setMobileDrawerOpen(true)}
-            className="p-2 -ml-2 text-brand-deepPlum hover:text-brand-plum rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center relative"
-            aria-label="Open Admin Menu"
-          >
-            <Menu className="w-5 h-5 stroke-[2.2]" />
-            {needsReplyCount > 0 && (
-              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-brand-plum" />
-            )}
-          </button>
-
-          <Link to="/admin" className="flex items-center gap-2">
-            <img src="/brand/logo.png" alt="Miss Malli" className="h-7 w-auto object-contain" />
-            <span className="text-[10px] tracking-widest uppercase font-extrabold text-brand-plum bg-brand-plum/10 px-2 py-0.5 rounded-full">
-              Admin
-            </span>
-          </Link>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Link
-            to="/"
-            target="_blank"
-            className="p-2 rounded-lg text-brand-deepPlum/70 hover:text-brand-plum flex items-center gap-1 text-xs font-bold"
-            title="View Live Store"
-          >
-            <Store className="w-4 h-4" />
-            <span className="hidden xs:inline">Store</span>
-          </Link>
-        </div>
-      </div>
-
-      {/* -------------------------------------------------------------
-          MOBILE HORIZONTAL TAB SLIDER (Quick Navigation)
-         ------------------------------------------------------------- */}
-      <div className="md:hidden bg-white/80 backdrop-blur-xs border-b border-brand-deepPlum/10 px-3 py-2 overflow-x-auto no-scrollbar flex items-center gap-1.5">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = item.to === "/admin" 
-            ? currentPath === "/admin" || currentPath === "/admin/"
-            : currentPath.startsWith(item.to);
-
-          return (
-            <Link
-              key={item.label}
-              to={item.to}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap shrink-0 transition min-h-[36px] ${
-                isActive
-                  ? "bg-brand-deepPlum text-white shadow-xs"
-                  : "bg-brand-ivory text-brand-deepPlum/75 hover:bg-brand-deepPlum/10"
-              }`}
+      <header className="md:hidden sticky top-0 z-40 bg-white border-b border-brand-deepPlum/15 shadow-xs">
+        {/* Top bar */}
+        <div className="px-4 py-2.5 flex items-center justify-between border-b border-brand-deepPlum/10">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setMobileDrawerOpen(true)}
+              className="p-2 -ml-2 text-brand-deepPlum hover:text-brand-plum rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center relative"
+              aria-label="Open Admin Menu"
             >
-              <Icon className="w-3.5 h-3.5" />
-              <span>{item.label}</span>
-              {item.badge && item.badge > 0 ? (
-                <span className={`text-[9.5px] px-1.5 py-0.2 rounded-full font-bold ${
-                  isActive ? "bg-white/20 text-white" : "bg-brand-plum text-white"
-                }`}>
-                  {item.badge}
-                </span>
-              ) : null}
+              <Menu className="w-5 h-5 stroke-[2.2]" />
+              {needsReplyCount > 0 && (
+                <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-brand-plum" />
+              )}
+            </button>
+
+            <Link to="/admin" className="flex items-center gap-2">
+              <img src="/brand/logo.png" alt="Miss Malli" className="h-7 w-auto object-contain" />
+              <span className="text-[10px] tracking-widest uppercase font-extrabold text-brand-plum bg-brand-plum/10 px-2 py-0.5 rounded-full">
+                Admin
+              </span>
             </Link>
-          );
-        })}
-      </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Link
+              to="/"
+              target="_blank"
+              className="p-2 rounded-lg text-brand-deepPlum/70 hover:text-brand-plum flex items-center gap-1 text-xs font-bold"
+              title="View Live Store"
+            >
+              <Store className="w-4 h-4" />
+              <span className="hidden xs:inline">Store</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Horizontal quick tabs */}
+        <div className="bg-[#FAF8F5] px-3 py-2 overflow-x-auto no-scrollbar flex items-center gap-1.5">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = item.to === "/admin" 
+              ? currentPath === "/admin" || currentPath === "/admin/"
+              : currentPath.startsWith(item.to);
+
+            return (
+              <Link
+                key={item.label}
+                to={item.to}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap shrink-0 transition min-h-[36px] ${
+                  isActive
+                    ? "bg-brand-deepPlum text-white shadow-xs"
+                    : "bg-white text-brand-deepPlum/75 hover:bg-brand-deepPlum/10 border border-brand-deepPlum/10"
+                }`}
+              >
+                <Icon className="w-3.5 h-3.5" />
+                <span>{item.label}</span>
+                {item.badge && item.badge > 0 ? (
+                  <span className={`text-[9.5px] px-1.5 py-0.2 rounded-full font-bold ${
+                    isActive ? "bg-white/20 text-white" : "bg-brand-plum text-white"
+                  }`}>
+                    {item.badge}
+                  </span>
+                ) : null}
+              </Link>
+            );
+          })}
+        </div>
+      </header>
 
       {/* -------------------------------------------------------------
           MOBILE SLIDE-OVER DRAWER
@@ -263,7 +264,7 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 p-3.5 sm:p-6 lg:p-8 max-w-5xl overflow-y-auto">
+      <main className="flex-1 p-3.5 sm:p-6 lg:p-8 max-w-5xl">
         <Outlet />
       </main>
     </div>

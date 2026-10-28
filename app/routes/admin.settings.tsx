@@ -87,8 +87,8 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="space-y-6 max-w-6xl pb-12">
-      {/* Top Header & Sticky Save Controls */}
-      <div className="bg-white rounded-2xl p-4 sm:p-6 border border-brand-deepPlum/15 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-14 md:top-4 z-30 backdrop-blur-md bg-white/95">
+      {/* Top Header & Save Controls */}
+      <div className="bg-white rounded-2xl p-4 sm:p-6 border border-brand-deepPlum/15 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <span className="px-2.5 py-0.5 rounded-full bg-brand-plum/10 text-brand-plum font-bold text-[11px] tracking-wide uppercase">
