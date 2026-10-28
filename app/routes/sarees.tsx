@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { json, type LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { useLoaderData, Link, useSearchParams } from "@remix-run/react";
-import { Heart } from "lucide-react";
+import { Heart, Check } from "lucide-react";
 import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
 import { INITIAL_PRODUCTS } from "~/db/mock-data";
@@ -23,6 +23,15 @@ export default function SareesListingPage() {
   const { products } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
   const { isSaved, toggleSave } = useSavedSarees();
+
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const handleToggleSave = (productId: number, productName: string) => {
+    toggleSave(productId);
+    const wasSaved = isSaved(productId);
+    setToastMessage(wasSaved ? `Removed "${productName}" from Wishlist` : `Saved "${productName}" to Wishlist`);
+    setTimeout(() => setToastMessage(null), 2800);
+  };
 
   const [selectedFabric, setSelectedFabric] = useState<string>("all");
   const [selectedOccasion, setSelectedOccasion] = useState<string>("all");
@@ -210,7 +219,7 @@ export default function SareesListingPage() {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        toggleSave(product.id);
+                        handleToggleSave(product.id, product.name);
                       }}
                       className="absolute top-3 right-3 p-2 rounded-full bg-white/90 backdrop-blur-sm text-brand-deepPlum hover:text-brand-plum transition shadow-sm"
                     >
@@ -249,7 +258,7 @@ export default function SareesListingPage() {
             {/* Load More Button */}
             <div className="text-center pt-4">
               <button
-                onClick={() => alert("All available handloom drapes loaded!")}
+                onClick={() => setToastMessage("All master handloom editions are currently loaded")}
                 className="px-8 py-3 rounded-full border border-brand-deepPlum text-brand-deepPlum text-xs font-bold hover:bg-brand-deepPlum hover:text-white transition shadow-sm"
               >
                 Load more
@@ -258,6 +267,22 @@ export default function SareesListingPage() {
           </div>
         </div>
       </main>
+
+      {/* Floating Interactive Toast */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-4 duration-300">
+          <div className="px-4 py-3 rounded-2xl bg-brand-deepPlum text-white text-xs font-bold shadow-xl flex items-center gap-2 border border-brand-lilac/30">
+            <Check className="w-4 h-4 text-emerald-400 stroke-[3]" />
+            <span>{toastMessage}</span>
+            <Link
+              to="/wishlist"
+              className="ml-2 px-2.5 py-1 rounded-lg bg-white/20 text-white hover:bg-white/30 transition text-[11px] underline"
+            >
+              View Wishlist →
+            </Link>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>

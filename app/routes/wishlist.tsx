@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { json, type LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { useLoaderData, Link } from "@remix-run/react";
-import { Heart, ShoppingBag, Trash2, ArrowRight } from "lucide-react";
+import { Heart, ShoppingBag, Trash2, ArrowRight, Check } from "lucide-react";
 import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
 import { INITIAL_PRODUCTS } from "~/db/mock-data";
@@ -14,6 +15,13 @@ export default function WishlistPage() {
   const { products } = useLoaderData<typeof loader>();
   const { savedIds, toggleSave, isLoaded } = useSavedSarees();
   const { addToBag } = useBag();
+
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
 
   const savedSarees = products.filter((p) => savedIds.includes(p.id));
 
@@ -31,7 +39,7 @@ export default function WishlistPage() {
       });
       toggleSave(saree.id);
     });
-    alert(`Moved ${savedSarees.length} sarees to your bag!`);
+    showToast(`Moved ${savedSarees.length} sarees to your bag!`);
   };
 
   return (
@@ -129,7 +137,7 @@ export default function WishlistPage() {
                           imageUrl: saree.images[0],
                         });
                         toggleSave(saree.id);
-                        alert(`Moved ${saree.name} to bag!`);
+                        showToast(`Moved "${saree.name}" to bag!`);
                       }}
                       className="text-[11px] font-bold text-brand-plum hover:underline"
                     >
@@ -142,6 +150,22 @@ export default function WishlistPage() {
           </div>
         )}
       </main>
+
+      {/* Floating Interactive Toast */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-4 duration-300">
+          <div className="px-4 py-3 rounded-2xl bg-brand-deepPlum text-white text-xs font-bold shadow-xl flex items-center gap-2 border border-brand-lilac/30">
+            <Check className="w-4 h-4 text-emerald-400 stroke-[3]" />
+            <span>{toastMessage}</span>
+            <Link
+              to="/bag"
+              className="ml-2 px-2.5 py-1 rounded-lg bg-white/20 text-white hover:bg-white/30 transition text-[11px] underline"
+            >
+              View Bag →
+            </Link>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>

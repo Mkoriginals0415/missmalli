@@ -81,6 +81,18 @@ export default function ProductDetailPage() {
   const { addRequest } = useMyRequests();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastLink, setToastLink] = useState<{ text: string; url: string } | null>(null);
+
+  const showToast = (message: string, link?: { text: string; url: string }) => {
+    setToastMessage(message);
+    setToastLink(link || null);
+    setTimeout(() => {
+      setToastMessage(null);
+      setToastLink(null);
+    }, 3500);
+  };
+
   const handlePincodeCheck = (e: React.FormEvent) => {
     e.preventDefault();
     if (pincode.length === 6) {
@@ -160,7 +172,7 @@ export default function ProductDetailPage() {
       );
     } catch (err) {
       console.error(err);
-      alert("Error processing WhatsApp order. Please try again.");
+      showToast("Error processing WhatsApp request. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -177,7 +189,7 @@ export default function ProductDetailPage() {
       price: product.price * quantity,
       imageUrl: product.images[0],
     });
-    alert(`Added ${quantity}x ${product.name} (#${product.code}) to your bag!`);
+    showToast(`Added ${quantity}x ${product.name} to bag`, { text: "View Bag", url: "/bag" });
   };
 
   const handleShare = () => {
@@ -190,7 +202,7 @@ export default function ProductDetailPage() {
       });
     } else {
       navigator.clipboard.writeText(url);
-      alert("Product link copied to clipboard!");
+      showToast("Product link copied to clipboard!");
     }
   };
 
@@ -532,7 +544,7 @@ export default function ProductDetailPage() {
                           price: acc.price,
                           imageUrl: acc.image,
                         });
-                        alert(`Added ${acc.name} to bag!`);
+                        showToast(`Added ${acc.name} to bag`, { text: "View Bag", url: "/bag" });
                       }}
                       className="text-[11px] font-bold text-brand-plum hover:underline"
                     >
@@ -575,6 +587,53 @@ export default function ProductDetailPage() {
           </div>
         </section>
       </main>
+
+      {/* Mobile Sticky Order Bar */}
+      <div className="lg:hidden sticky bottom-0 z-40 bg-white/95 backdrop-blur-md border-t border-brand-deepPlum/15 px-4 py-3 flex items-center justify-between gap-3 shadow-2xl">
+        <div>
+          <span className="text-xs font-bold text-brand-deepPlum block leading-tight truncate max-w-[170px]">
+            {product.name}
+          </span>
+          <span className="text-sm font-bold text-brand-plum">
+            ₹ {(product.price * quantity).toLocaleString("en-IN")}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleAddToBag}
+            className="p-2.5 rounded-full border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-ivory transition shadow-xs"
+            aria-label="Add to bag"
+          >
+            <ShoppingBag className="w-4 h-4" />
+          </button>
+          <button
+            onClick={handleBuyNow}
+            disabled={isSubmitting}
+            className="py-2.5 px-4 rounded-full bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md flex items-center gap-1.5 whitespace-nowrap"
+          >
+            <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Order on WhatsApp</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Floating Interactive Toast */}
+      {toastMessage && (
+        <div className="fixed bottom-20 lg:bottom-6 right-6 z-50 animate-in slide-in-from-bottom-4 duration-300">
+          <div className="px-4 py-3 rounded-2xl bg-brand-deepPlum text-white text-xs font-bold shadow-xl flex items-center gap-3 border border-brand-lilac/30">
+            <Check className="w-4 h-4 text-emerald-400 stroke-[3]" />
+            <span>{toastMessage}</span>
+            {toastLink && (
+              <Link
+                to={toastLink.url}
+                className="px-2.5 py-1 rounded-lg bg-white/20 text-white hover:bg-white/30 transition text-[11px] underline"
+              >
+                {toastLink.text} →
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>

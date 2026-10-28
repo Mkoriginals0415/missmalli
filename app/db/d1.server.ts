@@ -70,11 +70,74 @@ export async function updateProductStock(productId: number, delta: number, env?:
 }
 
 export async function getHomepageContent(env?: { DB?: D1Database }): Promise<HomepageContent> {
+  const db = getDb(env);
+  if (db) {
+    try {
+      const row = await db.query.storeSettings.findFirst({
+        where: (s, { eq }) => eq(s.key, "homepage_content_json"),
+      });
+      if (row?.value) {
+        const parsed = JSON.parse(row.value);
+        runtimeHomepageContent = { ...runtimeHomepageContent, ...parsed };
+      }
+    } catch (e) {
+      // Fallback to runtime state
+    }
+  }
+
+  // Ensure legacy fields match nested structure for safety
+  runtimeHomepageContent.heroTitle = runtimeHomepageContent.hero?.headline || runtimeHomepageContent.heroTitle;
+  runtimeHomepageContent.heroButtonText = runtimeHomepageContent.hero?.buttonText || runtimeHomepageContent.heroButtonText;
+  runtimeHomepageContent.categoriesTitle = runtimeHomepageContent.categories?.title || runtimeHomepageContent.categoriesTitle;
+  runtimeHomepageContent.newArrivalsTitle = runtimeHomepageContent.newArrivals?.title || runtimeHomepageContent.newArrivalsTitle;
+  runtimeHomepageContent.festiveTitle = runtimeHomepageContent.promotion?.title || runtimeHomepageContent.festiveTitle;
+  runtimeHomepageContent.festiveSubtitle = runtimeHomepageContent.promotion?.subtitle || runtimeHomepageContent.festiveSubtitle;
+  runtimeHomepageContent.festiveDiscount = runtimeHomepageContent.promotion?.discountTag || runtimeHomepageContent.festiveDiscount;
+  runtimeHomepageContent.artisanTitle = runtimeHomepageContent.artisan?.title || runtimeHomepageContent.artisanTitle;
+  runtimeHomepageContent.artisanDescription = runtimeHomepageContent.artisan?.description || runtimeHomepageContent.artisanDescription;
+  runtimeHomepageContent.reviewQuote = runtimeHomepageContent.hero?.reviewQuote || runtimeHomepageContent.reviewQuote;
+  runtimeHomepageContent.reviewAuthor = runtimeHomepageContent.hero?.reviewAuthor || runtimeHomepageContent.reviewAuthor;
+  runtimeHomepageContent.reviewLocation = runtimeHomepageContent.hero?.reviewLocation || runtimeHomepageContent.reviewLocation;
+
   return runtimeHomepageContent;
 }
 
-export async function updateHomepageContent(content: Partial<HomepageContent>, env?: { DB?: D1Database }): Promise<HomepageContent> {
-  runtimeHomepageContent = { ...runtimeHomepageContent, ...content };
+export async function updateHomepageContent(
+  content: Partial<HomepageContent>,
+  env?: { DB?: D1Database }
+): Promise<HomepageContent> {
+  runtimeHomepageContent = {
+    ...runtimeHomepageContent,
+    ...content,
+    // Deep merge for major sections
+    hero: content.hero ? { ...runtimeHomepageContent.hero, ...content.hero } : runtimeHomepageContent.hero,
+    categories: content.categories ? { ...runtimeHomepageContent.categories, ...content.categories } : runtimeHomepageContent.categories,
+    newArrivals: content.newArrivals ? { ...runtimeHomepageContent.newArrivals, ...content.newArrivals } : runtimeHomepageContent.newArrivals,
+    promotion: content.promotion ? { ...runtimeHomepageContent.promotion, ...content.promotion } : runtimeHomepageContent.promotion,
+    artisan: content.artisan ? { ...runtimeHomepageContent.artisan, ...content.artisan } : runtimeHomepageContent.artisan,
+    testimonials: content.testimonials ? { ...runtimeHomepageContent.testimonials, ...content.testimonials } : runtimeHomepageContent.testimonials,
+    trustBadges: content.trustBadges ? { ...runtimeHomepageContent.trustBadges, ...content.trustBadges } : runtimeHomepageContent.trustBadges,
+    sections: content.sections || runtimeHomepageContent.sections,
+  };
+
+  const db = getDb(env);
+  if (db) {
+    try {
+      await db
+        .insert(schema.storeSettings)
+        .values({
+          key: "homepage_content_json",
+          value: JSON.stringify(runtimeHomepageContent),
+        })
+        .onConflictDoUpdate({
+          target: schema.storeSettings.key,
+          set: { value: JSON.stringify(runtimeHomepageContent) },
+        });
+    } catch (e) {
+      // Best-effort in D1
+    }
+  }
+
   return runtimeHomepageContent;
 }
 

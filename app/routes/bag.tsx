@@ -34,15 +34,18 @@ export default function ShoppingBagPage() {
   const [couponCode, setCouponCode] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
   const [discountAmount, setDiscountAmount] = useState(0);
+  const [couponError, setCouponError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleApplyCoupon = (e: React.FormEvent) => {
     e.preventDefault();
-    if (couponCode.trim().toUpperCase() === "FESTIVE30" || couponCode.trim().toUpperCase() === "MISSMALLI") {
+    setCouponError(null);
+    const code = couponCode.trim().toUpperCase();
+    if (code === "FESTIVE30" || code === "MISSMALLI") {
       setCouponApplied(true);
       setDiscountAmount(500);
     } else {
-      alert("Invalid coupon code. Try FESTIVE30 for ₹500 off.");
+      setCouponError("Invalid coupon code. Try code FESTIVE30 for ₹500 off.");
     }
   };
 
@@ -229,6 +232,16 @@ export default function ShoppingBagPage() {
                   Apply
                 </button>
               </form>
+              {couponError && (
+                <p className="text-[11px] text-red-600 font-semibold px-2">
+                  {couponError}
+                </p>
+              )}
+              {couponApplied && (
+                <p className="text-[11px] text-emerald-700 font-bold px-2">
+                  ✓ FESTIVE30 applied! ₹500 discount added to your order.
+                </p>
+              )}
             </div>
 
             {/* Order Summary (Right Column) */}
