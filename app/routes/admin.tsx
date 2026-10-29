@@ -17,6 +17,10 @@ import { getAllRequests } from "~/db/d1.server";
 import { requireAdmin, destroyAdminSession } from "~/utils/auth.server";
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
+  const url = new URL(request.url);
+  if (url.pathname === "/admin/login") {
+    return json({ needsReplyCount: 0 });
+  }
   await requireAdmin(request);
   const env = (context as any)?.cloudflare?.env;
   const requests = await getAllRequests(env);
