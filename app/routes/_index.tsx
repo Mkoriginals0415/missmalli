@@ -169,22 +169,41 @@ export default function HomePage() {
                   {/* ----------------------------------------------------------
                       MOBILE HERO VIEW (Page 11 Notched 2-Card Layout)
                      ---------------------------------------------------------- */}
-                  <div className="block lg:hidden space-y-6">
-                    <div className="grid grid-cols-2 gap-3.5 items-stretch">
-                      <div className="relative aspect-[3/4] notched-tl overflow-hidden bg-brand-lilac/30 shadow-md">
-                        <img
-                          src={hero.mobileImages[0] || "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80"}
-                          alt="Heritage Drape"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
+                  <div className="block lg:hidden space-y-5">
+                    {/* Horizontal Smooth Snap Gallery of All Mobile Hero Pictures */}
+                    <div className="relative">
+                      <div className="flex gap-3.5 overflow-x-auto no-scrollbar snap-x snap-mandatory -mx-4 px-4 sm:mx-0 sm:px-0 py-1 scroll-smooth">
+                        {(hero.mobileImages && hero.mobileImages.length > 0 ? hero.mobileImages : hero.desktopImages).map((imgUrl, i) => {
+                          const notchedClass =
+                            i % 4 === 0
+                              ? "notched-tl bg-brand-lilac/30"
+                              : i % 4 === 1
+                              ? "notched-arch bg-brand-lilac/40"
+                              : i % 4 === 2
+                              ? "notched-tr bg-brand-blush/30"
+                              : "rounded-[24px] bg-brand-gold/20";
 
-                      <div className="relative aspect-[3/4] notched-arch overflow-hidden bg-brand-lilac/40 shadow-md">
-                        <img
-                          src={hero.mobileImages[1] || "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=600&q=80"}
-                          alt="Handloom Silk"
-                          className="w-full h-full object-cover"
-                        />
+                          return (
+                            <div
+                              key={i}
+                              className={`snap-center shrink-0 w-[70vw] sm:w-[48vw] aspect-[3/4] ${notchedClass} overflow-hidden shadow-md relative group`}
+                            >
+                              <img
+                                src={imgUrl}
+                                alt={`Heritage Drape ${i + 1}`}
+                                className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                                loading={i === 0 ? "eager" : "lazy"}
+                              />
+                              <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold">
+                                {i + 1} / {(hero.mobileImages || []).length}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="flex items-center justify-between px-1 pt-1.5 text-[11px] text-brand-deepPlum/60 font-semibold">
+                        <span>Swipe to explore handcrafted weaves</span>
+                        <span>→</span>
                       </div>
                     </div>
 

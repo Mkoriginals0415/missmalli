@@ -9,6 +9,7 @@ export interface BagItem {
   colorHex: string;
   blouseOption: "with" | "without";
   price: number;
+  quantity?: number;
   imageUrl: string;
 }
 
@@ -73,12 +74,36 @@ export function useBag() {
 
   const addToBag = (item: BagItem) => {
     setItems((prev) => {
-      // Prevent exact duplicates of same product & variant
-      const exists = prev.some(
+      const addQty = item.quantity && item.quantity > 0 ? item.quantity : 1;
+      const existingIdx = prev.findIndex(
         (i) => i.productId === item.productId && i.colorName === item.colorName && i.blouseOption === item.blouseOption
       );
-      if (exists) return prev;
-      const next = [...prev, item];
+
+      let next: BagItem[];
+      if (existingIdx >= 0) {
+        next = [...prev];
+        const currentQty = next[existingIdx].quantity || 1;
+        next[existingIdx] = {
+          ...next[existingIdx],
+          quantity: currentQty + addQty,
+        };
+      } else {
+        next = [...prev, { ...item, quantity: addQty }];
+      }
+
+      localStorage.setItem(STORAGE_KEYS.BAG, JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const updateQuantity = (index: number, quantity: number) => {
+    setItems((prev) => {
+      if (quantity <= 0) {
+        const next = prev.filter((_, i) => i !== index);
+        localStorage.setItem(STORAGE_KEYS.BAG, JSON.stringify(next));
+        return next;
+      }
+      const next = prev.map((item, i) => (i === index ? { ...item, quantity } : item));
       localStorage.setItem(STORAGE_KEYS.BAG, JSON.stringify(next));
       return next;
     });
@@ -97,9 +122,10 @@ export function useBag() {
     localStorage.removeItem(STORAGE_KEYS.BAG);
   };
 
-  const subtotal = items.reduce((sum, item) => sum + item.price, 0);
+  const subtotal = items.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0);
+  const totalItemsCount = items.reduce((sum, item) => sum + (item.quantity || 1), 0);
 
-  return { items, addToBag, removeFromBag, clearBag, subtotal, isLoaded };
+  return { items, addToBag, updateQuantity, removeFromBag, clearBag, subtotal, totalItemsCount, isLoaded };
 }
 
 export function useMyRequests() {

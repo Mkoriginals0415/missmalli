@@ -1,13 +1,34 @@
-import { useState } from "react";
-import { json, type LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { useLoaderData, Link } from "@remix-run/react";
+import { useState, useEffect } from "react";
+import { json, type LoaderFunctionArgs, type ActionFunctionArgs } from "@remix-run/cloudflare";
+import { useLoaderData, useFetcher, Link } from "@remix-run/react";
 import { Plus, Search, Minus, Edit, ExternalLink } from "lucide-react";
-import { getAllProducts } from "~/db/d1.server";
+import { getAllProducts, updateProductStock, deleteProduct } from "~/db/d1.server";
 
 export async function loader({ context }: LoaderFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
   const products = await getAllProducts(env);
   return json({ products });
+}
+
+export async function action({ request, context }: ActionFunctionArgs) {
+  const env = (context as any)?.cloudflare?.env;
+  const formData = await request.formData();
+  const intent = formData.get("intent");
+
+  if (intent === "stock") {
+    const productId = Number(formData.get("productId"));
+    const delta = Number(formData.get("delta"));
+    const updated = await updateProductStock(productId, delta, env);
+    return json({ success: true, updated });
+  }
+
+  if (intent === "delete") {
+    const productId = Number(formData.get("productId"));
+    await deleteProduct(productId, env);
+    return json({ success: true });
+  }
+
+  return json({ error: "Unknown intent" }, { status: 400 });
 }
 
 export default function AdminProductsPage() {
@@ -16,6 +37,13 @@ export default function AdminProductsPage() {
   const [productList, setProductList] = useState(products);
   const [search, setSearch] = useState("");
   const [collectionFilter, setCollectionFilter] = useState("all");
+  const fetcher = useFetcher();
+
+  useEffect(() => {
+    if (Array.isArray(data?.products)) {
+      setProductList(data.products);
+    }
+  }, [data?.products]);
 
   const handleStockChange = (productId: number, delta: number) => {
     setProductList((prev) =>
@@ -27,6 +55,10 @@ export default function AdminProductsPage() {
         if (newVariants[0]) newVariants[0] = { ...newVariants[0], stockCount: updated };
         return { ...p, variants: newVariants };
       })
+    );
+    fetcher.submit(
+      { intent: "stock", productId: String(productId), delta: String(delta) },
+      { method: "post" }
     );
   };
 

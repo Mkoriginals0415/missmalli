@@ -17,11 +17,13 @@ export function BottomNav({ hidden = false }: BottomNavProps) {
     return null;
   }
 
+  const bagCount = bagItems.reduce((acc, i) => acc + (i.quantity || 1), 0);
+
   const navItems = [
     { label: "Home", to: "/", icon: Home },
     { label: "Sarees", to: "/sarees", icon: Sparkles },
     { label: "Wishlist", to: "/wishlist", icon: Heart, count: savedIds.length },
-    { label: "Bag", to: "/bag", icon: ShoppingBag, count: bagItems.length },
+    { label: "Bag", to: "/bag", icon: ShoppingBag, count: bagCount },
   ];
 
   return (

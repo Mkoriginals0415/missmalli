@@ -492,14 +492,51 @@ export default function AdminHomepageEditor() {
             </div>
           </div>
 
-          {/* Mobile Hero Images (2 Images) */}
-          <div className="space-y-3 pt-4 border-t border-brand-deepPlum/10">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-brand-deepPlum">
-              Mobile 2-Card Notched Images (Page 11 Design)
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Mobile Hero Images Dynamic Gallery */}
+          <div className="space-y-4 pt-4 border-t border-brand-deepPlum/10">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-brand-deepPlum">
+                  Mobile Hero Showcase Gallery ({hero.mobileImages.length} pictures)
+                </h4>
+                <p className="text-[11px] text-brand-deepPlum/60 font-medium">
+                  Add as many high-res photos as you want. Customers can swipe smoothly through all drapes on mobile.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setHero({
+                    ...hero,
+                    mobileImages: [...hero.mobileImages, "/brand/logo.png"],
+                  });
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-xs self-start sm:self-auto"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add Mobile Picture</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {hero.mobileImages.map((imgUrl, i) => (
-                <div key={i} className="p-4 rounded-2xl bg-brand-ivory/50 border border-brand-deepPlum/15">
+                <div key={i} className="p-3.5 rounded-2xl bg-brand-ivory/50 border border-brand-deepPlum/15 relative space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-brand-deepPlum">Photo {i + 1}</span>
+                    {hero.mobileImages.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = hero.mobileImages.filter((_, idx) => idx !== i);
+                          setHero({ ...hero, mobileImages: updated });
+                        }}
+                        className="p-1 rounded-lg text-red-600 hover:bg-red-50 transition"
+                        title="Delete photo"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
                   <ImageUpload
                     value={imgUrl}
                     onChange={(newVal) => {
@@ -507,9 +544,9 @@ export default function AdminHomepageEditor() {
                       updated[i] = newVal;
                       setHero({ ...hero, mobileImages: updated });
                     }}
-                    label={`Mobile Notched Card ${i + 1}`}
+                    label={`Slide ${i + 1}`}
                     aspectRatio="portrait"
-                    helpText="Upload a portrait photo for the mobile hero card"
+                    helpText="Upload a portrait photo"
                   />
                 </div>
               ))}

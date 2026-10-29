@@ -3,24 +3,24 @@ export interface SeedProduct {
   code: string;
   name: string;
   slug: string;
-  collectionSlug: "sarees" | "dresses" | "materials" | "exclusive";
+  collectionSlug: "sarees" | "dresses" | "materials" | "exclusive" | string;
   collectionName: string;
   fabric: string;
   length: string;
   care: string;
   price: number;
-  originalPrice?: number;
+  originalPrice?: number | null;
   discount?: string;
-  badge?: "New" | "Bestseller" | "-15%" | "-20%";
-  occasion?: "Wedding" | "Festive" | "Daily";
-  status?: "live" | "draft";
+  badge?: string;
+  occasion?: string;
+  status?: "live" | "draft" | string;
   description: string;
   images: string[];
   variants: Array<{
     id: number;
     colorName: string;
     colorHex: string;
-    blouseOption: "with" | "without";
+    blouseOption: "with" | "without" | string;
     stockCount: number;
   }>;
 }
@@ -555,6 +555,11 @@ export const INITIAL_HOMEPAGE_CONTENT: HomepageContent = {
     mobileImages: [
       "/images/products/imitation-pattu-rich-pallu.jpeg",
       "/images/products/pure-raw-mango-saree.jpeg",
+      "/images/products/premium-tissue-banaras-saree.jpeg",
+      "/images/products/rich-pure-satin-crepe-saree.jpeg",
+      "/images/products/soft-chinon-trendy-saree.jpeg",
+      "/images/products/premium-mul-cotton-saree.jpeg",
+      "/images/products/purple-peplum-set.jpeg",
     ],
     reviewQuote: "miss malli is a piece of art... handwoven typography review it piece of art.... loved the saree!",
     reviewAuthor: "Rafi H.",

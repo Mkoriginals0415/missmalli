@@ -47,26 +47,134 @@ let runtimeRequests: any[] = [
 
 let runtimeSettings = { ...INITIAL_SETTINGS };
 
-export async function getAllProducts(env?: { DB?: D1Database }) {
+export async function getAllProducts(env?: { DB?: D1Database }): Promise<SeedProduct[]> {
+  const db = getDb(env);
+  if (db) {
+    try {
+      const row = await db.query.storeSettings.findFirst({
+        where: (s, { eq }) => eq(s.key, "products_catalog_json"),
+      });
+      if (row?.value) {
+        const parsed = JSON.parse(row.value);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          runtimeProducts = parsed;
+        }
+      }
+    } catch (e) {}
+  }
   return runtimeProducts;
 }
 
 export async function getProductBySlug(slug: string, env?: { DB?: D1Database }) {
+  await getAllProducts(env);
   return runtimeProducts.find((p) => p.slug === slug) || null;
 }
 
 export async function getProductById(id: number, env?: { DB?: D1Database }) {
+  await getAllProducts(env);
   return runtimeProducts.find((p) => p.id === id) || null;
 }
 
 export async function updateProductStock(productId: number, delta: number, env?: { DB?: D1Database }) {
+  await getAllProducts(env);
   const product = runtimeProducts.find((p) => p.id === productId);
   if (product && product.variants.length > 0) {
     const current = product.variants[0].stockCount || 0;
     product.variants[0].stockCount = Math.max(0, current + delta);
+    const db = getDb(env);
+    if (db) {
+      try {
+        await db.insert(schema.storeSettings).values({
+          key: "products_catalog_json",
+          value: JSON.stringify(runtimeProducts),
+        }).onConflictDoUpdate({
+          target: schema.storeSettings.key,
+          set: { value: JSON.stringify(runtimeProducts) },
+        });
+      } catch (e) {}
+    }
     return product;
   }
   return null;
+}
+
+export async function upsertProduct(productData: Partial<SeedProduct>, env?: { DB?: D1Database }): Promise<SeedProduct> {
+  await getAllProducts(env);
+  let id = Number(productData.id);
+
+  if (!id || id <= 0) {
+    id = Math.max(0, ...runtimeProducts.map((p) => p.id)) + 1;
+    const newProduct: SeedProduct = {
+      id,
+      code: productData.code || `MM-P${id.toString().padStart(2, "0")}`,
+      name: productData.name || "Untitled Product",
+      slug: productData.slug || `product-${id}`,
+      collectionSlug: productData.collectionSlug || "sarees",
+      collectionName: productData.collectionName || "Sarees",
+      fabric: productData.fabric || "Pure silk · Handwoven",
+      length: productData.length || "5.5 meters saree + 0.8 meter blouse piece",
+      care: productData.care || "Dry clean only.",
+      price: Number(productData.price) || 1999,
+      originalPrice: productData.originalPrice ? Number(productData.originalPrice) : null,
+      discount: productData.discount || "",
+      badge: productData.badge || "New",
+      occasion: productData.occasion || "Festive",
+      status: (productData.status as any) || "live",
+      description: productData.description || "",
+      images: productData.images && productData.images.length > 0 ? productData.images : ["/brand/logo.png"],
+      variants: productData.variants && productData.variants.length > 0 ? productData.variants : [
+        { id: id * 100 + 1, colorName: "Standard", colorHex: "#5B2A6E", blouseOption: "with", stockCount: 5 }
+      ],
+    };
+    runtimeProducts = [newProduct, ...runtimeProducts];
+    id = newProduct.id;
+  } else {
+    runtimeProducts = runtimeProducts.map((p) => {
+      if (p.id !== id) return p;
+      return {
+        ...p,
+        ...productData,
+        id,
+        price: Number(productData.price ?? p.price),
+        originalPrice: productData.originalPrice !== undefined
+          ? (productData.originalPrice ? Number(productData.originalPrice) : null)
+          : p.originalPrice,
+      };
+    });
+  }
+
+  const db = getDb(env);
+  if (db) {
+    try {
+      await db.insert(schema.storeSettings).values({
+        key: "products_catalog_json",
+        value: JSON.stringify(runtimeProducts),
+      }).onConflictDoUpdate({
+        target: schema.storeSettings.key,
+        set: { value: JSON.stringify(runtimeProducts) },
+      });
+    } catch (e) {}
+  }
+
+  return runtimeProducts.find((p) => p.id === id)!;
+}
+
+export async function deleteProduct(id: number, env?: { DB?: D1Database }): Promise<boolean> {
+  await getAllProducts(env);
+  runtimeProducts = runtimeProducts.filter((p) => p.id !== id);
+  const db = getDb(env);
+  if (db) {
+    try {
+      await db.insert(schema.storeSettings).values({
+        key: "products_catalog_json",
+        value: JSON.stringify(runtimeProducts),
+      }).onConflictDoUpdate({
+        target: schema.storeSettings.key,
+        set: { value: JSON.stringify(runtimeProducts) },
+      });
+    } catch (e) {}
+  }
+  return true;
 }
 
 export async function getHomepageContent(env?: { DB?: D1Database }): Promise<HomepageContent> {

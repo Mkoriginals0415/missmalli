@@ -27,7 +27,7 @@ export async function loader({ context }: LoaderFunctionArgs) {
 export default function ShoppingBagPage() {
   const { sellerPhone } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
-  const { items, removeFromBag, clearBag, subtotal, isLoaded } = useBag();
+  const { items, updateQuantity, removeFromBag, clearBag, subtotal, totalItemsCount, isLoaded } = useBag();
   const { toggleSave } = useSavedSarees();
   const { addRequest } = useMyRequests();
 
@@ -62,8 +62,10 @@ export default function ShoppingBagPage() {
         items: items.map((i) => ({
           productId: i.productId,
           productName: i.name,
-          variantDetails: `${i.colorName} · ${i.blouseOption === "with" ? "With blouse" : "Without blouse"}`,
-          price: i.price,
+          variantDetails: `${i.colorName} · ${i.blouseOption === "with" ? "With blouse" : "Without blouse"}${
+            (i.quantity || 1) > 1 ? ` · Qty: ${i.quantity}` : ""
+          }`,
+          price: i.price * (i.quantity || 1),
           imageUrl: i.imageUrl,
         })),
       };
@@ -87,9 +89,9 @@ export default function ShoppingBagPage() {
         requestId: data.requestId,
         requestNumber: data.requestNumber,
         secretToken: data.secretToken,
-        itemsCount: items.length,
+        itemsCount: totalItemsCount,
         totalAmount: finalTotal,
-        summaryText: `${items.length} drapes (${items[0].name}${items.length > 1 ? `, +${items.length - 1} more` : ""})`,
+        summaryText: `${totalItemsCount} drapes (${items[0].name}${items.length > 1 ? `, +${items.length - 1} more` : ""})`,
         status: "needs_reply",
         createdAt: new Date().toISOString(),
       });
@@ -102,9 +104,9 @@ export default function ShoppingBagPage() {
         requestNumber: data.requestNumber,
         requestUrl: data.requestUrl,
         items: items.map((i) => ({
-          name: i.name,
+          name: `${(i.quantity || 1) > 1 ? `${i.quantity}x ` : ""}${i.name}`,
           variantDetails: `${i.colorName} · ${i.blouseOption === "with" ? "With blouse" : "Without"}`,
-          price: i.price,
+          price: i.price * (i.quantity || 1),
         })),
         totalAmount: finalTotal,
       });
@@ -128,13 +130,25 @@ export default function ShoppingBagPage() {
       <Navbar />
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold text-brand-deepPlum">
-            Your Bag ({items.length} {items.length === 1 ? "item" : "items"})
-          </h1>
-          <p className="text-xs text-brand-deepPlum/60 mt-0.5">
-            Send several drapes in one single WhatsApp request
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-brand-deepPlum">
+              Your Bag ({totalItemsCount} {totalItemsCount === 1 ? "item" : "items"})
+            </h1>
+            <p className="text-xs text-brand-deepPlum/60 mt-0.5">
+              Send several drapes in one single WhatsApp request
+            </p>
+          </div>
+          {items.length > 0 && (
+            <button
+              onClick={clearBag}
+              className="text-xs font-semibold text-red-600/80 hover:text-red-700 flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-red-200 hover:bg-red-50 transition min-h-[36px]"
+              title="Clear all items in bag"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Clear Bag</span>
+            </button>
+          )}
         </div>
 
         {isLoaded && items.length === 0 ? (
@@ -201,10 +215,40 @@ export default function ShoppingBagPage() {
                       </div>
                     </div>
 
-                    <div className="self-end sm:self-center text-right">
-                      <span className="font-bold text-base text-brand-deepPlum">
-                        ₹ {item.price.toLocaleString("en-IN")}
-                      </span>
+                    <div className="flex sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto gap-3">
+                      {/* Quantity Stepper */}
+                      <div className="flex items-center gap-2 bg-brand-ivory px-3 py-1.5 rounded-full border border-brand-deepPlum/15 shadow-2xs">
+                        <button
+                          type="button"
+                          onClick={() => updateQuantity(idx, (item.quantity || 1) - 1)}
+                          className="w-6 h-6 rounded-full bg-white text-brand-deepPlum hover:bg-brand-plum hover:text-white flex items-center justify-center transition shadow-2xs active:scale-95"
+                          aria-label="Decrease quantity"
+                        >
+                          <Minus className="w-3 h-3" />
+                        </button>
+                        <span className="w-6 text-center text-xs font-bold text-brand-deepPlum">
+                          {item.quantity || 1}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => updateQuantity(idx, (item.quantity || 1) + 1)}
+                          className="w-6 h-6 rounded-full bg-white text-brand-deepPlum hover:bg-brand-plum hover:text-white flex items-center justify-center transition shadow-2xs active:scale-95"
+                          aria-label="Increase quantity"
+                        >
+                          <Plus className="w-3 h-3" />
+                        </button>
+                      </div>
+
+                      <div className="text-right">
+                        <span className="font-bold text-base text-brand-deepPlum block">
+                          ₹ {(item.price * (item.quantity || 1)).toLocaleString("en-IN")}
+                        </span>
+                        {(item.quantity || 1) > 1 && (
+                          <span className="text-[10px] text-brand-deepPlum/60 font-semibold block">
+                            ₹ {item.price.toLocaleString("en-IN")} each
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -291,7 +335,7 @@ export default function ShoppingBagPage() {
                   ) : (
                     <>
                       <MessageCircle className="w-4 h-4 text-emerald-400" />
-                      <span>Order on WhatsApp ({items.length} {items.length === 1 ? "item" : "items"})</span>
+                      <span>Order on WhatsApp ({totalItemsCount} {totalItemsCount === 1 ? "item" : "items"})</span>
                     </>
                   )}
                 </button>
@@ -314,7 +358,7 @@ export default function ShoppingBagPage() {
       {items.length > 0 && (
         <div className="lg:hidden sticky bottom-16 z-30 bg-white/95 backdrop-blur-md border-t border-brand-lilac/40 px-4 py-3 flex items-center justify-between gap-3 shadow-2xl">
           <div>
-            <span className="text-[10.5px] text-brand-deepPlum/70 block font-medium">Total ({items.length} items)</span>
+            <span className="text-[10.5px] text-brand-deepPlum/70 block font-medium">Total ({totalItemsCount} {totalItemsCount === 1 ? "item" : "items"})</span>
             <span className="text-base font-bold text-brand-plum">
               ₹ {finalTotal.toLocaleString("en-IN")}
             </span>

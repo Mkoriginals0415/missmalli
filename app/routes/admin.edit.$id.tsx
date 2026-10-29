@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { json, type LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { useLoaderData, useNavigate, Link } from "@remix-run/react";
-import { ArrowLeft, Save, Upload, Eye, Plus, Trash2 } from "lucide-react";
-import { getProductById } from "~/db/d1.server";
+import { json, redirect, type LoaderFunctionArgs, type ActionFunctionArgs } from "@remix-run/cloudflare";
+import { useLoaderData, useFetcher, useNavigate, Link } from "@remix-run/react";
+import { ArrowLeft, Save, Upload, Eye, Plus, Trash2, Loader2 } from "lucide-react";
+import { getProductById, upsertProduct, deleteProduct } from "~/db/d1.server";
 import { processImageFile } from "~/components/ui/ImageUpload";
 
 export async function loader({ params, context }: LoaderFunctionArgs) {
@@ -20,41 +20,100 @@ export async function loader({ params, context }: LoaderFunctionArgs) {
       id: 0,
       name: "",
       slug: "",
-      fabric: "",
+      fabric: "Pure silk · Handwoven",
       length: "5.5 meters saree + 0.8 meter blouse piece",
       care: "Dry clean only. Store wrapped in a muslin cloth.",
-      price: 9800,
-      salePrice: null,
+      price: 2499,
+      originalPrice: null,
       description: "",
-      collectionSlug: "silk",
+      collectionSlug: "sarees",
       status: "live",
       images: [
-        "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=900&q=80",
+        "/brand/logo.png",
       ],
       variants: [
-        { id: 1, colorName: "Ruby Red", colorHex: "#A51D24", blouseOption: "with", stockCount: 2 },
+        { id: 1, colorName: "Original", colorHex: "#5B2A6E", blouseOption: "with", stockCount: 5 },
       ],
     },
     isNew,
   });
 }
 
+export async function action({ request, context }: ActionFunctionArgs) {
+  const env = (context as any)?.cloudflare?.env;
+  const formData = await request.formData();
+  const intent = formData.get("intent");
+
+  if (intent === "delete") {
+    const productId = Number(formData.get("productId"));
+    if (productId) {
+      await deleteProduct(productId, env);
+      return redirect("/admin/products");
+    }
+    return json({ error: "Missing productId" }, { status: 400 });
+  }
+
+  const rawJson = formData.get("productJson");
+  if (!rawJson || typeof rawJson !== "string") {
+    return json({ error: "Invalid product payload" }, { status: 400 });
+  }
+
+  try {
+    const parsed = JSON.parse(rawJson);
+    await upsertProduct(parsed, env);
+    return redirect("/admin/products");
+  } catch (err: any) {
+    return json({ error: err.message || "Failed to save product" }, { status: 400 });
+  }
+}
+
 export default function AdminProductEditor() {
   const { product: initialProduct, isNew } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
+  const fetcher = useFetcher<typeof action>();
 
   const [name, setName] = useState(initialProduct.name);
   const [slug, setSlug] = useState(initialProduct.slug);
   const [fabric, setFabric] = useState(initialProduct.fabric);
   const [description, setDescription] = useState(initialProduct.description || "");
   const [price, setPrice] = useState(initialProduct.price);
+  const [originalPrice, setOriginalPrice] = useState<number | null>(initialProduct.originalPrice || null);
   const [collection, setCollection] = useState(initialProduct.collectionSlug);
+  const [status, setStatus] = useState(initialProduct.status || "live");
   const [images, setImages] = useState<string[]>(initialProduct.images);
   const [variants, setVariants] = useState(initialProduct.variants);
 
+  const isSaving = fetcher.state === "submitting" || fetcher.state === "loading";
+
   const handleSave = () => {
-    alert("Product saved successfully!");
-    navigate("/admin/products");
+    const cleanSlug = (slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-")).trim();
+    const payload = {
+      id: initialProduct.id,
+      name,
+      slug: cleanSlug,
+      fabric,
+      description,
+      price: Number(price),
+      originalPrice: originalPrice ? Number(originalPrice) : null,
+      collectionSlug: collection,
+      collectionName: collection === "dresses" ? "Dresses" : collection === "materials" ? "Dress Materials" : collection === "exclusive" ? "Exclusive" : "Sarees",
+      status,
+      images,
+      variants,
+    };
+
+    const formData = new FormData();
+    formData.append("productJson", JSON.stringify(payload));
+    fetcher.submit(formData, { method: "post" });
+  };
+
+  const handleDelete = () => {
+    if (confirm("Are you sure you want to delete this product?")) {
+      const formData = new FormData();
+      formData.append("intent", "delete");
+      formData.append("productId", String(initialProduct.id));
+      fetcher.submit(formData, { method: "post" });
+    }
   };
 
   const handleAddImage = () => {
@@ -82,13 +141,37 @@ export default function AdminProductEditor() {
           </div>
         </div>
 
-        <button
-          onClick={handleSave}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md min-h-[44px]"
-        >
-          <Save className="w-4 h-4" />
-          <span>Save and publish</span>
-        </button>
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          {!isNew && (
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={isSaving}
+              className="px-4 py-2.5 rounded-xl border border-red-300 text-red-600 hover:bg-red-50 text-xs font-bold transition flex items-center gap-1.5 min-h-[44px]"
+            >
+              <Trash2 className="w-4 h-4" />
+              <span>Delete</span>
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={isSaving}
+            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md min-h-[44px] disabled:opacity-50"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Saving...</span>
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4" />
+                <span>Save and publish</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

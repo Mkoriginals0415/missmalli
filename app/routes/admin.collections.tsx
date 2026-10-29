@@ -50,7 +50,15 @@ export default function AdminCollectionsPage() {
   const content = (data?.content || {}) as HomepageContent;
   const fetcher = useFetcher<typeof action>();
 
-  const [categories, setCategories] = useState(content.categories || []);
+  const defaultCategories = {
+    title: "Find Your Drape",
+    subtitle: "Explore our signature weaves categorized for every milestone",
+    layout: "grid" as const,
+    items: [],
+  };
+  const [categories, setCategories] = useState(
+    content.categories?.items ? content.categories : defaultCategories
+  );
   const [sections, setSections] = useState<HomepageSection[]>(content.sections || []);
   const [promotion, setPromotion] = useState(content.promotion || ({} as any));
 

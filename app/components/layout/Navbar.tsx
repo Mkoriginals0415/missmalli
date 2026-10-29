@@ -9,6 +9,7 @@ export function Navbar() {
   const currentPath = location.pathname;
   const { items: bagItems } = useBag();
   const { savedIds } = useSavedSarees();
+  const bagCount = bagItems.reduce((acc, i) => acc + (i.quantity || 1), 0);
 
   const navLinks = [
     { label: "Home", to: "/" },
@@ -97,9 +98,9 @@ export function Navbar() {
               aria-label="Shopping Bag"
             >
               <ShoppingBag className="w-5 h-5 stroke-[2.2]" />
-              {bagItems.length > 0 && (
+              {bagCount > 0 && (
                 <span className="absolute top-1.5 right-1.5 bg-brand-plum text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs">
-                  {bagItems.length}
+                  {bagCount}
                 </span>
               )}
             </Link>

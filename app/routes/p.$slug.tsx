@@ -186,7 +186,8 @@ export default function ProductDetailPage() {
       colorName: selectedColor,
       colorHex: product.variants[0]?.colorHex || "#5B2A6E",
       blouseOption,
-      price: product.price * quantity,
+      price: product.price,
+      quantity,
       imageUrl: product.images[0],
     });
     showToast(`Added ${quantity}x ${product.name} to bag`, { text: "View Bag", url: "/bag" });
