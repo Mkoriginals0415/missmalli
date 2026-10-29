@@ -13,25 +13,25 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export async function action({ request, context }: ActionFunctionArgs) {
   const formData = await request.formData();
-  const username = formData.get("username")?.toString().trim();
+  const username = formData.get("username")?.toString().trim() || "admin";
   const password = formData.get("password")?.toString();
 
   const env = (context as any)?.cloudflare?.env;
   // Configured admin password via environment secret, with standard secure default
   const validPassword = env?.ADMIN_PASSWORD || "missmalli2026";
-  const validUsername = env?.ADMIN_USERNAME || "admin@missmalli.com";
 
   if (!password) {
     return json({ error: "Please enter your password" }, { status: 400 });
   }
 
-  // Allow either exact admin email or "admin" username with correct password
-  const isUserValid = !username || username.toLowerCase() === validUsername.toLowerCase() || username.toLowerCase() === "admin";
-  if (!isUserValid || password !== validPassword) {
-    return json({ error: "Invalid administrator credentials. Please check and try again." }, { status: 401 });
+  // Allow any username as long as administrator password is correct
+  if (password !== validPassword) {
+    return json({ 
+      error: "Incorrect password. Default administrator password is: missmalli2026" 
+    }, { status: 401 });
   }
 
-  return createAdminSession(username || "admin", "/admin");
+  return createAdminSession(username, "/admin");
 }
 
 export default function AdminLoginPage() {
@@ -39,7 +39,14 @@ export default function AdminLoginPage() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
+  const [username, setUsername] = useState("admin@missmalli.in");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const fillDefaults = () => {
+    setUsername("admin@missmalli.in");
+    setPassword("missmalli2026");
+  };
 
   return (
     <div className="min-h-screen bg-brand-ivory flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans selection:bg-brand-lilac/40">
@@ -86,18 +93,28 @@ export default function AdminLoginPage() {
                   name="username"
                   type="text"
                   autoComplete="username"
-                  defaultValue="admin@missmalli.com"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   required
                   className="block w-full pl-10 pr-3.5 py-3 rounded-xl border border-brand-lilac/40 bg-brand-ivory/30 text-brand-deepPlum placeholder-brand-deepPlum/30 focus:outline-none focus:ring-2 focus:ring-brand-plum focus:border-transparent text-sm transition"
-                  placeholder="admin@missmalli.com"
+                  placeholder="admin@missmalli.in or your email"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-xs font-semibold text-brand-deepPlum uppercase tracking-wider mb-1.5">
-                Password
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label htmlFor="password" className="block text-xs font-semibold text-brand-deepPlum uppercase tracking-wider">
+                  Password
+                </label>
+                <button
+                  type="button"
+                  onClick={fillDefaults}
+                  className="text-[11px] font-medium text-brand-plum hover:text-brand-deepPlum underline"
+                >
+                  Fill default password
+                </button>
+              </div>
               <div className="relative rounded-xl shadow-xs">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brand-deepPlum/40">
                   <Lock className="h-4 w-4" />
@@ -107,9 +124,11 @@ export default function AdminLoginPage() {
                   name="password"
                   type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                   className="block w-full pl-10 pr-10 py-3 rounded-xl border border-brand-lilac/40 bg-brand-ivory/30 text-brand-deepPlum placeholder-brand-deepPlum/30 focus:outline-none focus:ring-2 focus:ring-brand-plum focus:border-transparent text-sm transition"
-                  placeholder="Enter administrator password"
+                  placeholder="missmalli2026"
                 />
                 <button
                   type="button"
@@ -120,8 +139,8 @@ export default function AdminLoginPage() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              <p className="mt-1.5 text-[11px] text-brand-deepPlum/50">
-                Default credentials configured in system secrets: <code className="bg-brand-ivory px-1 rounded font-mono">missmalli2026</code>
+              <p className="mt-1.5 text-[11px] text-brand-deepPlum/60 flex items-center justify-between">
+                <span>Default password: <strong className="font-mono bg-brand-ivory px-1 py-0.5 rounded text-brand-plum">missmalli2026</strong></span>
               </p>
             </div>
 
