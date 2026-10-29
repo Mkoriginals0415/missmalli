@@ -436,14 +436,14 @@ export default function AdminHomepageEditor() {
             </div>
           </div>
 
-          {/* Desktop Images Editor (5 Images) */}
+          {/* Desktop Images Editor */}
           <div className="space-y-3 pt-4 border-t border-brand-deepPlum/10">
             <div>
               <h4 className="text-xs font-bold uppercase tracking-wider text-brand-deepPlum">
-                Desktop 5-Column Gallery Images
+                Desktop Bento Moodboard Showcase Images
               </h4>
-              <p className="text-[11px] text-brand-deepPlum/60">
-                Upload photos directly from your computer for each column of the desktop gallery
+              <p className="text-[11px] text-brand-deepPlum/60 font-medium">
+                Upload luxury editorial moodboard, loom craftsmanship, and handloom silk aesthetic photos (these are brand showcase visuals, distinct from individual catalog products)
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">

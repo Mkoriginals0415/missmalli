@@ -39,6 +39,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
     { title: `${title} | Miss Malli` },
     { name: "description", content: description },
+    { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" },
     { name: "robots", content: "noindex, nofollow" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },

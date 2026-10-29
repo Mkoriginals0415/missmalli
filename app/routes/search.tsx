@@ -95,8 +95,8 @@ export default function SearchPage() {
                     key={product.id}
                     className="bg-white rounded-[22px] overflow-hidden border border-brand-lilac/30 shadow-sm flex flex-col justify-between"
                   >
-                    <div className="relative aspect-[3/4] bg-brand-lilac/10">
-                      <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                    <div className="relative aspect-[2/3] bg-brand-ivory/60 overflow-hidden">
+                      <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover object-top" />
                       <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full bg-brand-deepPlum text-white text-[9px] font-bold">
                         #{product.code}
                       </span>

@@ -93,11 +93,11 @@ export default function WishlistPage() {
                 key={saree.id}
                 className="bg-white rounded-[18px] sm:rounded-[22px] overflow-hidden border border-brand-lilac/30 shadow-xs flex flex-col justify-between"
               >
-                <div className="relative aspect-[3/4] bg-brand-lilac/10 overflow-hidden">
+                <div className="relative aspect-[2/3] bg-brand-ivory/60 overflow-hidden">
                   <img
                     src={saree.images[0]}
                     alt={saree.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500"
                   />
                   <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full bg-brand-deepPlum text-white text-[9px] font-bold">
                     #{saree.code}

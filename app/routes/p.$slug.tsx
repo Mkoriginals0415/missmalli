@@ -49,6 +49,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
     { title },
     { name: "description", content: description },
+    { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:image", content: image },
@@ -225,16 +226,16 @@ export default function ProductDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-12 items-start">
           {/* Left: Thumbnail Column + Main Image with Mobile Swipe indicator */}
           <div className="lg:col-span-7 flex flex-col sm:flex-row-reverse gap-3 sm:gap-4 items-start">
-            {/* Main Image with Zoom on Hover */}
-            <div className="relative flex-1 aspect-[3/4] w-full rounded-[24px] sm:rounded-[28px] overflow-hidden bg-brand-lilac/20 shadow-md group">
+            {/* Main Image with Zoom on Hover - aspect-[2/3] fits 9:16/tall portrait without cutting off */}
+            <div className="relative flex-1 aspect-[2/3] max-h-[78vh] w-full rounded-[24px] sm:rounded-[28px] overflow-hidden bg-brand-ivory border border-brand-lilac/30 shadow-md group flex items-center justify-center">
               <img
                 src={product.images[activePhoto] || product.images[0]}
                 alt={product.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition duration-500 ease-out"
+                className="w-full h-full object-contain sm:object-cover sm:object-top group-hover:scale-102 transition duration-500 ease-out"
               />
               
               {/* Photo Counter Badge (Mobile & Desktop) */}
-              <span className="absolute bottom-3 left-3 px-3 py-1 rounded-full bg-black/50 backdrop-blur-xs text-white text-[11px] font-medium tracking-wide">
+              <span className="absolute bottom-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-xs text-white text-[11px] font-medium tracking-wide">
                 {activePhoto + 1} / {product.images.length}
               </span>
 
@@ -273,13 +274,13 @@ export default function ProductDetailPage() {
                 <button
                   key={idx}
                   onClick={() => setActivePhoto(idx)}
-                  className={`w-14 sm:w-20 aspect-[3/4] rounded-[14px] sm:rounded-[16px] overflow-hidden border-2 transition shrink-0 ${
+                  className={`w-14 sm:w-20 aspect-[2/3] rounded-[14px] sm:rounded-[16px] overflow-hidden border-2 transition shrink-0 bg-brand-ivory/60 ${
                     activePhoto === idx
                       ? "border-brand-plum shadow-md scale-95"
                       : "border-transparent opacity-70 hover:opacity-100"
                   }`}
                 >
-                  <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                  <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover object-top" />
                 </button>
               ))}
             </div>

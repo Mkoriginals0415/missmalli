@@ -167,44 +167,98 @@ export default function HomePage() {
                   </div>
 
                   {/* ----------------------------------------------------------
-                      MOBILE HERO VIEW (Page 11 Notched 2-Card Layout)
+                      MOBILE HERO VIEW: Interlocking Bento Moodboard Showcase
                      ---------------------------------------------------------- */}
-                  <div className="block lg:hidden space-y-5">
-                    {/* Horizontal Smooth Snap Gallery of All Mobile Hero Pictures */}
-                    <div className="relative">
-                      <div className="flex gap-3.5 overflow-x-auto no-scrollbar snap-x snap-mandatory -mx-4 px-4 sm:mx-0 sm:px-0 py-1 scroll-smooth">
-                        {(hero.mobileImages && hero.mobileImages.length > 0 ? hero.mobileImages : hero.desktopImages).map((imgUrl, i) => {
-                          const notchedClass =
-                            i % 4 === 0
-                              ? "notched-tl bg-brand-lilac/30"
-                              : i % 4 === 1
-                              ? "notched-arch bg-brand-lilac/40"
-                              : i % 4 === 2
-                              ? "notched-tr bg-brand-blush/30"
-                              : "rounded-[24px] bg-brand-gold/20";
+                  <div className="block lg:hidden space-y-4">
+                    <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory -mx-4 px-4 py-1 scroll-smooth">
+                      {/* Card 1: Tall Arched Pill */}
+                      <div className="snap-center shrink-0 w-[65vw] sm:w-[45vw] h-[360px] rounded-t-full rounded-b-[32px] overflow-hidden relative shadow-md bg-brand-plum/20">
+                        <img
+                          src={hero.mobileImages[0] || hero.desktopImages[0]}
+                          alt="Heritage Silk"
+                          className="w-full h-full object-cover object-top"
+                          loading="eager"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/85 via-transparent to-transparent flex items-end p-4">
+                          <div className="text-white">
+                            <span className="text-[10px] uppercase font-bold tracking-widest text-brand-lilac block">Heirloom Weave</span>
+                            <span className="text-sm font-serif italic">Pure Handloom Silk</span>
+                          </div>
+                        </div>
+                      </div>
 
-                          return (
-                            <div
-                              key={i}
-                              className={`snap-center shrink-0 w-[70vw] sm:w-[48vw] aspect-[3/4] ${notchedClass} overflow-hidden shadow-md relative group`}
-                            >
-                              <img
-                                src={imgUrl}
-                                alt={`Heritage Drape ${i + 1}`}
-                                className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                                loading={i === 0 ? "eager" : "lazy"}
-                              />
-                              <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold">
-                                {i + 1} / {(hero.mobileImages || []).length}
-                              </div>
-                            </div>
-                          );
-                        })}
+                      {/* Card 2: Stack of 2 Rounded Bento Blocks */}
+                      <div className="snap-center shrink-0 w-[65vw] sm:w-[45vw] h-[360px] flex flex-col gap-3">
+                        <div className="flex-1 rounded-[28px] overflow-hidden relative shadow-sm bg-brand-gold/20">
+                          <img
+                            src={hero.mobileImages[2] || hero.desktopImages[2]}
+                            alt="Antique Gold Zari"
+                            className="w-full h-full object-cover object-center"
+                            loading="lazy"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/70 via-transparent to-transparent flex items-end p-3.5">
+                            <span className="text-xs font-serif text-white">Antique Zari Brocade</span>
+                          </div>
+                        </div>
+                        <div className="h-[140px] rounded-full overflow-hidden relative shadow-sm bg-brand-lilac/30">
+                          <img
+                            src={hero.mobileImages[4] || hero.desktopImages[4]}
+                            alt="Master Loom"
+                            className="w-full h-full object-cover object-center"
+                            loading="lazy"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/70 via-transparent to-transparent flex items-end p-3.5 px-5">
+                            <span className="text-[11px] font-serif italic text-white">Master Weaver Looms</span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between px-1 pt-1.5 text-[11px] text-brand-deepPlum/60 font-semibold">
-                        <span>Swipe to explore handcrafted weaves</span>
-                        <span>→</span>
+
+                      {/* Card 3: Tall Rounded Rectangle with Inverted Arch */}
+                      <div className="snap-center shrink-0 w-[65vw] sm:w-[45vw] h-[360px] rounded-t-[32px] rounded-b-full overflow-hidden relative shadow-md bg-brand-blush/30">
+                        <img
+                          src={hero.mobileImages[1] || hero.desktopImages[1]}
+                          alt="Georgette Drape"
+                          className="w-full h-full object-cover object-top"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/85 via-transparent to-transparent flex items-end p-4">
+                          <div className="text-white">
+                            <span className="text-[10px] uppercase font-bold tracking-widest text-brand-lilac block">Fluid Grace</span>
+                            <span className="text-sm font-serif italic">Serene Georgette Fall</span>
+                          </div>
+                        </div>
                       </div>
+
+                      {/* Card 4: Stack of Horizontal Pill & Square Card */}
+                      <div className="snap-center shrink-0 w-[65vw] sm:w-[45vw] h-[360px] flex flex-col gap-3">
+                        <div className="h-[140px] rounded-full overflow-hidden relative shadow-sm bg-brand-plum/30">
+                          <img
+                            src={hero.mobileImages[3] || hero.desktopImages[3]}
+                            alt="Satin Crepe"
+                            className="w-full h-full object-cover object-center"
+                            loading="lazy"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/70 via-transparent to-transparent flex items-end p-3.5 px-5">
+                            <span className="text-[11px] font-serif italic text-white">Lustrous Satin Drape</span>
+                          </div>
+                        </div>
+                        <div className="flex-1 rounded-[28px] overflow-hidden relative shadow-sm bg-brand-gold/30">
+                          <img
+                            src={hero.mobileImages[0] || hero.desktopImages[0]}
+                            alt="Palace Drape"
+                            className="w-full h-full object-cover object-top"
+                            loading="lazy"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/70 via-transparent to-transparent flex items-end p-3.5">
+                            <span className="text-xs font-serif text-white">Crafted for Milestones</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between px-1 text-[11px] text-brand-deepPlum/60 font-semibold">
+                      <span>Swipe to explore editorial moodboard</span>
+                      <span>→</span>
                     </div>
 
                     {/* Centered Explore Button on Mobile */}
@@ -242,84 +296,102 @@ export default function HomePage() {
                   </div>
 
                   {/* ----------------------------------------------------------
-                      DESKTOP HERO VIEW (5-Column Notched Gallery)
+                      DESKTOP HERO VIEW: Interlocking Bento Moodboard Showcase
                      ---------------------------------------------------------- */}
-                  <div className="hidden lg:grid grid-cols-5 gap-4 items-center">
-                    {/* Column 1 */}
-                    <div className="flex flex-col gap-4">
-                      <div className="relative aspect-[3/4] notched-tl overflow-hidden bg-brand-lilac/30 shadow-md group">
-                        <img
-                          src={hero.desktopImages[0]}
-                          alt="Saree Gallery 1"
-                          className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                        />
-                      </div>
-                      <div className="relative aspect-[4/3] rounded-[22px] overflow-hidden bg-brand-blush/30 shadow-sm group">
+                  <div className="hidden lg:grid grid-cols-12 gap-3.5 h-[520px] items-stretch bento-hero-mosaic">
+                    {/* Column 1 (span 3): Horizontal pill top + tall vertical card bottom */}
+                    <div className="col-span-3 flex flex-col gap-3.5">
+                      <div className="relative h-[160px] rounded-[36px] overflow-hidden bg-brand-lilac/30 shadow-sm group">
                         <img
                           src={hero.desktopImages[4] || hero.desktopImages[0]}
-                          alt="Zari Weave"
-                          className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                          alt="Master Loom Weaving"
+                          className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-700"
                         />
+                        <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/70 via-transparent to-transparent flex items-end p-4">
+                          <span className="text-[11px] font-serif italic text-white/95">Master Weaver Looms</span>
+                        </div>
                       </div>
-                    </div>
-
-                    {/* Column 2: Arched Tall */}
-                    <div className="relative aspect-[3/5] notched-arch overflow-hidden bg-brand-lilac/40 shadow-lg group">
-                      <img
-                        src={hero.desktopImages[1]}
-                        alt="Saree Gallery 2"
-                        className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/60 via-transparent to-transparent flex items-end p-4">
-                        <span className="text-white text-xs font-serif italic">Pure Lilac Handloom</span>
-                      </div>
-                    </div>
-
-                    {/* Column 3: Center with Explore Pill */}
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="relative w-full aspect-[4/5] rounded-[22px] overflow-hidden bg-brand-gold/20 shadow-md group border border-brand-gold/30">
+                      <div className="relative flex-1 rounded-[36px] overflow-hidden bg-brand-gold/20 shadow-md group border border-brand-gold/30">
                         <img
-                          src={hero.desktopImages[2]}
-                          alt="Saree Gallery 3"
-                          className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                          src={hero.desktopImages[0]}
+                          alt="Heritage Silk Drape"
+                          className="w-full h-full object-cover object-top group-hover:scale-105 transition duration-700"
                         />
+                        <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/75 via-transparent to-transparent flex items-end p-4">
+                          <span className="text-xs font-serif text-white font-medium">Pure Kanjivaram Silk</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Column 2 (span 3): Tall Arched Organic Card + Explore Pill */}
+                    <div className="col-span-3 flex flex-col gap-3.5">
+                      <div className="relative flex-1 rounded-t-full rounded-b-[36px] overflow-hidden bg-brand-plum/20 shadow-lg group">
+                        <img
+                          src={hero.desktopImages[1]}
+                          alt="Lilac Handloom Silk"
+                          className="w-full h-full object-cover object-top group-hover:scale-105 transition duration-700"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/80 via-transparent to-transparent flex items-end p-5">
+                          <div className="text-white space-y-0.5">
+                            <span className="text-[10px] tracking-widest uppercase font-bold text-brand-lilac block">Heirloom Weave</span>
+                            <span className="text-sm font-serif italic">Soft Georgette Fall</span>
+                          </div>
+                        </div>
                       </div>
                       <Link
                         to={hero.buttonLink || "/sarees"}
-                        className="w-full py-3.5 px-6 rounded-full bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-lg flex items-center justify-center gap-2 group"
+                        className="h-[56px] rounded-full bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md flex items-center justify-between px-6 group"
                       >
                         <span>{hero.buttonText}</span>
-                        <span className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition">↗</span>
+                        <span className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-1 transition">↗</span>
                       </Link>
                     </div>
 
-                    {/* Column 4: Arched Tall */}
-                    <div className="relative aspect-[3/5] notched-arch overflow-hidden bg-brand-plum/30 shadow-lg group">
-                      <img
-                        src={hero.desktopImages[3]}
-                        alt="Saree Gallery 4"
-                        className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/60 via-transparent to-transparent flex items-end p-4">
-                        <span className="text-white text-xs font-serif italic">Royal Paithani Weave</span>
+                    {/* Column 3 (span 3): Square Rounded Card + Inverted Arched Card */}
+                    <div className="col-span-3 flex flex-col gap-3.5">
+                      <div className="relative h-[230px] rounded-[36px] overflow-hidden bg-brand-blush/30 shadow-md group">
+                        <img
+                          src={hero.desktopImages[2]}
+                          alt="Antique Gold Zari"
+                          className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-700"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/65 via-transparent to-transparent flex items-end p-4">
+                          <span className="text-xs font-serif text-white">Antique Gold Zari Brocade</span>
+                        </div>
+                      </div>
+                      <div className="relative flex-1 rounded-t-[36px] rounded-b-full overflow-hidden bg-brand-lilac/30 shadow-sm group">
+                        <img
+                          src={hero.desktopImages[5] || hero.desktopImages[1]}
+                          alt="Artisan Craftsmanship"
+                          className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-700"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/70 via-transparent to-transparent flex items-end p-4">
+                          <span className="text-[11px] font-serif italic text-white/95">Centuries of Heritage</span>
+                        </div>
                       </div>
                     </div>
 
-                    {/* Column 5 */}
-                    <div className="flex flex-col gap-4">
-                      <div className="relative aspect-[4/3] notched-tr overflow-hidden bg-brand-blush/30 shadow-md group">
+                    {/* Column 4 (span 3): Tall Vertical Card + Horizontal Pill */}
+                    <div className="col-span-3 flex flex-col gap-3.5">
+                      <div className="relative flex-1 rounded-[36px] overflow-hidden bg-brand-gold/30 shadow-md group">
                         <img
-                          src={hero.desktopImages[1]}
-                          alt="Saree Gallery 5"
-                          className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                          src={hero.desktopImages[3]}
+                          alt="Emerald Satin Crepe"
+                          className="w-full h-full object-cover object-top group-hover:scale-105 transition duration-700"
                         />
+                        <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/75 via-transparent to-transparent flex items-end p-4">
+                          <span className="text-xs font-serif text-white">Lustrous Satin Crepe</span>
+                        </div>
                       </div>
-                      <div className="relative aspect-[3/4] rounded-[22px] overflow-hidden bg-brand-lilac/30 shadow-sm group">
+                      <div className="relative h-[150px] rounded-full overflow-hidden bg-brand-deepPlum/20 shadow-sm group">
                         <img
-                          src={hero.desktopImages[0]}
-                          alt="Drape"
-                          className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                          src={hero.desktopImages[4] || hero.desktopImages[2]}
+                          alt="Artisan Loom"
+                          className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-700"
                         />
+                        <div className="absolute inset-0 bg-gradient-to-r from-brand-deepPlum/80 via-transparent to-transparent flex items-center px-6">
+                          <span className="text-xs font-serif italic text-white">Crafted by Master Hands</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -457,11 +529,11 @@ export default function HomePage() {
                         to={`/p/${product.slug}`}
                         className="group bg-white rounded-[22px] overflow-hidden border border-brand-lilac/30 shadow-sm hover:shadow-md transition flex flex-col justify-between"
                       >
-                        <div className="relative aspect-[3/4] bg-brand-lilac/10 overflow-hidden">
+                        <div className="relative aspect-[2/3] bg-brand-ivory/60 overflow-hidden">
                           <img
                             src={product.images[0]}
                             alt={product.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                            className="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500"
                           />
 
                           <div className="absolute top-3 left-3 flex flex-col gap-1">

@@ -304,12 +304,12 @@ export default function SareesListingPage() {
                     to={`/p/${product.slug}`}
                     className="group bg-white rounded-[18px] sm:rounded-[22px] overflow-hidden border border-brand-lilac/30 shadow-xs hover:shadow-md transition flex flex-col justify-between"
                   >
-                    {/* Photo container */}
-                    <div className="relative aspect-[3/4] bg-brand-lilac/10 overflow-hidden">
+                    {/* Photo container - 2:3 vertical portrait with object-top */}
+                    <div className="relative aspect-[2/3] bg-brand-ivory/60 overflow-hidden">
                       <img
                         src={product.images[0]}
                         alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                        className="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500"
                         loading="lazy"
                       />
 

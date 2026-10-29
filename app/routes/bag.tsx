@@ -186,7 +186,7 @@ export default function ShoppingBagPage() {
                       <img
                         src={item.imageUrl}
                         alt={item.name}
-                        className="w-20 h-24 sm:w-24 sm:h-28 rounded-[18px] object-cover bg-brand-lilac/10 shrink-0"
+                        className="w-20 aspect-[2/3] sm:w-24 rounded-[18px] object-cover object-top bg-brand-ivory/60 shrink-0 border border-brand-deepPlum/10"
                       />
                       <div className="space-y-1">
                         <Link to={`/p/${item.slug}`} className="hover:text-brand-plum">
