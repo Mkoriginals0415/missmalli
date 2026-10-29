@@ -6,43 +6,59 @@ import { getAllRequests } from "~/db/d1.server";
 
 export async function loader({ context }: LoaderFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
-  const requests = await getAllRequests(env);
-  return json({ requests });
+  try {
+    const requests = await getAllRequests(env);
+    return json({ requests: Array.isArray(requests) ? requests : [] });
+  } catch (e) {
+    return json({ requests: [] });
+  }
 }
 
 export default function AdminRequestsPage() {
-  const { requests } = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
+  const requests = Array.isArray(data?.requests) ? data.requests : [];
   const [activeFilter, setActiveFilter] = useState<string>("needs_reply");
   const [searchQuery, setSearchQuery] = useState("");
 
   const filterTabs = [
-    { key: "needs_reply", label: "Needs reply", count: requests.filter((r) => r.status === "needs_reply").length },
-    { key: "replied", label: "Replied", count: requests.filter((r) => r.status === "replied").length },
-    { key: "confirmed", label: "Confirmed", count: requests.filter((r) => r.status === "confirmed").length },
-    { key: "dispatched", label: "Dispatched", count: requests.filter((r) => r.status === "dispatched").length },
-    { key: "closed", label: "Closed", count: requests.filter((r) => r.status === "closed").length },
+    { key: "needs_reply", label: "Needs reply", count: requests.filter((r) => r?.status === "needs_reply").length },
+    { key: "replied", label: "Replied", count: requests.filter((r) => r?.status === "replied").length },
+    { key: "confirmed", label: "Confirmed", count: requests.filter((r) => r?.status === "confirmed").length },
+    { key: "dispatched", label: "Dispatched", count: requests.filter((r) => r?.status === "dispatched").length },
+    { key: "closed", label: "Closed", count: requests.filter((r) => r?.status === "closed").length },
     { key: "all", label: "All", count: requests.length },
   ];
 
   const filteredRequests = useMemo(() => {
     return requests.filter((r) => {
+      if (!r) return false;
       const matchesFilter = activeFilter === "all" ? true : r.status === activeFilter;
+      const reqNumber = r.requestNumber || "";
+      const items = Array.isArray(r.items) ? r.items : [];
       const matchesSearch =
         searchQuery === "" ||
-        r.requestNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        r.items.some((i: any) => i.productName.toLowerCase().includes(searchQuery.toLowerCase()));
+        reqNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        items.some((i: any) => (i?.productName || "").toLowerCase().includes(searchQuery.toLowerCase()));
       return matchesFilter && matchesSearch;
     });
   }, [requests, activeFilter, searchQuery]);
 
   // Helper for human-readable age
-  const getAge = (isoString: string) => {
-    const diffMs = Date.now() - new Date(isoString).getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    if (diffMins < 60) return `${Math.max(1, diffMins)} min`;
-    const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours} hrs`;
-    return `${Math.floor(diffHours / 24)}d ago`;
+  const getAge = (isoString?: string) => {
+    if (!isoString) return "Recently";
+    try {
+      const parsedTime = new Date(isoString).getTime();
+      if (isNaN(parsedTime)) return "Recently";
+      const diffMs = Date.now() - parsedTime;
+      const diffMins = Math.floor(diffMs / 60000);
+      if (diffMins < 1) return "Just now";
+      if (diffMins < 60) return `${diffMins} min`;
+      const diffHours = Math.floor(diffMins / 60);
+      if (diffHours < 24) return `${diffHours} hrs`;
+      return `${Math.floor(diffHours / 24)}d ago`;
+    } catch {
+      return "Recently";
+    }
   };
 
   return (
@@ -122,10 +138,10 @@ export default function AdminRequestsPage() {
 
                   <div>
                     <p className="text-xs font-semibold text-brand-dark leading-snug">
-                      {req.items.map((i: any) => i.productName).join(", ")}
+                      {(req.items || []).map((i: any) => i?.productName || "Saree").join(", ")}
                     </p>
                     <span className="text-xs text-brand-dark/60 block mt-0.5">
-                      {req.items.length} {req.items.length === 1 ? "saree" : "sarees"}
+                      {(req.items || []).length} {(req.items || []).length === 1 ? "saree" : "sarees"}
                     </span>
                   </div>
 
@@ -133,7 +149,7 @@ export default function AdminRequestsPage() {
                     <div>
                       <span className="text-[10px] text-brand-dark/60 uppercase tracking-wider block font-semibold">Total Amount</span>
                       <span className="text-sm font-bold text-brand-plum">
-                        ₹ {req.totalAmount.toLocaleString("en-IN")}
+                        ₹ {Number(req.totalAmount || 0).toLocaleString("en-IN")}
                       </span>
                     </div>
 
@@ -172,11 +188,11 @@ export default function AdminRequestsPage() {
                       </td>
                       <td className="py-3 px-4 max-w-xs truncate">
                         <span className="font-medium text-brand-dark">
-                          {req.items.map((i: any) => i.productName).join(", ")}
+                          {(req.items || []).map((i: any) => i?.productName || "Saree").join(", ")}
                         </span>
                       </td>
                       <td className="py-3 px-4 font-bold text-brand-dark">
-                        ₹ {req.totalAmount.toLocaleString("en-IN")}
+                        ₹ {Number(req.totalAmount || 0).toLocaleString("en-IN")}
                       </td>
                       <td className="py-3 px-4">
                         <span className={`px-2 py-0.5 rounded-full text-[10px] uppercase font-semibold ${

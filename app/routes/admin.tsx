@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { json, type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { useLoaderData, Link, Outlet, useLocation, Form } from "@remix-run/react";
+import { useLoaderData, Link, Outlet, useLocation, Form, useRouteError } from "@remix-run/react";
 import { 
   Inbox, 
   Package, 
@@ -23,12 +23,19 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   }
   await requireAdmin(request);
   const env = (context as any)?.cloudflare?.env;
-  const requests = await getAllRequests(env);
-  const needsReplyCount = requests.filter((r) => r.status === "needs_reply").length;
+  try {
+    const requests = await getAllRequests(env);
+    const safeRequests = Array.isArray(requests) ? requests : [];
+    const needsReplyCount = safeRequests.filter((r) => r?.status === "needs_reply").length;
 
-  return json({
-    needsReplyCount,
-  });
+    return json({
+      needsReplyCount,
+    });
+  } catch (e) {
+    return json({
+      needsReplyCount: 0,
+    });
+  }
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -325,6 +332,39 @@ export default function AdminLayout() {
       <main className="flex-1 p-3.5 sm:p-6 lg:p-8 max-w-5xl">
         <Outlet />
       </main>
+    </div>
+  );
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+  const message = error instanceof Error ? error.message : "An unexpected error occurred in the administration panel.";
+
+  return (
+    <div className="min-h-screen bg-[#F5F2EB] flex items-center justify-center p-6">
+      <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center border border-brand-lilac/30">
+        <div className="w-12 h-12 rounded-full bg-brand-plum/10 text-brand-plum flex items-center justify-center mx-auto mb-4 font-bold text-lg">
+          !
+        </div>
+        <h2 className="text-xl font-serif font-bold text-brand-deepPlum mb-2">Admin Section Notice</h2>
+        <p className="text-xs text-brand-deepPlum/70 mb-6 leading-relaxed">
+          {message}
+        </p>
+        <div className="flex flex-col sm:flex-row gap-2 justify-center">
+          <Link
+            to="/admin"
+            className="px-5 py-2.5 rounded-full bg-brand-plum text-white text-xs font-semibold hover:bg-brand-deepPlum transition shadow-sm"
+          >
+            Reload Dashboard
+          </Link>
+          <Link
+            to="/"
+            className="px-5 py-2.5 rounded-full border border-brand-plum/30 text-brand-plum text-xs font-semibold hover:bg-brand-plum/5 transition"
+          >
+            Return to Store
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

@@ -87,27 +87,47 @@ export default function App() {
 export function ErrorBoundary() {
   const error = useRouteError();
 
+  let title = "Something went wrong";
+  let message = "An unexpected error occurred while loading this page.";
+
+  if (isRouteErrorResponse(error)) {
+    title = `${error.status} ${error.statusText}`;
+    message = error.data?.message || "The page you're looking for doesn't exist or has moved.";
+  } else if (error instanceof Error) {
+    message = error.message;
+  } else if (typeof error === "string") {
+    message = error;
+  }
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center bg-brand-ivory">
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center bg-brand-ivory font-sans">
       <div className="w-16 h-16 rounded-full bg-brand-blush/30 flex items-center justify-center mb-4 text-brand-plum text-2xl font-serif">
         MM
       </div>
       <h1 className="text-2xl font-serif text-brand-plum mb-2">
-        {isRouteErrorResponse(error)
-          ? `${error.status} ${error.statusText}`
-          : "Something went wrong"}
+        {title}
       </h1>
-      <p className="text-brand-dark/70 max-w-sm mb-6 text-sm">
-        {isRouteErrorResponse(error)
-          ? error.data?.message || "The page you're looking for doesn't exist or has moved."
-          : "An unexpected error occurred while loading this page."}
+      <p className="text-brand-dark/70 max-w-sm mb-6 text-xs leading-relaxed">
+        {message}
       </p>
-      <Link
-        to="/"
-        className="px-6 py-2.5 rounded-full bg-brand-purple text-white text-sm font-medium hover:bg-brand-plum transition shadow-sm"
-      >
-        Return to Home
-      </Link>
+      <div className="flex items-center gap-3">
+        <button
+          onClick={() => {
+            if (typeof window !== "undefined") {
+              window.location.reload();
+            }
+          }}
+          className="px-6 py-2.5 rounded-full border border-brand-purple/40 text-brand-purple text-xs font-semibold hover:bg-brand-purple/5 transition"
+        >
+          Try Again
+        </button>
+        <Link
+          to="/"
+          className="px-6 py-2.5 rounded-full bg-brand-purple text-white text-xs font-semibold hover:bg-brand-plum transition shadow-sm"
+        >
+          Return to Home
+        </Link>
+      </div>
     </div>
   );
 }
