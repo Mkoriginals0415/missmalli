@@ -1,8 +1,4 @@
 import { Link } from "@remix-run/react";
-import { MessageCircle, ArrowRight } from "lucide-react";
-import { useState } from "react";
-
-import { Link } from "@remix-run/react";
 import { MessageCircle, ArrowRight, ChevronDown } from "lucide-react";
 import { useState } from "react";
 
@@ -75,9 +71,10 @@ export function Footer() {
               }`}
             >
               <li><Link to="/sarees" className="hover:text-brand-lilac transition block py-1">Sarees</Link></li>
-              <li><Link to="/sarees?collection=dresses" className="hover:text-brand-lilac transition block py-1">Dresses</Link></li>
-              <li><Link to="/sarees?collection=materials" className="hover:text-brand-lilac transition block py-1">Dress Materials</Link></li>
-              <li><Link to="/sarees?filter=sale" className="hover:text-brand-lilac transition block py-1">Festive Sale</Link></li>
+              <li><Link to="/dresses" className="hover:text-brand-lilac transition block py-1">Dresses</Link></li>
+              <li><Link to="/materials" className="hover:text-brand-lilac transition block py-1">Dress Materials</Link></li>
+              <li><Link to="/exclusive" className="hover:text-brand-lilac transition block py-1">Exclusive</Link></li>
+              <li><Link to="/sale" className="hover:text-brand-lilac transition block py-1">Festive Sale</Link></li>
             </ul>
           </div>
 
@@ -124,7 +121,7 @@ export function Footer() {
                 openSection === "company" ? "block" : "hidden lg:block"
               }`}
             >
-              <li><Link to="/info?tab=about" className="hover:text-brand-lilac transition block py-1">Our Heritage & Artisans</Link></li>
+              <li><Link to="/artisans" className="hover:text-brand-lilac transition block py-1">Our Heritage & Artisans</Link></li>
               <li><Link to="/info?tab=contact" className="hover:text-brand-lilac transition block py-1">Contact Concierge</Link></li>
               <li><Link to="/admin" className="hover:text-brand-lilac transition block py-1">Seller Portal</Link></li>
             </ul>

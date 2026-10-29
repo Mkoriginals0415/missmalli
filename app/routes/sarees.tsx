@@ -10,17 +10,49 @@ import { useSavedSarees } from "~/hooks/useLocalStorage";
 export async function loader({ request, context }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const collection = url.searchParams.get("collection");
+  const filter = url.searchParams.get("filter");
 
   let list = [...INITIAL_PRODUCTS];
-  if (collection) {
+  let categoryTitle = "Sarees";
+  let categorySubtitle = "Handcrafted pure silk, tissue and georgette drapes";
+  let breadcrumbName = "Sarees";
+
+  if (collection === "dresses") {
+    categoryTitle = "Dresses";
+    breadcrumbName = "Dresses";
+    categorySubtitle = "Contemporary festive dresses and elegant handwoven silhouettes";
+    list = list.filter((p) => p.collectionSlug === "dresses");
+  } else if (collection === "materials") {
+    categoryTitle = "Dress Materials";
+    breadcrumbName = "Dress Materials";
+    categorySubtitle = "Unstitched handloom fabrics and pure silk suit sets";
+    list = list.filter((p) => p.collectionSlug === "materials");
+  } else if (collection === "exclusive") {
+    categoryTitle = "Exclusive Edit";
+    breadcrumbName = "Exclusive";
+    categorySubtitle = "Heirloom bridal weaves and master artisan limited editions";
+    list = list.filter((p) => p.collectionSlug === "exclusive");
+  } else if (filter === "sale") {
+    categoryTitle = "Festive Sale · Flat 30% Off";
+    breadcrumbName = "Sale";
+    categorySubtitle = "Special festive markdowns on handwoven silk sarees";
+    list = list.filter((p) => p.discount || p.originalPrice);
+  } else if (collection) {
+    categoryTitle = collection.charAt(0).toUpperCase() + collection.slice(1);
+    breadcrumbName = categoryTitle;
     list = list.filter((p) => p.collectionSlug === collection);
   }
 
-  return json({ products: list });
+  return json({
+    products: list,
+    categoryTitle,
+    categorySubtitle,
+    breadcrumbName,
+  });
 }
 
 export default function SareesListingPage() {
-  const { products } = useLoaderData<typeof loader>();
+  const { products, categoryTitle, categorySubtitle, breadcrumbName } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
   const { isSaved, toggleSave } = useSavedSarees();
 
@@ -84,16 +116,16 @@ export default function SareesListingPage() {
           <nav className="text-xs text-brand-deepPlum/70 mb-1.5 flex items-center gap-1.5 font-medium">
             <Link to="/" className="hover:text-brand-plum">Home</Link>
             <span>/</span>
-            <span className="text-brand-deepPlum font-bold">Sarees</span>
+            <span className="text-brand-deepPlum font-bold">{breadcrumbName}</span>
           </nav>
 
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
             <div>
-              <h1 className="text-2xl sm:text-4xl font-bold text-brand-deepPlum">
-                Sarees
+              <h1 className="text-2xl sm:text-4xl font-serif font-bold text-brand-deepPlum">
+                {categoryTitle}
               </h1>
               <p className="text-xs text-brand-deepPlum/70 mt-0.5 font-medium">
-                {filtered.length} authentic handloom designs available
+                {filtered.length} authentic designs available · {categorySubtitle}
               </p>
             </div>
 

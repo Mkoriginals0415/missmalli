@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { json, type LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { useLoaderData, Link, Outlet, useLocation } from "@remix-run/react";
+import { json, type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/cloudflare";
+import { useLoaderData, Link, Outlet, useLocation, Form } from "@remix-run/react";
 import { 
   Inbox, 
   Package, 
@@ -10,11 +10,14 @@ import {
   ExternalLink,
   Store,
   Menu,
-  X
+  X,
+  LogOut
 } from "lucide-react";
 import { getAllRequests } from "~/db/d1.server";
+import { requireAdmin, destroyAdminSession } from "~/utils/auth.server";
 
-export async function loader({ context }: LoaderFunctionArgs) {
+export async function loader({ request, context }: LoaderFunctionArgs) {
+  await requireAdmin(request);
   const env = (context as any)?.cloudflare?.env;
   const requests = await getAllRequests(env);
   const needsReplyCount = requests.filter((r) => r.status === "needs_reply").length;
@@ -22,6 +25,14 @@ export async function loader({ context }: LoaderFunctionArgs) {
   return json({
     needsReplyCount,
   });
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  if (formData.get("_action") === "logout") {
+    return destroyAdminSession(request);
+  }
+  return json({});
 }
 
 export default function AdminLayout() {
@@ -204,6 +215,16 @@ export default function AdminLayout() {
                 <Store className="w-4 h-4" />
                 <span>Open Public Store ↗</span>
               </Link>
+              <Form method="post">
+                <input type="hidden" name="_action" value="logout" />
+                <button
+                  type="submit"
+                  className="w-full flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 transition"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Sign Out</span>
+                </button>
+              </Form>
             </div>
           </div>
         </div>
@@ -273,16 +294,26 @@ export default function AdminLayout() {
           </nav>
         </div>
 
-        {/* Back to store pill */}
-        <div className="pt-4 border-t border-brand-deepPlum/10">
+        {/* Back to store pill & Logout */}
+        <div className="pt-4 border-t border-brand-deepPlum/10 space-y-2">
           <Link
             to="/"
             target="_blank"
-            className="flex items-center gap-2 text-xs font-bold text-brand-deepPlum/70 hover:text-brand-plum"
+            className="flex items-center gap-2 text-xs font-bold text-brand-deepPlum/70 hover:text-brand-plum py-1"
           >
             <Store className="w-4 h-4" />
-            <span>Open Customer Store</span>
+            <span>Open Customer Store ↗</span>
           </Link>
+          <Form method="post">
+            <input type="hidden" name="_action" value="logout" />
+            <button
+              type="submit"
+              className="flex items-center gap-2 text-xs font-bold text-red-600/80 hover:text-red-700 py-1 transition"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Sign Out</span>
+            </button>
+          </Form>
         </div>
       </aside>
 

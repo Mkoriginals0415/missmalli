@@ -13,10 +13,11 @@ export function Navbar() {
   const navLinks = [
     { label: "Home", to: "/" },
     { label: "Sarees", to: "/sarees" },
-    { label: "Sale", to: "/sarees?filter=sale" },
-    { label: "Dresses", to: "/sarees?collection=dresses" },
-    { label: "Dress Materials", to: "/sarees?collection=materials" },
-    { label: "Exclusive", to: "/sarees?collection=exclusive" },
+    { label: "Sale", to: "/sale" },
+    { label: "Dresses", to: "/dresses" },
+    { label: "Dress Materials", to: "/materials" },
+    { label: "Exclusive", to: "/exclusive" },
+    { label: "Our Story", to: "/artisans" },
   ];
 
   return (

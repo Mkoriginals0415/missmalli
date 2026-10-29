@@ -110,7 +110,7 @@ export default function HomePage() {
                   <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8 sm:mb-10">
                     {/* Circular Rotating Badge (Desktop) */}
                     <div className="hidden lg:flex items-center gap-3">
-                      <div className="relative w-20 h-20 flex items-center justify-center">
+                      <Link to="/artisans" className="relative w-20 h-20 flex items-center justify-center cursor-pointer hover:scale-105 transition" title="Learn about our master artisans">
                         <svg className="w-full h-full animate-[spin_14s_linear_infinite]" viewBox="0 0 100 100">
                           <path
                             id="circlePath"
@@ -126,12 +126,12 @@ export default function HomePage() {
                         <div className="absolute inset-0 m-auto w-9 h-9 rounded-full bg-brand-deepPlum text-white flex items-center justify-center shadow-md">
                           <Play className="w-3.5 h-3.5 fill-white ml-0.5" />
                         </div>
-                      </div>
+                      </Link>
                     </div>
 
                     {/* Central Headline */}
                     <div className="text-center max-w-3xl mx-auto space-y-2">
-                      <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-brand-deepPlum leading-[1.12]">
+                      <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-bold tracking-tight text-brand-deepPlum leading-[1.12]">
                         {hero.headline}
                       </h1>
                       {hero.subheadline && (
@@ -549,22 +549,20 @@ export default function HomePage() {
                 <section key="artisan" className="max-w-7xl mx-auto px-4 sm:px-8">
                   <div className="rounded-[28px] p-6 sm:p-12 bg-white border border-brand-lilac/30 shadow-sm flex flex-col md:flex-row items-center justify-between gap-8">
                     <div className="space-y-4 max-w-md">
-                      <h2 className="text-2xl sm:text-4xl font-bold text-brand-deepPlum leading-tight">
+                      <h2 className="text-2xl sm:text-4xl font-serif font-bold text-brand-deepPlum leading-tight">
                         {artisan.title}
                       </h2>
                       <p className="text-xs sm:text-sm text-brand-deepPlum/80 leading-relaxed font-medium">
                         {artisan.description}
                       </p>
-                      <div className="pt-2">
-                        <a
-                          href={artisan.buttonLink || "https://wa.me/919876543210?text=Hi%20Miss%20Malli%2C%20tell%20me%20about%20your%20artisans"}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                      <div className="pt-2 flex items-center gap-3">
+                        <Link
+                          to="/artisans"
                           className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md"
                         >
-                          <span>{artisan.buttonText || "Chat With Our Concierge"}</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
-                        </a>
+                          <Play className="w-3.5 h-3.5 fill-white" />
+                          <span>Watch the story</span>
+                        </Link>
                       </div>
                     </div>
 
