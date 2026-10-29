@@ -49,6 +49,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const data = useRouteLoaderData<typeof loader>("root");
   const themeColors = data?.themeColors || DEFAULT_THEME_COLORS;
 
+  const hexToRgb = (hex: string, fallback: string) => {
+    const clean = hex?.replace(/^#/, "");
+    if (!clean || clean.length !== 6) return fallback;
+    const r = parseInt(clean.substring(0, 2), 16);
+    const g = parseInt(clean.substring(2, 4), 16);
+    const b = parseInt(clean.substring(4, 6), 16);
+    return isNaN(r) || isNaN(g) || isNaN(b) ? fallback : `${r} ${g} ${b}`;
+  };
+
   return (
     <html lang="en" className="h-full bg-brand-ivory">
       <head>
@@ -61,17 +70,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
             __html: `
               :root {
                 --color-brand-plum: ${themeColors.primaryPlum};
+                --color-brand-plum-rgb: ${hexToRgb(themeColors.primaryPlum, "91 42 110")};
                 --color-brand-deep-plum: ${themeColors.deepPlum};
+                --color-brand-deep-plum-rgb: ${hexToRgb(themeColors.deepPlum, "42 18 53")};
                 --color-brand-ivory: ${themeColors.ivoryCanvas};
+                --color-brand-ivory-rgb: ${hexToRgb(themeColors.ivoryCanvas, "251 248 242")};
                 --color-brand-gold: ${themeColors.accentGold};
+                --color-brand-gold-rgb: ${hexToRgb(themeColors.accentGold, "184 146 58")};
                 --color-brand-lilac: ${themeColors.accentLilac};
+                --color-brand-lilac-rgb: ${hexToRgb(themeColors.accentLilac, "201 182 228")};
                 --color-brand-blush: ${themeColors.accentBlush};
+                --color-brand-blush-rgb: ${hexToRgb(themeColors.accentBlush, "232 180 196")};
               }
             `,
           }}
         />
       </head>
-      <body className="h-full bg-brand-ivory text-brand-dark overflow-x-hidden antialiased pb-16 lg:pb-0 selection:bg-brand-lilac/30 selection:text-brand-deepPlum">
+      <body className="h-full bg-brand-ivory text-brand-dark overflow-x-hidden antialiased pb-20 lg:pb-0 selection:bg-brand-lilac/30 selection:text-brand-deepPlum">
         {children}
         <BottomNav />
         <ScrollRestoration />

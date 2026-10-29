@@ -27,8 +27,8 @@ export function BottomNav({ hidden = false }: BottomNavProps) {
   ];
 
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-brand-ivory/95 backdrop-blur-lg border-t border-brand-deepPlum/15 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] transition-all">
-      <div className="flex items-center justify-around h-16 px-3 max-w-lg mx-auto">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-brand-ivory border-t border-brand-deepPlum/10 shadow-[0_-4px_25px_rgba(42,18,53,0.08)] transition-all">
+      <div className="flex items-center justify-around h-16 pb-[env(safe-area-inset-bottom)] px-3 max-w-lg mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = item.to === "/" ? currentPath === "/" : currentPath.startsWith(item.to);
@@ -38,37 +38,41 @@ export function BottomNav({ hidden = false }: BottomNavProps) {
               key={item.label}
               to={item.to}
               className={`flex flex-col items-center justify-center flex-1 py-1 transition-colors relative touch-manipulation ${
-                isActive ? "text-brand-plum font-bold" : "text-brand-deepPlum/60 hover:text-brand-plum"
+                isActive ? "text-brand-plum font-semibold" : "text-brand-deepPlum/65 hover:text-brand-plum"
               }`}
             >
               <div className="relative">
-                <Icon className={`w-5 h-5 ${isActive ? "stroke-[2.4]" : "stroke-[1.8]"}`} />
+                <Icon className={`w-5 h-5 ${isActive ? "stroke-[2.3]" : "stroke-[1.8]"}`} />
                 {item.count !== undefined && item.count > 0 ? (
-                  <span className="absolute -top-1.5 -right-2.5 bg-brand-plum text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs">
+                  <span className="absolute -top-1.5 -right-2.5 bg-brand-plum text-white text-[9px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center font-bold ring-2 ring-brand-ivory shadow-xs">
                     {item.count > 9 ? "9+" : item.count}
                   </span>
                 ) : null}
               </div>
-              <span className="text-[10px] mt-1 tracking-tight font-medium">{item.label}</span>
-              {isActive && (
-                <span className="w-1 h-1 rounded-full bg-brand-plum mt-0.5" />
+              <span className="text-[10px] mt-1 tracking-tight">{item.label}</span>
+              {isActive ? (
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-plum mt-0.5" />
+              ) : (
+                <span className="w-1.5 h-1.5 mt-0.5" />
               )}
             </Link>
           );
         })}
 
-        {/* Quick WhatsApp Concierge Item */}
+        {/* Quick WhatsApp Concierge Item - Balanced & Consistent */}
         <a
           href="https://wa.me/919876543210?text=Hi%20Miss%20Malli%2C%20I'd%20like%20assistance%20with%20an%20order"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex flex-col items-center justify-center flex-1 py-1 text-emerald-700 hover:text-emerald-800 transition-colors touch-manipulation"
+          className="flex flex-col items-center justify-center flex-1 py-1 text-brand-deepPlum/65 hover:text-emerald-700 transition-colors touch-manipulation group"
           aria-label="Chat on WhatsApp"
         >
-          <div className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-xs">
-            <MessageCircle className="w-3.5 h-3.5 fill-white" />
+          <div className="relative">
+            <MessageCircle className="w-5 h-5 stroke-[1.8] group-hover:stroke-emerald-600 transition-colors" />
+            <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-brand-ivory animate-pulse" />
           </div>
-          <span className="text-[10px] mt-1 tracking-tight font-bold text-emerald-800">Chat</span>
+          <span className="text-[10px] mt-1 tracking-tight group-hover:text-emerald-700 transition-colors">Chat</span>
+          <span className="w-1.5 h-1.5 mt-0.5" />
         </a>
       </div>
     </nav>

@@ -6,11 +6,17 @@
 
 :root {
   --color-brand-ivory: #FBF8F2;
+  --color-brand-ivory-rgb: 251 248 242;
   --color-brand-plum: #5B2A6E;
+  --color-brand-plum-rgb: 91 42 110;
   --color-brand-deep-plum: #2A1235;
+  --color-brand-deep-plum-rgb: 42 18 53;
   --color-brand-lilac: #C9B6E4;
+  --color-brand-lilac-rgb: 201 182 228;
   --color-brand-blush: #E8B4C4;
+  --color-brand-blush-rgb: 232 180 196;
   --color-brand-gold: #B8923A;
+  --color-brand-gold-rgb: 184 146 58;
 }
 
 @layer base {
