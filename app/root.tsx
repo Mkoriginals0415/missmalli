@@ -93,8 +93,8 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     title = `${error.status} ${error.statusText}`;
     message = error.data?.message || "The page you're looking for doesn't exist or has moved.";
-  } else if (error instanceof Error) {
-    message = error.message;
+  } else if (error && typeof error === "object") {
+    message = (error as any).message || (error as any).statusText || (error as any).data || JSON.stringify(error);
   } else if (typeof error === "string") {
     message = error;
   }

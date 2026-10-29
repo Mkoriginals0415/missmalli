@@ -47,7 +47,8 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function AdminHomepageEditor() {
-  const { content } = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
+  const content = (data?.content || {}) as HomepageContent;
   const fetcher = useFetcher<typeof action>();
 
   const [activeTab, setActiveTab] = useState<

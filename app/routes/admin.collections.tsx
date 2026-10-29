@@ -46,12 +46,13 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function AdminCollectionsPage() {
-  const { content } = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
+  const content = (data?.content || {}) as HomepageContent;
   const fetcher = useFetcher<typeof action>();
 
-  const [categories, setCategories] = useState(content.categories);
-  const [sections, setSections] = useState<HomepageSection[]>(content.sections);
-  const [promotion, setPromotion] = useState(content.promotion);
+  const [categories, setCategories] = useState(content.categories || []);
+  const [sections, setSections] = useState<HomepageSection[]>(content.sections || []);
+  const [promotion, setPromotion] = useState(content.promotion || ({} as any));
 
   // Edit Collection Modal/Drawer State
   const [editingItem, setEditingItem] = useState<CollectionItem | null>(null);

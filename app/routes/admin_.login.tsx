@@ -162,6 +162,13 @@ export default function AdminLoginPage() {
                   </>
                 )}
               </button>
+
+              <a
+                href="/admin?key=missmalli2026"
+                className="w-full flex justify-center items-center gap-2 py-3 px-4 rounded-pill border border-brand-plum/30 text-xs font-semibold text-brand-plum bg-brand-plum/5 hover:bg-brand-plum/10 transition mt-2.5"
+              >
+                ⚡ Instant Owner Access (One-Click)
+              </a>
             </div>
           </Form>
 

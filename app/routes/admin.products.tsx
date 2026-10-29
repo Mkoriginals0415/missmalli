@@ -11,7 +11,8 @@ export async function loader({ context }: LoaderFunctionArgs) {
 }
 
 export default function AdminProductsPage() {
-  const { products } = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
+  const products = Array.isArray(data?.products) ? data.products : [];
   const [productList, setProductList] = useState(products);
   const [search, setSearch] = useState("");
   const [collectionFilter, setCollectionFilter] = useState("all");

@@ -47,7 +47,9 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function AdminSettingsPage() {
-  const { settings, themeColors: initialThemeColors } = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
+  const settings = data?.settings || ({} as any);
+  const initialThemeColors = data?.themeColors || DEFAULT_THEME_COLORS;
   const fetcher = useFetcher<typeof action>();
 
   const [whatsappNumber, setWhatsappNumber] = useState(settings.seller_whatsapp_number || "919876543210");
