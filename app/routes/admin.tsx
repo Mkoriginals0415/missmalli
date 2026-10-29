@@ -18,26 +18,6 @@ import { requireAdmin, destroyAdminSession, sessionStorage } from "~/utils/auth.
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
   const url = new URL(request.url);
-  const key = url.searchParams.get("key");
-
-  // Direct owner access bypass via secret key
-  if (key === "missmalli2026") {
-    const session = await sessionStorage.getSession();
-    session.set("adminLoggedIn", true);
-    session.set("adminUser", "admin");
-    const headers = new Headers();
-    headers.append("Set-Cookie", await sessionStorage.commitSession(session));
-
-    const env = (context as any)?.cloudflare?.env;
-    let needsReplyCount = 0;
-    try {
-      const requests = await getAllRequests(env);
-      needsReplyCount = (Array.isArray(requests) ? requests : []).filter((r) => r?.status === "needs_reply").length;
-    } catch {}
-
-    return json({ needsReplyCount }, { headers });
-  }
-
   if (url.pathname === "/admin/login") {
     return json({ needsReplyCount: 0 });
   }

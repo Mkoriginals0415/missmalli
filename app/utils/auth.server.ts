@@ -19,10 +19,6 @@ export async function getAdminSession(request: Request) {
 }
 
 export async function requireAdmin(request: Request) {
-  const url = new URL(request.url);
-  if (url.searchParams.get("key") === "missmalli2026") {
-    return null;
-  }
   const session = await getAdminSession(request);
   if (!session.has("adminLoggedIn")) {
     throw redirect("/admin/login");
@@ -31,10 +27,6 @@ export async function requireAdmin(request: Request) {
 }
 
 export async function isAdminAuthenticated(request: Request): Promise<boolean> {
-  const url = new URL(request.url);
-  if (url.searchParams.get("key") === "missmalli2026") {
-    return true;
-  }
   const session = await getAdminSession(request);
   return session.has("adminLoggedIn");
 }

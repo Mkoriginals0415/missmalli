@@ -43,11 +43,6 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const fillDefaults = () => {
-    setUsername("admin@missmalli.in");
-    setPassword("missmalli2026");
-  };
-
   return (
     <div className="min-h-screen bg-brand-ivory flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans selection:bg-brand-lilac/40">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
@@ -97,24 +92,15 @@ export default function AdminLoginPage() {
                   onChange={(e) => setUsername(e.target.value)}
                   required
                   className="block w-full pl-10 pr-3.5 py-3 rounded-xl border border-brand-lilac/40 bg-brand-ivory/30 text-brand-deepPlum placeholder-brand-deepPlum/30 focus:outline-none focus:ring-2 focus:ring-brand-plum focus:border-transparent text-sm transition"
-                  placeholder="admin@missmalli.in or your email"
+                  placeholder="admin@missmalli.in"
                 />
               </div>
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label htmlFor="password" className="block text-xs font-semibold text-brand-deepPlum uppercase tracking-wider">
-                  Password
-                </label>
-                <button
-                  type="button"
-                  onClick={fillDefaults}
-                  className="text-[11px] font-medium text-brand-plum hover:text-brand-deepPlum underline"
-                >
-                  Fill default password
-                </button>
-              </div>
+              <label htmlFor="password" className="block text-xs font-semibold text-brand-deepPlum uppercase tracking-wider mb-1.5">
+                Password
+              </label>
               <div className="relative rounded-xl shadow-xs">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-brand-deepPlum/40">
                   <Lock className="h-4 w-4" />
@@ -128,7 +114,7 @@ export default function AdminLoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   className="block w-full pl-10 pr-10 py-3 rounded-xl border border-brand-lilac/40 bg-brand-ivory/30 text-brand-deepPlum placeholder-brand-deepPlum/30 focus:outline-none focus:ring-2 focus:ring-brand-plum focus:border-transparent text-sm transition"
-                  placeholder="missmalli2026"
+                  placeholder="Enter administrator password"
                 />
                 <button
                   type="button"
@@ -139,9 +125,6 @@ export default function AdminLoginPage() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-              <p className="mt-1.5 text-[11px] text-brand-deepPlum/60 flex items-center justify-between">
-                <span>Default password: <strong className="font-mono bg-brand-ivory px-1 py-0.5 rounded text-brand-plum">missmalli2026</strong></span>
-              </p>
             </div>
 
             <div>
@@ -162,13 +145,6 @@ export default function AdminLoginPage() {
                   </>
                 )}
               </button>
-
-              <a
-                href="/admin?key=missmalli2026"
-                className="w-full flex justify-center items-center gap-2 py-3 px-4 rounded-pill border border-brand-plum/30 text-xs font-semibold text-brand-plum bg-brand-plum/5 hover:bg-brand-plum/10 transition mt-2.5"
-              >
-                ⚡ Instant Owner Access (One-Click)
-              </a>
             </div>
           </Form>
 
