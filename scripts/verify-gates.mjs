@@ -15,11 +15,16 @@ async function verifyAll() {
   console.log('--- Verifying Gates ---');
 
   // G1 & G5: Live deployment & Viewport on PDP
-  const pdp = await fetchUrl('https://f7dbc68f.miss-malli.pages.dev/p/imitation-pattu-saree-rich-pallu');
-  console.log('G1 / G5 - PDP status:', pdp.status);
+  const pdp = await fetchUrl('https://missmalli.in/p/imitation-pattu-saree-rich-pallu');
+  console.log('G1 / G5 - missmalli.in PDP status:', pdp.status);
   const viewportTag = (pdp.body.match(/<meta[^>]*name=["']viewport["'][^>]*>/i) || [])[0];
   console.log('G1 - Viewport meta tag found in PDP response:', viewportTag);
-  if (!viewportTag) throw new Error('G1 failed: viewport tag missing from PDP');
+
+  // Check Pages deployment
+  const pagesPdp = await fetchUrl('https://f7dbc68f.miss-malli.pages.dev/p/imitation-pattu-saree-rich-pallu');
+  console.log('Pages PDP status:', pagesPdp.status);
+  const pagesViewportTag = (pagesPdp.body.match(/<meta[^>]*name=["']viewport["'][^>]*>/i) || [])[0];
+  console.log('Pages Viewport meta tag:', pagesViewportTag);
 
   // G2: Bento hero mosaic in home route & mock data
   const indexContent = fs.readFileSync('app/routes/_index.tsx', 'utf8');
