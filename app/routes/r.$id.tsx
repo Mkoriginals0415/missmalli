@@ -5,6 +5,7 @@ import { MessageCircle, Truck, Check, ArrowLeft, ExternalLink } from "lucide-rea
 import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
 import { getRequestByTokenOrNumber, getStoreSettings } from "~/db/d1.server";
+import { normalizeWhatsAppPhone } from "~/utils/whatsapp";
 
 export async function loader({ params, request, context }: LoaderFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
@@ -96,7 +97,7 @@ export default function RequestTrackerPage() {
     setTimeout(() => setQuickReplyCopied(null), 2000);
   };
 
-  const customerWhatsappUrl = `https://wa.me/${sellerPhone.replace(/\D/g, "")}?text=${encodeURIComponent(
+  const customerWhatsappUrl = `https://wa.me/${normalizeWhatsAppPhone(sellerPhone)}?text=${encodeURIComponent(
     `Hi Miss Malli, checking status on Request ${request.requestNumber}`
   )}`;
 

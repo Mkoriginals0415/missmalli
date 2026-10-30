@@ -249,18 +249,39 @@ export async function updateHomepageContent(
   return runtimeHomepageContent;
 }
 
-export async function getAllRequests(env?: { DB?: D1Database }) {
+export async function getAllRequests(env?: { DB?: D1Database }): Promise<any[]> {
+  const db = getDb(env);
+  if (db) {
+    try {
+      const row = await db.query.storeSettings.findFirst({
+        where: (s, { eq }) => eq(s.key, "requests_catalog_json"),
+      });
+      if (row?.value) {
+        const parsed = JSON.parse(row.value);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          runtimeRequests = parsed;
+        }
+      }
+    } catch (e) {
+      console.error("Error reading requests from D1:", e);
+    }
+  }
   return runtimeRequests;
 }
 
 export async function getRequestByTokenOrNumber(identifier: string, env?: { DB?: D1Database }) {
+  await getAllRequests(env);
+  const clean = decodeURIComponent(identifier || "").trim();
+  const withoutHash = clean.replace(/^#/, "");
   return (
     runtimeRequests.find(
       (r) =>
-        r.secretToken === identifier ||
-        r.requestNumber === identifier ||
-        r.requestNumber === `#${identifier}` ||
-        String(r.id) === identifier
+        r.secretToken === clean ||
+        r.requestNumber === clean ||
+        r.requestNumber === `#${withoutHash}` ||
+        (r.requestNumber && r.requestNumber.replace(/^#/, "") === withoutHash) ||
+        String(r.id) === clean ||
+        String(r.id) === withoutHash
     ) || null
   );
 }
@@ -281,6 +302,7 @@ export async function createNewRequest(
   },
   env?: { DB?: D1Database }
 ) {
+  await getAllRequests(env);
   const nextId = 1043 + runtimeRequests.length;
   const requestNumber = `#${nextId}`;
   const secretToken = `req_${Math.random().toString(36).substring(2, 10)}_${nextId}`;
@@ -306,6 +328,24 @@ export async function createNewRequest(
 
   runtimeRequests.unshift(newReq);
 
+  const db = getDb(env);
+  if (db) {
+    try {
+      await db
+        .insert(schema.storeSettings)
+        .values({
+          key: "requests_catalog_json",
+          value: JSON.stringify(runtimeRequests),
+        })
+        .onConflictDoUpdate({
+          target: schema.storeSettings.key,
+          set: { value: JSON.stringify(runtimeRequests) },
+        });
+    } catch (e) {
+      console.error("Error persisting requests to D1:", e);
+    }
+  }
+
   return {
     requestId: newReq.id,
     requestNumber: newReq.requestNumber,
@@ -324,12 +364,31 @@ export async function updateRequestStatus(
   },
   env?: { DB?: D1Database }
 ) {
+  await getAllRequests(env);
   const req = runtimeRequests.find((r) => r.id === requestId);
   if (req) {
     if (updates.status !== undefined) req.status = updates.status;
     if (updates.internalNote !== undefined) req.internalNote = updates.internalNote;
     if (updates.trackingNote !== undefined) req.trackingNote = updates.trackingNote;
     if (updates.isPaymentReceived !== undefined) req.isPaymentReceived = updates.isPaymentReceived;
+
+    const db = getDb(env);
+    if (db) {
+      try {
+        await db
+          .insert(schema.storeSettings)
+          .values({
+            key: "requests_catalog_json",
+            value: JSON.stringify(runtimeRequests),
+          })
+          .onConflictDoUpdate({
+            target: schema.storeSettings.key,
+            set: { value: JSON.stringify(runtimeRequests) },
+          });
+      } catch (e) {
+        console.error("Error updating requests in D1:", e);
+      }
+    }
     return req;
   }
   return null;

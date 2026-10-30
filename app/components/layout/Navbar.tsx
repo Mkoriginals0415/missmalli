@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "@remix-run/react";
-import { Heart, ShoppingBag, Menu, X, MessageCircle } from "lucide-react";
-import { useBag, useSavedSarees } from "~/hooks/useLocalStorage";
+import { Heart, ShoppingBag, Menu, X, MessageCircle, Package } from "lucide-react";
+import { useBag, useSavedSarees, useMyRequests } from "~/hooks/useLocalStorage";
 import { useSellerPhone } from "~/hooks/useSellerPhone";
 
 export function Navbar() {
@@ -10,6 +10,7 @@ export function Navbar() {
   const currentPath = location.pathname;
   const { items: bagItems } = useBag();
   const { savedIds } = useSavedSarees();
+  const { requestsList } = useMyRequests();
   const { getChatUrl } = useSellerPhone();
   const bagCount = bagItems.reduce((acc, i) => acc + (i.quantity || 1), 0);
 
@@ -17,6 +18,7 @@ export function Navbar() {
     { label: "Home", to: "/" },
     { label: "Sarees", to: "/sarees" },
     { label: "Sale", to: "/sale" },
+    { label: "My Orders", to: "/my-requests" },
     { label: "Dresses", to: "/dresses" },
     { label: "Dress Materials", to: "/materials" },
     { label: "Exclusive", to: "/exclusive" },
@@ -103,6 +105,21 @@ export function Navbar() {
               {bagCount > 0 && (
                 <span className="absolute top-1.5 right-1.5 bg-brand-plum text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs">
                   {bagCount}
+                </span>
+              )}
+            </Link>
+
+            {/* My Orders Direct Link */}
+            <Link
+              to="/my-requests"
+              className="p-2 text-brand-deepPlum hover:text-brand-plum transition relative min-w-[44px] min-h-[44px] flex items-center justify-center"
+              aria-label="My Orders"
+              title="My Orders"
+            >
+              <Package className="w-5 h-5 stroke-[2.2]" />
+              {requestsList.length > 0 && (
+                <span className="absolute top-1.5 right-1.5 bg-brand-plum text-white text-[10px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center font-bold shadow-xs">
+                  {requestsList.length}
                 </span>
               )}
             </Link>
@@ -200,9 +217,9 @@ export function Navbar() {
                 <Link
                   to="/my-requests"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="hover:text-brand-plum underline"
+                  className="hover:text-brand-plum underline font-bold"
                 >
-                  Track WhatsApp Inquiries
+                  My Orders & Live Status
                 </Link>
                 <Link
                   to="/admin"

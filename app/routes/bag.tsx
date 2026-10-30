@@ -11,7 +11,8 @@ import {
   Loader2, 
   Tag,
   ArrowRight,
-  ShieldCheck
+  ShieldCheck,
+  Package
 } from "lucide-react";
 import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
@@ -139,7 +140,10 @@ export default function ShoppingBagPage() {
               Your Bag ({totalItemsCount} {totalItemsCount === 1 ? "item" : "items"})
             </h1>
             <p className="text-xs text-brand-deepPlum/60 mt-0.5">
-              Send several drapes in one single WhatsApp request
+              Send several drapes in one single WhatsApp request ·{" "}
+              <Link to="/my-requests" className="underline text-brand-plum font-semibold">
+                Track previous orders
+              </Link>
             </p>
           </div>
           {items.length > 0 && (
@@ -163,13 +167,20 @@ export default function ShoppingBagPage() {
             <p className="text-xs text-brand-deepPlum/70 max-w-sm mx-auto">
               Explore our handwoven sarees and tap "Add to Bag" to curate your collection.
             </p>
-            <div className="pt-2">
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
                 to="/sarees"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-deepPlum text-white text-xs font-semibold hover:bg-brand-plum transition shadow-md"
               >
                 <span>Browse Sarees</span>
                 <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                to="/my-requests"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white border border-brand-deepPlum/30 text-brand-deepPlum text-xs font-semibold hover:bg-brand-ivory transition shadow-xs"
+              >
+                <Package className="w-4 h-4" />
+                <span>View My Orders</span>
               </Link>
             </div>
           </div>
