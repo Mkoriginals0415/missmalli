@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { json, type LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { useLoaderData, Link } from "@remix-run/react";
 import { 
@@ -18,6 +18,7 @@ import { Footer } from "~/components/layout/Footer";
 import { INITIAL_PRODUCTS } from "~/db/mock-data";
 import { getHomepageContent } from "~/db/d1.server";
 import { useSavedSarees } from "~/hooks/useLocalStorage";
+import { Hero3DCoverFlow } from "~/components/home/Hero3DCoverFlow";
 
 export async function loader({ context }: LoaderFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
@@ -36,47 +37,6 @@ export default function HomePage() {
 
   // Floating notification toast for user interactions
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  // Scroll-driven horizontal translation for hero cutouts with momentum Lerp
-  const heroContainerRef = useRef<HTMLDivElement>(null);
-  const heroTrackRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    let animationFrameId: number;
-    let targetX = 0;
-    let currentX = 0;
-
-    const onScroll = () => {
-      if (!heroContainerRef.current || !heroTrackRef.current) return;
-      const rect = heroContainerRef.current.getBoundingClientRect();
-      // Distance scrolled past the top of the hero container
-      const scrollDistance = Math.max(0, -rect.top + 60);
-      const maxScroll = Math.max(0, heroTrackRef.current.scrollWidth - window.innerWidth + 80);
-      // As website is scrolled, track moves smoothly from right to left
-      targetX = -Math.min(maxScroll, scrollDistance * 0.7);
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
-    onScroll();
-
-    // 60-120fps buttery smooth Lerp loop
-    const lerp = () => {
-      currentX += (targetX - currentX) * 0.09;
-      if (heroTrackRef.current) {
-        heroTrackRef.current.style.transform = `translate3d(${currentX.toFixed(2)}px, 0, 0)`;
-      }
-      animationFrameId = requestAnimationFrame(lerp);
-    };
-
-    animationFrameId = requestAnimationFrame(lerp);
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, []);
 
   const handleToggleSave = (productId: number, productName: string) => {
     toggleSave(productId);
@@ -142,7 +102,7 @@ export default function HomePage() {
 
           switch (section.id) {
             /* =========================================================
-               1. HERO SECTION (Scroll-driven editorial cutout moodboard)
+               1. HERO SECTION (3D Cover-Flow Gallery with Tilt & Brand Colors)
                ========================================================= */
             case "hero": {
               const heroCards = [
@@ -152,7 +112,6 @@ export default function HomePage() {
                   title: "Pure Kanjivaram Silk",
                   subtitle: "Heirloom Gold Zari Drape",
                   tag: "Royal Heritage",
-                  cutoutClass: "cutout-arch",
                   link: "/sarees?collection=kanjivaram",
                 },
                 {
@@ -161,7 +120,6 @@ export default function HomePage() {
                   title: "Lilac Handloom Silk",
                   subtitle: "Soft Georgette Fall",
                   tag: "Pure Weave",
-                  cutoutClass: "cutout-leaf-tl",
                   link: "/sarees?collection=handloom",
                 },
                 {
@@ -170,7 +128,6 @@ export default function HomePage() {
                   title: "Antique Zari Brocade",
                   subtitle: "Festive Crimson & Zari",
                   tag: "Bridal Trousseau",
-                  cutoutClass: "cutout-capsule",
                   link: "/sarees?collection=banarasi",
                 },
                 {
@@ -179,7 +136,6 @@ export default function HomePage() {
                   title: "Lustrous Satin Crepe",
                   subtitle: "Contemporary Emerald Glow",
                   tag: "Modern Festive",
-                  cutoutClass: "cutout-inverted-arch",
                   link: "/sarees?collection=crepe",
                 },
                 {
@@ -188,7 +144,6 @@ export default function HomePage() {
                   title: "Master Weaver Looms",
                   subtitle: "Handcrafted Heritage Art",
                   tag: "Artisan Loom",
-                  cutoutClass: "cutout-bento-organic",
                   link: "/artisans",
                 },
                 {
@@ -197,7 +152,6 @@ export default function HomePage() {
                   title: "Blossom Organza Weave",
                   subtitle: "Pastel Drapes & Resham",
                   tag: "Lightweight Luxury",
-                  cutoutClass: "cutout-squircle",
                   link: "/sarees?collection=organza",
                 },
                 {
@@ -206,7 +160,6 @@ export default function HomePage() {
                   title: "Temple Border Silk",
                   subtitle: "Pure Mulberry Weave",
                   tag: "Temple Zari",
-                  cutoutClass: "cutout-leaf-tr",
                   link: "/sarees",
                 },
                 {
@@ -215,7 +168,6 @@ export default function HomePage() {
                   title: "Chanderi Gold Motif",
                   subtitle: "Featherlight Grace",
                   tag: "Classic Weave",
-                  cutoutClass: "cutout-capsule",
                   link: "/sarees",
                 },
               ];
@@ -283,79 +235,22 @@ export default function HomePage() {
                   </div>
 
                   {/* ----------------------------------------------------------
-                      SCROLL-DRIVEN EDITORIAL CUTOUT SHOWCASE (Desktop & Mobile)
+                      3D COVER-FLOW GALLERY SHOWCASE (Desktop & Mobile)
                      ---------------------------------------------------------- */}
-                  <div className="space-y-6">
-                    {/* Scroll-Driven Horizontal Track */}
-                    <div
-                      ref={heroContainerRef}
-                      className="relative w-screen -ml-[calc((100vw-100%)/2)] overflow-hidden hero-perspective-container py-4 select-none"
-                    >
-                      {/* Left & Right Soft Blur Edge Fades */}
-                      <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-24 bg-gradient-to-r from-brand-ivory via-brand-ivory/80 to-transparent z-10 pointer-events-none" />
-                      <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-24 bg-gradient-to-l from-brand-ivory via-brand-ivory/80 to-transparent z-10 pointer-events-none" />
+                  <div className="space-y-4">
+                    <Hero3DCoverFlow items={heroCards} />
 
-                      <div
-                        ref={heroTrackRef}
-                        className="hero-scroll-track flex gap-4 sm:gap-6 lg:gap-8 items-center px-4"
+                    {/* Action Pill Buttons */}
+                    <div className="flex items-center gap-2 flex-wrap justify-center pt-2">
+                      <Link
+                        to={hero.buttonLink || "/sarees"}
+                        className="px-5 py-2 rounded-full bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md flex items-center gap-1.5"
                       >
-                        {heroCards.map((card, idx) => (
-                          <Link
-                            key={`${card.id}-${idx}`}
-                            to={card.link}
-                            className={`${card.cutoutClass} hero-card-3d group relative shrink-0 w-[220px] sm:w-[270px] lg:w-[310px] h-[350px] sm:h-[420px] lg:h-[480px] overflow-hidden bg-white/60 border border-brand-lilac/30 shadow-md hover:shadow-[0_24px_50px_rgba(42,18,53,0.22)] hover:border-brand-gold/60 transition-all duration-500 block`}
-                          >
-                            <img
-                              src={card.image}
-                              alt={card.title}
-                              className="w-full h-full object-cover object-top group-hover:scale-108 transition-transform duration-700 ease-out"
-                              loading={idx < 4 ? "eager" : "lazy"}
-                            />
-                            {/* Luxury Gradient & Info Overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/90 via-brand-deepPlum/20 to-transparent flex flex-col justify-between p-5 sm:p-6 text-white transition-opacity duration-300">
-                              {/* Top Micro-Badge Tag */}
-                              <div className="flex items-center justify-between">
-                                <span className="px-3 py-1 rounded-full text-[10px] tracking-widest uppercase font-bold bg-brand-deepPlum/70 backdrop-blur-md text-brand-gold border border-brand-gold/30 shadow-xs">
-                                  {card.tag}
-                                </span>
-                                <span className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:scale-105 group-hover:bg-brand-gold group-hover:text-brand-deepPlum transition-all duration-300">
-                                  ↗
-                                </span>
-                              </div>
-
-                              {/* Bottom Details */}
-                              <div className="space-y-1">
-                                <h3 className="font-serif italic text-base sm:text-xl font-bold leading-tight text-white group-hover:text-brand-gold transition-colors">
-                                  {card.title}
-                                </h3>
-                                <p className="text-[11px] sm:text-xs text-white/80 font-sans font-medium line-clamp-1">
-                                  {card.subtitle}
-                                </p>
-                              </div>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Interactive Micro-hint & Controls */}
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-1 max-w-5xl mx-auto px-4">
-                      <div className="flex items-center gap-2 text-[11px] font-medium text-brand-deepPlum/65">
-                        <span className="w-2 h-2 rounded-full bg-brand-plum animate-pulse" />
-                        <span>Scroll down to glide through editorial moodboard · Tap card to explore drape</span>
-                      </div>
-
-                      {/* Action Pill Buttons */}
-                      <div className="flex items-center gap-2 flex-wrap justify-center">
-                        <Link
-                          to={hero.buttonLink || "/sarees"}
-                          className="px-5 py-2 rounded-full bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md flex items-center gap-1.5"
-                        >
-                          <span>{hero.buttonText}</span>
-                          <span>↗</span>
-                        </Link>
-                        <Link
-                          to="/sarees"
+                        <span>{hero.buttonText}</span>
+                        <span>↗</span>
+                      </Link>
+                      <Link
+                        to="/sarees"
                           className="px-4 py-1.5 rounded-full bg-white border border-brand-deepPlum/15 text-xs font-semibold text-brand-deepPlum hover:bg-brand-deepPlum hover:text-white transition shadow-2xs"
                         >
                           Sarees
@@ -374,7 +269,6 @@ export default function HomePage() {
                         </Link>
                       </div>
                     </div>
-                  </div>
                 </section>
               );
             }

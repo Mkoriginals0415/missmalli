@@ -124,6 +124,47 @@
   transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.45s ease;
 }
 
+/* 3D Perspective Stage */
+.carousel-perspective-stage {
+  perspective: 1400px;
+  perspective-origin: 50% 50%;
+  transform-style: preserve-3d;
+  -webkit-perspective: 1400px;
+  -webkit-perspective-origin: 50% 50%;
+}
+
+/* 3D Card */
+.flow-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-origin: center center;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: box-shadow 0.3s ease;
+}
+.flow-card:active {
+  cursor: grabbing;
+}
+
+/* Premium soft shadow matching reference in brand colors */
+.flow-card-shadow {
+  box-shadow: 
+    0 20px 40px -15px rgba(42, 18, 53, 0.22),
+    0 10px 20px -8px rgba(42, 18, 53, 0.12),
+    0 0 0 1px rgba(255, 255, 255, 0.45) inset;
+}
+
+/* Glass highlight reflection on card edges */
+.flow-card-sheen {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.04) 45%, rgba(42, 18, 53, 0.12) 100%);
+}
+
 .hero-card-3d:hover {
   transform: translate3d(0, -8px, 16px) scale(1.03);
 }
