@@ -3,8 +3,10 @@ import { useSearchParams } from "@remix-run/react";
 import { ChevronDown, ChevronUp, MessageCircle } from "lucide-react";
 import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
+import { useSellerPhone } from "~/hooks/useSellerPhone";
 
 export default function StoreInfoPage() {
+  const { getChatUrl, formatted } = useSellerPhone();
   const [searchParams] = useSearchParams();
   const initialTab = searchParams.get("tab") || "shipping";
   const [activeTab, setActiveTab] = useState<string>(initialTab);
@@ -124,7 +126,7 @@ export default function StoreInfoPage() {
             <div className="space-y-3 text-xs text-brand-deepPlum/80 leading-relaxed">
               <h3 className="font-bold text-sm text-brand-deepPlum">Studio & WhatsApp Concierge</h3>
               <p>📍 Miss Malli Studio, Bengaluru, Karnataka, 560038</p>
-              <p>📞 WhatsApp: +91 98765 43210</p>
+              <p>📞 WhatsApp: {formatted}</p>
               <p>✉️ Email: care@missmalli.com</p>
               <p>⏰ Hours: Monday to Saturday, 10:00 AM – 8:00 PM IST</p>
             </div>
@@ -144,7 +146,7 @@ export default function StoreInfoPage() {
         </div>
 
         <a
-          href="https://wa.me/919876543210?text=Hi%20Miss%20Malli%2C%20I%20have%20an%20inquiry"
+          href={getChatUrl("Hi Miss Malli, I have an inquiry")}
           target="_blank"
           rel="noopener noreferrer"
           className="w-full py-4 px-6 rounded-full bg-emerald-600 text-white font-semibold text-xs flex items-center justify-center gap-2 hover:bg-emerald-700 transition shadow-md"

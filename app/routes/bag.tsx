@@ -17,10 +17,13 @@ import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
 import { useBag, useSavedSarees, useMyRequests } from "~/hooks/useLocalStorage";
 import { generateWhatsAppBuyUrl } from "~/utils/whatsapp";
+import { getStoreSettings } from "~/db/d1.server";
 
 export async function loader({ context }: LoaderFunctionArgs) {
+  const env = (context as any)?.cloudflare?.env;
+  const settings = await getStoreSettings(env);
   return json({
-    sellerPhone: "919876543210",
+    sellerPhone: settings.seller_whatsapp_number || "919876543210",
   });
 }
 

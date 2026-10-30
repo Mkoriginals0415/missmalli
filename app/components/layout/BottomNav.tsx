@@ -1,6 +1,7 @@
 import { Link, useLocation } from "@remix-run/react";
 import { Home, Sparkles, Heart, ShoppingBag, MessageCircle } from "lucide-react";
 import { useBag, useSavedSarees } from "~/hooks/useLocalStorage";
+import { useSellerPhone } from "~/hooks/useSellerPhone";
 
 interface BottomNavProps {
   hidden?: boolean;
@@ -11,6 +12,7 @@ export function BottomNav({ hidden = false }: BottomNavProps) {
   const currentPath = location.pathname;
   const { items: bagItems } = useBag();
   const { savedIds } = useSavedSarees();
+  const { getChatUrl } = useSellerPhone();
 
   // Hide on admin routes or product details (PDP has its own dedicated sticky buy bar)
   if (hidden || currentPath.startsWith("/admin") || currentPath.startsWith("/p/")) {
@@ -61,7 +63,7 @@ export function BottomNav({ hidden = false }: BottomNavProps) {
 
         {/* Quick WhatsApp Concierge Item - Balanced & Consistent */}
         <a
-          href="https://wa.me/919876543210?text=Hi%20Miss%20Malli%2C%20I'd%20like%20assistance%20with%20an%20order"
+          href={getChatUrl("Hi Miss Malli, I'd like assistance with an order")}
           target="_blank"
           rel="noopener noreferrer"
           className="flex flex-col items-center justify-center flex-1 py-1 text-brand-deepPlum/65 hover:text-emerald-700 transition-colors touch-manipulation group"

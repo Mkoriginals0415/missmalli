@@ -4,6 +4,7 @@ import { Link, useNavigate } from "@remix-run/react";
 import { SeedProduct } from "~/db/mock-data";
 import { useBag, useMyRequests } from "~/hooks/useLocalStorage";
 import { generateWhatsAppBuyUrl } from "~/utils/whatsapp";
+import { useSellerPhone } from "~/hooks/useSellerPhone";
 
 interface QuickViewModalProps {
   product: SeedProduct | null;
@@ -16,8 +17,10 @@ export function QuickViewModal({
   product,
   isOpen,
   onClose,
-  sellerPhone = "919876543210",
+  sellerPhone,
 }: QuickViewModalProps) {
+  const { phone: contextSellerPhone } = useSellerPhone();
+  const activeSellerPhone = sellerPhone || contextSellerPhone;
   const navigate = useNavigate();
   const { addToBag } = useBag();
   const { addRequest } = useMyRequests();
@@ -76,7 +79,7 @@ export function QuickViewModal({
       });
 
       const whatsappUrl = generateWhatsAppBuyUrl({
-        sellerPhone,
+        sellerPhone: activeSellerPhone,
         requestNumber: data.requestNumber,
         requestUrl: data.requestUrl,
         items: [

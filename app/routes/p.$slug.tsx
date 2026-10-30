@@ -18,21 +18,26 @@ import {
 } from "lucide-react";
 import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
-import { INITIAL_PRODUCTS, ACCESSORIES, SeedProduct } from "~/db/mock-data";
+import { ACCESSORIES, SeedProduct } from "~/db/mock-data";
+import { getProductBySlug, getStoreSettings } from "~/db/d1.server";
 import { useSavedSarees, useBag, useMyRequests } from "~/hooks/useLocalStorage";
 import { generateWhatsAppBuyUrl, generateWhatsAppQuestionUrl } from "~/utils/whatsapp";
 
 export async function loader({ params, context }: LoaderFunctionArgs) {
+  const env = (context as any)?.cloudflare?.env;
   const slug = params.slug;
-  const product = INITIAL_PRODUCTS.find((p) => p.slug === slug);
+  const product = await getProductBySlug(slug as string, env);
   if (!product) {
     throw new Response("Product Not Found", { status: 404 });
   }
 
+  const settings = await getStoreSettings(env);
+
   return json({
     product,
     accessories: ACCESSORIES,
-    sellerPhone: "919876543210",
+    sellerPhone: settings.seller_whatsapp_number || "919876543210",
+    buyTemplate: settings.buy_now_message_template || "",
   });
 }
 
@@ -62,7 +67,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 };
 
 export default function ProductDetailPage() {
-  const { product, accessories, sellerPhone } = useLoaderData<typeof loader>();
+  const { product, accessories, sellerPhone, buyTemplate } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
 
   const [activePhoto, setActivePhoto] = useState(0);
@@ -154,6 +159,7 @@ export default function ProductDetailPage() {
         sellerPhone,
         requestNumber: data.requestNumber,
         requestUrl: data.requestUrl,
+        customTemplate: buyTemplate || undefined,
         items: [
           {
             code: product.code,

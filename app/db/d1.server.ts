@@ -335,11 +335,43 @@ export async function updateRequestStatus(
   return null;
 }
 
-export async function getStoreSettings(env?: { DB?: D1Database }) {
+export async function getStoreSettings(env?: { DB?: D1Database }): Promise<typeof INITIAL_SETTINGS> {
+  const db = getDb(env);
+  if (db) {
+    try {
+      const row = await db.query.storeSettings.findFirst({
+        where: (s, { eq }) => eq(s.key, "store_settings_json"),
+      });
+      if (row?.value) {
+        const parsed = JSON.parse(row.value);
+        runtimeSettings = { ...INITIAL_SETTINGS, ...runtimeSettings, ...parsed };
+      }
+    } catch (e) {
+      // Best-effort in D1
+    }
+  }
   return runtimeSettings;
 }
 
-export async function updateStoreSettings(newSettings: Record<string, string>, env?: { DB?: D1Database }) {
+export async function updateStoreSettings(newSettings: Record<string, string>, env?: { DB?: D1Database }): Promise<typeof INITIAL_SETTINGS> {
+  await getStoreSettings(env);
   runtimeSettings = { ...runtimeSettings, ...newSettings };
+  const db = getDb(env);
+  if (db) {
+    try {
+      await db
+        .insert(schema.storeSettings)
+        .values({
+          key: "store_settings_json",
+          value: JSON.stringify(runtimeSettings),
+        })
+        .onConflictDoUpdate({
+          target: schema.storeSettings.key,
+          set: { value: JSON.stringify(runtimeSettings) },
+        });
+    } catch (e) {
+      console.error("Error saving store settings to D1:", e);
+    }
+  }
   return runtimeSettings;
 }

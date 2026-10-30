@@ -1,10 +1,23 @@
-import { useSearchParams, Link } from "@remix-run/react";
+import { useSearchParams, Link, useLoaderData } from "@remix-run/react";
+import { json, type LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { Check, MessageCircle, Copy, ArrowRight, ShoppingBag } from "lucide-react";
 import { useState } from "react";
 import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
+import { getStoreSettings } from "~/db/d1.server";
+import { normalizeWhatsAppPhone } from "~/utils/whatsapp";
+
+export async function loader({ context }: LoaderFunctionArgs) {
+  const env = (context as any)?.cloudflare?.env;
+  const settings = await getStoreSettings(env);
+  return json({
+    sellerPhone: settings.seller_whatsapp_number || "919876543210",
+  });
+}
 
 export default function RequestCreatedPage() {
+  const { sellerPhone } = useLoaderData<typeof loader>();
+  const cleanPhone = normalizeWhatsAppPhone(sellerPhone);
   const [searchParams] = useSearchParams();
   const requestNumber = searchParams.get("number") || "#1042";
   const secretToken = searchParams.get("token") || "";
@@ -43,7 +56,7 @@ export default function RequestCreatedPage() {
 
         <div className="w-full mt-8 space-y-3">
           <a
-            href={`https://wa.me/919876543210?text=${encodeURIComponent(messageText)}`}
+            href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(messageText)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="w-full py-4 px-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-lg transition"

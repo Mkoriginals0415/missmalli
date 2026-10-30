@@ -3,6 +3,7 @@ import { X, MessageCircle, Loader2 } from "lucide-react";
 import { useNavigate } from "@remix-run/react";
 import { generateWhatsAppBuyUrl } from "~/utils/whatsapp";
 import { useMyRequests } from "~/hooks/useLocalStorage";
+import { useSellerPhone } from "~/hooks/useSellerPhone";
 
 interface Variant {
   id: number;
@@ -30,8 +31,10 @@ export function BuyNowSheet({
   isOpen,
   onClose,
   product,
-  sellerPhone = "919876543210",
+  sellerPhone,
 }: BuyNowSheetProps) {
+  const { phone: contextSellerPhone } = useSellerPhone();
+  const activeSellerPhone = sellerPhone || contextSellerPhone;
   const navigate = useNavigate();
   const { addRequest } = useMyRequests();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -102,7 +105,7 @@ export function BuyNowSheet({
 
       // Formulate WhatsApp buy URL
       const whatsappUrl = generateWhatsAppBuyUrl({
-        sellerPhone,
+        sellerPhone: activeSellerPhone,
         requestNumber: data.requestNumber,
         requestUrl: data.requestUrl,
         items: [

@@ -16,6 +16,7 @@ import { useBag, useSavedSarees, useFeedHint } from "~/hooks/useLocalStorage";
 import { DetailsSheet } from "~/components/product/DetailsSheet";
 import { BuyNowSheet } from "~/components/product/BuyNowSheet";
 import { generateWhatsAppQuestionUrl } from "~/utils/whatsapp";
+import { useSellerPhone } from "~/hooks/useSellerPhone";
 
 export interface SareeItem {
   id: number;
@@ -43,7 +44,9 @@ interface SwipeFeedProps {
   initialIndex?: number;
 }
 
-export function SwipeFeed({ sarees, sellerPhone = "919876543210", initialIndex = 0 }: SwipeFeedProps) {
+export function SwipeFeed({ sarees, sellerPhone, initialIndex = 0 }: SwipeFeedProps) {
+  const { phone: contextSellerPhone } = useSellerPhone();
+  const activeSellerPhone = sellerPhone || contextSellerPhone;
   const navigate = useNavigate();
   const [sareeIndex, setSareeIndex] = useState(initialIndex);
   const [photoIndex, setPhotoIndex] = useState(0);
@@ -192,7 +195,7 @@ export function SwipeFeed({ sarees, sellerPhone = "919876543210", initialIndex =
   }
 
   const whatsappAskUrl = generateWhatsAppQuestionUrl(
-    sellerPhone,
+    activeSellerPhone,
     currentSaree.name,
     typeof window !== "undefined" ? `${window.location.origin}/p/${currentSaree.slug}` : ""
   );
@@ -455,7 +458,7 @@ export function SwipeFeed({ sarees, sellerPhone = "919876543210", initialIndex =
         isOpen={detailsOpen}
         onClose={() => setDetailsOpen(false)}
         product={currentSaree}
-        sellerPhone={sellerPhone}
+        sellerPhone={activeSellerPhone}
       />
 
       {/* Buy Now Sheet Modal */}
@@ -470,7 +473,7 @@ export function SwipeFeed({ sarees, sellerPhone = "919876543210", initialIndex =
           coverImage: currentPhotos[0],
           variants: currentSaree.variants,
         }}
-        sellerPhone={sellerPhone}
+        sellerPhone={activeSellerPhone}
       />
     </div>
   );

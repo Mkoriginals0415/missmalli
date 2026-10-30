@@ -9,14 +9,51 @@ export interface WhatsAppOrderPayload {
     price: number;
   }>;
   totalAmount: number;
+  customTemplate?: string;
+}
+
+/**
+ * Normalizes any phone number into international WhatsApp format (digits only).
+ * If 10 digits (typical Indian mobile), automatically prepends 91.
+ */
+export function normalizeWhatsAppPhone(phone?: string | null): string {
+  let clean = (phone || "").replace(/\D/g, "");
+  if (!clean) return "919876543210";
+  if (clean.length === 10) {
+    clean = "91" + clean;
+  } else if (clean.length === 11 && clean.startsWith("0")) {
+    clean = "91" + clean.slice(1);
+  }
+  return clean;
+}
+
+/**
+ * Formats phone number for clean human display (e.g. +91 98765 43210)
+ */
+export function formatPhoneDisplay(phone?: string | null): string {
+  const clean = normalizeWhatsAppPhone(phone);
+  if (clean.startsWith("91") && clean.length === 12) {
+    return `+91 ${clean.slice(2, 7)} ${clean.slice(7)}`;
+  }
+  return `+${clean}`;
 }
 
 export function generateWhatsAppBuyUrl(payload: WhatsAppOrderPayload): string {
-  const { sellerPhone, requestNumber, requestUrl, items, totalAmount } = payload;
-  const cleanPhone = sellerPhone.replace(/\D/g, "");
+  const { sellerPhone, requestNumber, requestUrl, items, totalAmount, customTemplate } = payload;
+  const cleanPhone = normalizeWhatsAppPhone(sellerPhone);
 
   let message = "";
-  if (items.length === 1) {
+
+  if (customTemplate && items.length === 1) {
+    const item = items[0];
+    message = customTemplate
+      .replace(/\{saree\}/g, item.name)
+      .replace(/\{code\}/g, item.code || "")
+      .replace(/\{variant\}/g, item.variantDetails)
+      .replace(/\{price\}/g, item.price.toLocaleString("en-IN"))
+      .replace(/\{request\}/g, requestNumber)
+      .replace(/\{link\}/g, requestUrl);
+  } else if (items.length === 1) {
     const item = items[0];
     const codeStr = item.code ? `[Product ID: #${item.code}]` : "";
     message = `Hi Miss Malli, I would like to order this drape.\n\n` +
@@ -44,7 +81,7 @@ export function generateWhatsAppBuyUrl(payload: WhatsAppOrderPayload): string {
 }
 
 export function generateWhatsAppQuestionUrl(sellerPhone: string, productName: string, productCode?: string): string {
-  const cleanPhone = sellerPhone.replace(/\D/g, "");
+  const cleanPhone = normalizeWhatsAppPhone(sellerPhone);
   const codeStr = productCode ? `(#${productCode})` : "";
   const message = `Hi Miss Malli, I have an inquiry about *${productName}* ${codeStr}.\nCould you please help me with details and styling advice?`;
   return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;

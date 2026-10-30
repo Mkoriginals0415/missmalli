@@ -13,8 +13,10 @@ import {
 import { Header } from "~/components/layout/Header";
 import { BottomNav } from "~/components/layout/BottomNav";
 import { clearAllLocalData } from "~/hooks/useLocalStorage";
+import { useSellerPhone } from "~/hooks/useSellerPhone";
 
 export default function MorePage() {
+  const { getChatUrl, formatted } = useSellerPhone();
   const handleClearData = () => {
     if (confirm("Clear all saved sarees, bag, and request history from this device?")) {
       clearAllLocalData();
@@ -89,13 +91,13 @@ export default function MorePage() {
           </p>
           <div className="pt-1">
             <a
-              href="https://wa.me/919876543210?text=Hi%20Miss%20Malli%2C%20I'd%20like%20assistance%20with%20a%20saree"
+              href={getChatUrl("Hi Miss Malli, I'd like assistance with a saree")}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition shadow-sm"
             >
               <MessageCircle className="w-4 h-4" />
-              <span>WhatsApp +91 98765 43210</span>
+              <span>WhatsApp {formatted}</span>
             </a>
           </div>
           <span className="text-[10px] text-brand-dark/50 block">Available Mon – Sat, 10 AM – 8 PM IST</span>

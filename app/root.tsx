@@ -28,7 +28,9 @@ export async function loader({ context }: LoaderFunctionArgs) {
     // Fallback to default
   }
 
-  return json({ themeColors });
+  const sellerPhone = settings.seller_whatsapp_number || "919876543210";
+
+  return json({ themeColors, sellerPhone });
 }
 
 export const links: LinksFunction = () => [

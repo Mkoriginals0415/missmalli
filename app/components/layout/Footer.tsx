@@ -1,11 +1,13 @@
 import { Link } from "@remix-run/react";
 import { MessageCircle, ArrowRight, ChevronDown } from "lucide-react";
 import { useState } from "react";
+import { useSellerPhone } from "~/hooks/useSellerPhone";
 
 export function Footer() {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [openSection, setOpenSection] = useState<string | null>(null);
+  const { getChatUrl, formatted } = useSellerPhone();
 
   const toggleSection = (section: string) => {
     setOpenSection(openSection === section ? null : section);
@@ -41,13 +43,13 @@ export function Footer() {
             </p>
             <div className="pt-1">
               <a
-                href="https://wa.me/919876543210?text=Hi%20Miss%20Malli%2C%20I'd%20like%20to%20order"
+                href={getChatUrl("Hi Miss Malli, I'd like to order")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-emerald-600/90 text-white text-xs font-semibold hover:bg-emerald-600 transition min-h-[44px]"
               >
                 <MessageCircle className="w-4 h-4" />
-                <span>WhatsApp: +91 98765 43210</span>
+                <span>WhatsApp: {formatted}</span>
               </a>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { json, type LoaderFunctionArgs, type ActionFunctionArgs } from "@remix-run/cloudflare";
 import { useLoaderData, useFetcher, Link } from "@remix-run/react";
 import { 
@@ -10,10 +10,12 @@ import {
   ExternalLink,
   Phone,
   Clock,
-  Mail
+  Mail,
+  MessageCircle
 } from "lucide-react";
 import { getStoreSettings, updateStoreSettings } from "~/db/d1.server";
 import { DEFAULT_THEME_COLORS, StoreThemeColors } from "~/db/mock-data";
+import { normalizeWhatsAppPhone, formatPhoneDisplay } from "~/utils/whatsapp";
 
 export async function loader({ context }: LoaderFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
@@ -33,8 +35,11 @@ export async function action({ request, context }: ActionFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
   const formData = await request.formData();
 
+  const rawPhone = String(formData.get("seller_whatsapp_number") || "").trim();
+  const normalizedPhone = normalizeWhatsAppPhone(rawPhone);
+
   const updates: Record<string, string> = {
-    seller_whatsapp_number: String(formData.get("seller_whatsapp_number") || ""),
+    seller_whatsapp_number: normalizedPhone,
     buy_now_message_template: String(formData.get("buy_now_message_template") || ""),
     reserve_hours: String(formData.get("reserve_hours") || "24"),
     auto_expire_unanswered: String(formData.get("auto_expire_unanswered") || "false"),
@@ -63,6 +68,12 @@ export default function AdminSettingsPage() {
 
   // Brand Theme Colors State
   const [colors, setColors] = useState<StoreThemeColors>(initialThemeColors);
+
+  useEffect(() => {
+    if (fetcher.data?.settings?.seller_whatsapp_number) {
+      setWhatsappNumber(fetcher.data.settings.seller_whatsapp_number);
+    }
+  }, [fetcher.data]);
 
   const isSaving = fetcher.state === "submitting";
   const isSaved = fetcher.data?.success;
@@ -414,11 +425,25 @@ export default function AdminSettingsPage() {
               type="text"
               value={whatsappNumber}
               onChange={(e) => setWhatsappNumber(e.target.value)}
-              placeholder="e.g. 919876543210 (Country code + phone)"
+              placeholder="e.g. 919876543210 or 10-digit mobile"
               className="w-full px-3.5 py-2.5 rounded-xl border border-brand-deepPlum/20 text-xs font-bold text-brand-deepPlum focus:ring-1 focus:ring-brand-plum"
             />
-            <span className="text-[10px] text-brand-deepPlum/60 block mt-1">
-              Include country code without '+' or special characters.
+            <div className="flex flex-wrap items-center justify-between gap-2 mt-1.5 text-[10.5px]">
+              <span className="text-brand-deepPlum/60">
+                Display: <strong className="text-brand-deepPlum">{formatPhoneDisplay(whatsappNumber)}</strong>
+              </span>
+              <a
+                href={`https://wa.me/${normalizeWhatsAppPhone(whatsappNumber)}?text=${encodeURIComponent("Test message from Miss Malli Admin")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-emerald-700 font-semibold hover:underline"
+              >
+                <MessageCircle className="w-3 h-3" />
+                <span>Test WhatsApp Link (wa.me/{normalizeWhatsAppPhone(whatsappNumber)})</span>
+              </a>
+            </div>
+            <span className="text-[10px] text-brand-deepPlum/50 block mt-1">
+              Supports 10-digit mobile numbers or international numbers with country code.
             </span>
           </div>
 

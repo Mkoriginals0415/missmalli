@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { X, MessageCircle, ChevronDown, ChevronUp } from "lucide-react";
 import { generateWhatsAppQuestionUrl } from "~/utils/whatsapp";
+import { useSellerPhone } from "~/hooks/useSellerPhone";
 
 interface DetailsSheetProps {
   isOpen: boolean;
@@ -17,13 +18,15 @@ interface DetailsSheetProps {
   sellerPhone?: string;
 }
 
-export function DetailsSheet({ isOpen, onClose, product, sellerPhone = "919876543210" }: DetailsSheetProps) {
+export function DetailsSheet({ isOpen, onClose, product, sellerPhone }: DetailsSheetProps) {
+  const { phone: contextSellerPhone } = useSellerPhone();
+  const activeSellerPhone = sellerPhone || contextSellerPhone;
   const [shippingOpen, setShippingOpen] = useState(false);
 
   if (!isOpen) return null;
 
   const currentUrl = typeof window !== "undefined" ? window.location.href : `https://missmalli.com/p/${product.slug}`;
-  const whatsappUrl = generateWhatsAppQuestionUrl(sellerPhone, product.name, currentUrl);
+  const whatsappUrl = generateWhatsAppQuestionUrl(activeSellerPhone, product.name, currentUrl);
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm animate-fade-in">

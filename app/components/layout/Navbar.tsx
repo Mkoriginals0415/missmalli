@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "@remix-run/react";
 import { Heart, ShoppingBag, Menu, X, MessageCircle } from "lucide-react";
 import { useBag, useSavedSarees } from "~/hooks/useLocalStorage";
+import { useSellerPhone } from "~/hooks/useSellerPhone";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -9,6 +10,7 @@ export function Navbar() {
   const currentPath = location.pathname;
   const { items: bagItems } = useBag();
   const { savedIds } = useSavedSarees();
+  const { getChatUrl } = useSellerPhone();
   const bagCount = bagItems.reduce((acc, i) => acc + (i.quantity || 1), 0);
 
   const navLinks = [
@@ -107,7 +109,7 @@ export function Navbar() {
 
             {/* WhatsApp Support / Order pill button */}
             <a
-              href="https://wa.me/919876543210?text=Hi%20Miss%20Malli%2C%20I'd%20like%20assistance%20with%20an%20order"
+              href={getChatUrl("Hi Miss Malli, I'd like assistance with an order")}
               target="_blank"
               rel="noopener noreferrer"
               className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-deepPlum text-white text-[13px] font-semibold hover:bg-brand-plum transition shadow-md"
@@ -185,7 +187,7 @@ export function Navbar() {
             {/* Bottom Actions & Support inside Drawer */}
             <div className="p-5 border-t border-brand-lilac/30 space-y-3 bg-brand-warmWhite/60">
               <a
-                href="https://wa.me/919876543210?text=Hi%20Miss%20Malli%2C%20I%20have%20an%20enquiry"
+                href={getChatUrl("Hi Miss Malli, I have an enquiry")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-center gap-2.5 py-3 rounded-full bg-emerald-600 text-white font-semibold text-sm shadow-sm"
