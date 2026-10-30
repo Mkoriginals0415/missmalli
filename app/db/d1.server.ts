@@ -272,14 +272,16 @@ export async function getAllRequests(env?: { DB?: D1Database }): Promise<any[]> 
 export async function getRequestByTokenOrNumber(identifier: string, env?: { DB?: D1Database }) {
   await getAllRequests(env);
   const clean = decodeURIComponent(identifier || "").trim();
-  const withoutHash = clean.replace(/^#/, "");
+  const upper = clean.toUpperCase();
+  const withoutHash = upper.replace(/^#/, "");
   return (
     runtimeRequests.find(
       (r) =>
         r.secretToken === clean ||
-        r.requestNumber === clean ||
-        r.requestNumber === `#${withoutHash}` ||
-        (r.requestNumber && r.requestNumber.replace(/^#/, "") === withoutHash) ||
+        r.secretToken?.toUpperCase() === upper ||
+        r.requestNumber?.toUpperCase() === upper ||
+        r.requestNumber?.toUpperCase() === withoutHash ||
+        (r.requestNumber && r.requestNumber.replace(/^#/, "").toUpperCase() === withoutHash) ||
         String(r.id) === clean ||
         String(r.id) === withoutHash
     ) || null
@@ -303,9 +305,13 @@ export async function createNewRequest(
   env?: { DB?: D1Database }
 ) {
   await getAllRequests(env);
-  const nextId = 1043 + runtimeRequests.length;
-  const requestNumber = `#${nextId}`;
-  const secretToken = `req_${Math.random().toString(36).substring(2, 10)}_${nextId}`;
+  // Random number + one alphabet (e.g. 8492K) per user request
+  const letters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+  const randomLetter = letters[Math.floor(Math.random() * letters.length)];
+  const randomNum = Math.floor(1000 + Math.random() * 9000);
+  const requestNumber = `${randomNum}${randomLetter}`;
+  const nextId = Date.now();
+  const secretToken = `req_${Math.random().toString(36).substring(2, 8)}_${requestNumber.toLowerCase()}`;
 
   const newReq = {
     id: nextId,

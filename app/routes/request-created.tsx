@@ -19,9 +19,9 @@ export default function RequestCreatedPage() {
   const { sellerPhone } = useLoaderData<typeof loader>();
   const cleanPhone = normalizeWhatsAppPhone(sellerPhone);
   const [searchParams] = useSearchParams();
-  const requestNumber = searchParams.get("number") || "#1042";
+  const requestNumber = searchParams.get("number") || "Order";
   const secretToken = searchParams.get("token") || "";
-  const requestUrl = searchParams.get("url") || (secretToken ? `/r/${secretToken}` : "/my-requests");
+  const requestUrl = searchParams.get("url") || (secretToken ? `/r/${secretToken}` : "/track");
 
   const [copied, setCopied] = useState(false);
 
@@ -75,7 +75,7 @@ export default function RequestCreatedPage() {
 
           <div className="flex items-center justify-center gap-4 pt-4">
             <Link
-              to={secretToken ? `/r/${secretToken}` : "/my-requests"}
+              to={secretToken ? `/r/${secretToken}` : "/track"}
               className="text-xs font-semibold text-brand-plum hover:underline flex items-center gap-1"
             >
               <span>Track Order</span>

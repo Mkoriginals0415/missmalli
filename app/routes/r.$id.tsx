@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { json, type LoaderFunctionArgs, type ActionFunctionArgs, type MetaFunction } from "@remix-run/cloudflare";
 import { useLoaderData, useFetcher, Link } from "@remix-run/react";
-import { MessageCircle, Truck, Check, ArrowLeft, ExternalLink } from "lucide-react";
+import { MessageCircle, Truck, Check, ArrowLeft, ExternalLink, ShieldCheck } from "lucide-react";
 import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
 import { getRequestByTokenOrNumber, getStoreSettings, updateRequestStatus } from "~/db/d1.server";
 import { normalizeWhatsAppPhone } from "~/utils/whatsapp";
+import { isAdminAuthenticated } from "~/utils/auth.server";
 
 export async function loader({ params, request, context }: LoaderFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
@@ -16,17 +17,21 @@ export async function loader({ params, request, context }: LoaderFunctionArgs) {
   if (!req) throw new Response("Request Not Found", { status: 404 });
 
   const settings = await getStoreSettings(env);
-  const url = new URL(request.url);
-  const isAdminView = url.searchParams.get("view") === "admin" || request.headers.get("cookie")?.includes("mm_admin=authenticated");
+  const isAdminView = await isAdminAuthenticated(request);
 
   return json({
     request: req,
-    isAdminView: !!isAdminView,
+    isAdminView,
     sellerPhone: settings.seller_whatsapp_number || "919876543210",
   });
 }
 
 export async function action({ request, params, context }: ActionFunctionArgs) {
+  const isAdmin = await isAdminAuthenticated(request);
+  if (!isAdmin) {
+    return json({ error: "Unauthorized: only store admins can update request status" }, { status: 403 });
+  }
+
   const env = (context as any)?.cloudflare?.env;
   const idOrToken = params.id;
   if (!idOrToken) return json({ error: "Missing ID" }, { status: 400 });
@@ -140,12 +145,15 @@ export default function RequestTrackerPage() {
         {/* Header Bar */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link to="/my-requests" className="p-1.5 -ml-1 text-brand-deepPlum/60 hover:text-brand-plum">
+            <Link to="/track" className="p-1.5 -ml-1 text-brand-deepPlum/60 hover:text-brand-plum" title="Track another request">
               <ArrowLeft className="w-5 h-5" />
             </Link>
             <div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-brand-plum block">
+                Order Tracking
+              </span>
               <h1 className="text-2xl font-bold text-brand-deepPlum">
-                Order {request.requestNumber}
+                Request {request.requestNumber}
               </h1>
               <p className="text-xs text-brand-deepPlum/60">
                 Created: {new Date(request.createdAt).toLocaleDateString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
@@ -153,12 +161,15 @@ export default function RequestTrackerPage() {
             </div>
           </div>
 
-          <Link
-            to={isAdminView ? `/r/${request.secretToken}` : `/r/${request.secretToken}?view=admin`}
-            className="text-xs font-semibold px-4 py-1.5 rounded-full bg-brand-lilac/30 text-brand-deepPlum hover:bg-brand-lilac/50 transition"
-          >
-            {isAdminView ? "👁️ Customer View" : "🛠️ Admin View"}
-          </Link>
+          {isAdminView && (
+            <Link
+              to="/admin"
+              className="text-xs font-semibold px-3 py-1.5 rounded-full bg-brand-deepPlum text-white hover:bg-brand-plum transition flex items-center gap-1.5 shadow-xs"
+            >
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Admin Portal</span>
+            </Link>
+          )}
         </div>
 
         {/* ADMIN VIEW CONTROLS */}

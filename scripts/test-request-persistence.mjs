@@ -22,7 +22,8 @@ async function testRequests() {
 
   console.log('Created request:', created);
   assert(created.secretToken, 'secretToken must exist');
-  assert(created.requestUrl.startsWith('/r/req_'), 'requestUrl must start with /r/req_');
+  assert(/^[0-9]{4}[A-Z]$/.test(created.requestNumber), `requestNumber must be 4 digits + 1 alphabet, got: ${created.requestNumber}`);
+  console.log('✓ Validated random number + alphabet format:', created.requestNumber);
 
   // Test retrieval by secret token
   const retrievedByToken = await getRequestByTokenOrNumber(created.secretToken);
@@ -35,6 +36,16 @@ async function testRequests() {
   assert(retrievedByNumber, 'Must find request by requestNumber');
   assert.strictEqual(retrievedByNumber.secretToken, created.secretToken);
   console.log('✓ Found by requestNumber:', retrievedByNumber.requestNumber);
+
+  // Test retrieval by lowercase request number
+  const retrievedByLower = await getRequestByTokenOrNumber(created.requestNumber.toLowerCase());
+  assert(retrievedByLower, 'Must find request by lowercase requestNumber');
+  console.log('✓ Found by lowercase search:', created.requestNumber.toLowerCase());
+
+  // Test retrieval with # prefix
+  const retrievedWithHash = await getRequestByTokenOrNumber(`#${created.requestNumber}`);
+  assert(retrievedWithHash, 'Must find request with # prefix');
+  console.log('✓ Found by # prefixed search');
 
   // Test retrieval by id
   const retrievedById = await getRequestByTokenOrNumber(String(created.requestId));
