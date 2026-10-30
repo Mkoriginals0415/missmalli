@@ -54,7 +54,7 @@ export default function TrackOrderPage() {
                     if (errorMsg) setErrorMsg("");
                   }}
                   placeholder="e.g. 8492K or 4921M"
-                  className="w-full px-4 py-3.5 pl-11 rounded-full border border-brand-lilac/40 focus:border-brand-plum focus:ring-2 focus:ring-brand-plum/20 outline-none text-base font-semibold text-brand-deepPlum bg-brand-warmWhite/30 uppercase placeholder:normal-case placeholder:font-normal"
+                  className="w-full px-4 py-3.5 pl-11 rounded-full border border-brand-lilac/40 focus:border-brand-plum focus:ring-2 focus:ring-brand-plum/20 outline-none text-base font-semibold text-brand-deepPlum bg-brand-ivory/50 uppercase placeholder:normal-case placeholder:font-normal"
                   autoFocus
                 />
                 <Search className="w-5 h-5 text-brand-deepPlum/40 absolute left-4 top-1/2 -translate-y-1/2" />

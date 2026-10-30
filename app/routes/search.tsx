@@ -5,10 +5,13 @@ import { Search as SearchIcon, X, Eye } from "lucide-react";
 import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
 import { QuickViewModal } from "~/components/product/QuickViewModal";
-import { INITIAL_PRODUCTS, SeedProduct } from "~/db/mock-data";
+import { SeedProduct } from "~/db/mock-data";
+import { getAllProducts } from "~/db/d1.server";
 
 export async function loader({ context }: LoaderFunctionArgs) {
-  return json({ products: INITIAL_PRODUCTS });
+  const env = (context as any)?.cloudflare?.env;
+  const products = await getAllProducts(env);
+  return json({ products });
 }
 
 export default function SearchPage() {

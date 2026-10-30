@@ -14,8 +14,8 @@ export function BottomNav({ hidden = false }: BottomNavProps) {
   const { savedIds } = useSavedSarees();
   const { getChatUrl } = useSellerPhone();
 
-  // Hide on admin routes or product details (PDP has its own dedicated sticky buy bar)
-  if (hidden || currentPath.startsWith("/admin") || currentPath.startsWith("/p/")) {
+  // Hide on admin routes, feed (100dvh swipe reel), or product details (dedicated sticky buy bar)
+  if (hidden || currentPath.startsWith("/admin") || currentPath.startsWith("/p/") || currentPath.startsWith("/feed")) {
     return null;
   }
 

@@ -4,15 +4,16 @@ import { useLoaderData, Link, useSearchParams } from "@remix-run/react";
 import { Heart, Check, SlidersHorizontal, X, ArrowUpDown } from "lucide-react";
 import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
-import { INITIAL_PRODUCTS } from "~/db/mock-data";
+import { getAllProducts } from "~/db/d1.server";
 import { useSavedSarees } from "~/hooks/useLocalStorage";
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
+  const env = (context as any)?.cloudflare?.env;
   const url = new URL(request.url);
   const collection = url.searchParams.get("collection");
   const filter = url.searchParams.get("filter");
 
-  let list = [...INITIAL_PRODUCTS];
+  let list = await getAllProducts(env);
   let categoryTitle = "Sarees";
   let categorySubtitle = "Handcrafted pure silk, tissue and georgette drapes";
   let breadcrumbName = "Sarees";

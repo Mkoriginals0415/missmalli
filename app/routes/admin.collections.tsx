@@ -20,14 +20,17 @@ import {
 import { getHomepageContent, updateHomepageContent } from "~/db/d1.server";
 import { HomepageContent, CollectionItem, HomepageSection } from "~/db/mock-data";
 import { ImageUpload } from "~/components/ui/ImageUpload";
+import { requireAdmin } from "~/utils/auth.server";
 
-export async function loader({ context }: LoaderFunctionArgs) {
+export async function loader({ request, context }: LoaderFunctionArgs) {
+  await requireAdmin(request);
   const env = (context as any)?.cloudflare?.env;
   const content = await getHomepageContent(env);
   return json({ content });
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
+  await requireAdmin(request);
   const env = (context as any)?.cloudflare?.env;
   const formData = await request.formData();
   const rawJson = formData.get("homepageJson");

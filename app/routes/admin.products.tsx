@@ -3,14 +3,17 @@ import { json, type LoaderFunctionArgs, type ActionFunctionArgs } from "@remix-r
 import { useLoaderData, useFetcher, Link } from "@remix-run/react";
 import { Plus, Search, Minus, Edit, ExternalLink } from "lucide-react";
 import { getAllProducts, updateProductStock, deleteProduct } from "~/db/d1.server";
+import { requireAdmin } from "~/utils/auth.server";
 
-export async function loader({ context }: LoaderFunctionArgs) {
+export async function loader({ request, context }: LoaderFunctionArgs) {
+  await requireAdmin(request);
   const env = (context as any)?.cloudflare?.env;
   const products = await getAllProducts(env);
   return json({ products });
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
+  await requireAdmin(request);
   const env = (context as any)?.cloudflare?.env;
   const formData = await request.formData();
   const intent = formData.get("intent");
@@ -75,14 +78,14 @@ export default function AdminProductsPage() {
           <h1 className="text-2xl font-serif font-bold text-brand-plum">
             Products ({productList.length})
           </h1>
-          <p className="text-xs text-brand-dark/60">
+          <p className="text-xs text-brand-deepPlum/60">
             Manage saree catalog, variants, and live inventory
           </p>
         </div>
 
         <Link
           to="/admin/edit/new"
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-purple text-white text-xs font-semibold hover:bg-brand-plum transition shadow-sm self-start sm:self-auto"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-deepPlum text-white text-xs font-semibold hover:bg-brand-plum transition shadow-sm self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
           <span>Add product</span>
@@ -92,20 +95,20 @@ export default function AdminProductsPage() {
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="w-4 h-4 text-brand-dark/40 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-brand-deepPlum/40 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search products..."
-            className="w-full pl-9 pr-3 py-2 bg-white rounded-xl border border-brand-lavender/40 text-xs focus:ring-1 focus:ring-brand-purple"
+            className="w-full pl-9 pr-3 py-2 bg-white rounded-xl border border-brand-lilac/40 text-xs focus:ring-1 focus:ring-brand-plum text-brand-deepPlum"
           />
         </div>
 
         <select
           value={collectionFilter}
           onChange={(e) => setCollectionFilter(e.target.value)}
-          className="px-3 py-2 bg-white rounded-xl border border-brand-lavender/40 text-xs font-medium text-brand-dark"
+          className="px-3 py-2 bg-white rounded-xl border border-brand-lilac/40 text-xs font-medium text-brand-deepPlum"
         >
           <option value="all">All Collections</option>
           <option value="silk">Pure Silk</option>
@@ -115,9 +118,9 @@ export default function AdminProductsPage() {
       </div>
 
       {/* Products Display: Responsive Mobile Cards + Desktop Table */}
-      <div className="bg-white rounded-2xl sm:rounded-3xl border border-brand-lavender/30 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl sm:rounded-3xl border border-brand-lilac/30 shadow-sm overflow-hidden">
         {filtered.length === 0 ? (
-          <div className="p-8 sm:p-12 text-center text-xs text-brand-dark/60 font-medium">
+          <div className="p-8 sm:p-12 text-center text-xs text-brand-deepPlum/60 font-medium">
             No products found matching your search.
           </div>
         ) : (
@@ -125,7 +128,7 @@ export default function AdminProductsPage() {
             {/* --------------------------------------------------------
                 MOBILE PRODUCT CARDS VIEW (Visible only on < md screens)
                -------------------------------------------------------- */}
-            <div className="md:hidden divide-y divide-brand-lavender/20">
+            <div className="md:hidden divide-y divide-brand-lilac/20">
               {filtered.map((product) => {
                 const stock = product.variants[0]?.stockCount ?? 0;
                 return (
@@ -159,7 +162,7 @@ export default function AdminProductsPage() {
                     </div>
 
                     {/* Stock Stepper & Action Buttons */}
-                    <div className="flex items-center justify-between pt-1 border-t border-brand-lavender/20">
+                    <div className="flex items-center justify-between pt-1 border-t border-brand-lilac/20">
                       {/* Stock Stepper */}
                       <div className="flex items-center gap-1.5 bg-brand-ivory/60 px-2.5 py-1 rounded-xl border border-brand-deepPlum/15">
                         <span className="text-[10px] uppercase font-bold text-brand-dark/60 mr-1">Stock:</span>
@@ -211,7 +214,7 @@ export default function AdminProductsPage() {
                -------------------------------------------------------- */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-[#FAF8F5] text-brand-dark/60 border-b border-brand-lavender/20 uppercase tracking-wider text-[10px]">
+                <thead className="bg-[#FAF8F5] text-brand-deepPlum/60 border-b border-brand-lilac/20 uppercase tracking-wider text-[10px]">
                   <tr>
                     <th className="py-3 px-4">Product</th>
                     <th className="py-3 px-4">Price</th>
@@ -220,7 +223,7 @@ export default function AdminProductsPage() {
                     <th className="py-3 px-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-brand-lavender/20">
+                <tbody className="divide-y divide-brand-lilac/20">
                   {filtered.map((product) => {
                     const stock = product.variants[0]?.stockCount ?? 0;
                     return (
@@ -233,10 +236,10 @@ export default function AdminProductsPage() {
                               className="w-10 h-12 rounded-lg object-cover bg-brand-ivory shrink-0"
                             />
                             <div>
-                              <span className="font-serif font-bold text-brand-dark block">
+                              <span className="font-serif font-bold text-brand-deepPlum block">
                                 {product.name}
                               </span>
-                              <span className="text-[11px] text-brand-dark/60">
+                              <span className="text-[11px] text-brand-deepPlum/60">
                                 {product.fabric}
                               </span>
                             </div>
@@ -250,7 +253,7 @@ export default function AdminProductsPage() {
                           <div className="flex items-center justify-center gap-2">
                             <button
                               onClick={() => handleStockChange(product.id, -1)}
-                              className="w-6 h-6 rounded-lg bg-brand-ivory border border-brand-lavender/40 text-brand-dark flex items-center justify-center hover:bg-brand-lavender/30"
+                              className="w-6 h-6 rounded-lg bg-brand-ivory border border-brand-lilac/40 text-brand-deepPlum flex items-center justify-center hover:bg-brand-lilac/30"
                             >
                               <Minus className="w-3 h-3" />
                             </button>
@@ -259,7 +262,7 @@ export default function AdminProductsPage() {
                             </span>
                             <button
                               onClick={() => handleStockChange(product.id, 1)}
-                              className="w-6 h-6 rounded-lg bg-brand-ivory border border-brand-lavender/40 text-brand-dark flex items-center justify-center hover:bg-brand-lavender/30"
+                              className="w-6 h-6 rounded-lg bg-brand-ivory border border-brand-lilac/40 text-brand-deepPlum flex items-center justify-center hover:bg-brand-lilac/30"
                             >
                               <Plus className="w-3 h-3" />
                             </button>
@@ -276,7 +279,7 @@ export default function AdminProductsPage() {
                           <div className="flex items-center justify-end gap-2">
                             <Link
                               to={`/admin/edit/${product.id}`}
-                              className="p-1.5 text-brand-dark/60 hover:text-brand-purple rounded-lg hover:bg-brand-ivory"
+                              className="p-1.5 text-brand-deepPlum/60 hover:text-brand-plum rounded-lg hover:bg-brand-ivory"
                               title="Edit product"
                             >
                               <Edit className="w-4 h-4" />
@@ -284,7 +287,7 @@ export default function AdminProductsPage() {
                             <Link
                               to={`/p/${product.slug}`}
                               target="_blank"
-                              className="p-1.5 text-brand-dark/60 hover:text-brand-purple rounded-lg hover:bg-brand-ivory"
+                              className="p-1.5 text-brand-deepPlum/60 hover:text-brand-plum rounded-lg hover:bg-brand-ivory"
                               title="View public page"
                             >
                               <ExternalLink className="w-4 h-4" />

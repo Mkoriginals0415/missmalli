@@ -1,5 +1,6 @@
 import { json, type ActionFunctionArgs } from "@remix-run/cloudflare";
 import { createNewRequest, updateRequestStatus } from "~/db/d1.server";
+import { isAdminAuthenticated } from "~/utils/auth.server";
 
 export async function action({ request, context }: ActionFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
@@ -35,6 +36,11 @@ export async function action({ request, context }: ActionFunctionArgs) {
   }
 
   if (request.method === "PATCH") {
+    const isAdmin = await isAdminAuthenticated(request);
+    if (!isAdmin) {
+      return json({ error: "Unauthorized: Administrator login required" }, { status: 401 });
+    }
+
     try {
       const body = await request.json() as any;
       if (!body.requestId) {

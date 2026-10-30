@@ -4,11 +4,13 @@ import { useLoaderData, Link } from "@remix-run/react";
 import { Heart, ShoppingBag, Trash2, ArrowRight, Check } from "lucide-react";
 import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
-import { INITIAL_PRODUCTS } from "~/db/mock-data";
+import { getAllProducts } from "~/db/d1.server";
 import { useSavedSarees, useBag } from "~/hooks/useLocalStorage";
 
 export async function loader({ context }: LoaderFunctionArgs) {
-  return json({ products: INITIAL_PRODUCTS });
+  const env = (context as any)?.cloudflare?.env;
+  const products = await getAllProducts(env);
+  return json({ products });
 }
 
 export default function WishlistPage() {

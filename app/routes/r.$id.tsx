@@ -133,7 +133,14 @@ export default function RequestTrackerPage() {
     setTimeout(() => setQuickReplyCopied(null), 2000);
   };
 
-  const customerWhatsappUrl = `https://wa.me/${normalizeWhatsAppPhone(sellerPhone)}?text=${encodeURIComponent(
+  const customerDirectPhone = request.customerPhone ? normalizeWhatsAppPhone(request.customerPhone) : null;
+  const adminChatWithCustomerUrl = customerDirectPhone
+    ? `https://wa.me/${customerDirectPhone}?text=${encodeURIComponent(
+        `Hi, this is Miss Malli regarding your order request ${request.requestNumber}.`
+      )}`
+    : null;
+
+  const contactSellerUrl = `https://wa.me/${normalizeWhatsAppPhone(sellerPhone)}?text=${encodeURIComponent(
     `Hi Miss Malli, checking status on Request ${request.requestNumber}`
   )}`;
 
@@ -179,14 +186,18 @@ export default function RequestTrackerPage() {
               <span className="text-xs uppercase tracking-wider font-bold text-brand-plum">
                 Admin Order Control
               </span>
-              <a
-                href={customerWhatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-1.5 rounded-full bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition"
-              >
-                Chat with Customer
-              </a>
+              {adminChatWithCustomerUrl ? (
+                <a
+                  href={adminChatWithCustomerUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-1.5 rounded-full bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition"
+                >
+                  Chat with Customer
+                </a>
+              ) : (
+                <span className="text-[11px] text-brand-deepPlum/60 italic">No customer phone saved</span>
+              )}
             </div>
 
             {/* Quick Replies */}
@@ -343,7 +354,7 @@ export default function RequestTrackerPage() {
           {/* Actions */}
           <div className="space-y-3 pt-2">
             <a
-              href={customerWhatsappUrl}
+              href={contactSellerUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full py-3.5 px-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-md transition"

@@ -1,22 +1,22 @@
 import { Link } from "@remix-run/react";
 import { 
-  ShoppingBag, 
+  Package, 
   Truck, 
   HelpCircle, 
   Info, 
   Shield, 
   Trash2, 
   ChevronRight, 
-  MessageCircle,
-  Sparkles
+  MessageCircle
 } from "lucide-react";
-import { Header } from "~/components/layout/Header";
-import { BottomNav } from "~/components/layout/BottomNav";
+import { Navbar } from "~/components/layout/Navbar";
+import { Footer } from "~/components/layout/Footer";
 import { clearAllLocalData } from "~/hooks/useLocalStorage";
 import { useSellerPhone } from "~/hooks/useSellerPhone";
 
 export default function MorePage() {
-  const { getChatUrl, formatted } = useSellerPhone();
+  const { getChatUrl } = useSellerPhone();
+
   const handleClearData = () => {
     if (confirm("Clear all saved sarees, bag, and request history from this device?")) {
       clearAllLocalData();
@@ -26,40 +26,45 @@ export default function MorePage() {
   };
 
   const menuItems = [
-    { label: "My requests", to: "/my-requests", icon: ShoppingBag },
-    { label: "Shipping and returns", to: "/info?tab=shipping", icon: Truck },
-    { label: "Contact and support", to: "/info?tab=contact", icon: HelpCircle },
+    { label: "Track My Orders & Requests", to: "/track", icon: Package },
+    { label: "Shipping and Returns", to: "/info?tab=shipping", icon: Truck },
+    { label: "Contact and Support", to: "/info?tab=contact", icon: HelpCircle },
     { label: "About Miss Malli", to: "/info?tab=about", icon: Info },
     { label: "Privacy Policy", to: "/info?tab=privacy", icon: Shield },
   ];
 
   return (
-    <div className="min-h-screen bg-brand-warmWhite flex flex-col pb-20">
-      <Header />
+    <div className="min-h-screen bg-brand-ivory flex flex-col font-sans">
+      <Navbar />
 
-      <main className="flex-1 max-w-xl mx-auto w-full px-4 pt-4 space-y-5">
-        <h1 className="text-xl sm:text-2xl font-serif font-bold text-brand-plum">
-          More
-        </h1>
+      <main className="flex-1 max-w-xl mx-auto w-full px-4 sm:px-8 py-8 space-y-6">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-brand-deepPlum">
+            More Options
+          </h1>
+          <p className="text-xs text-brand-deepPlum/60 mt-1">
+            Store policies, order tracking, and concierge assistance
+          </p>
+        </div>
 
-        <div className="bg-white rounded-3xl border border-brand-lavender/30 shadow-sm overflow-hidden divide-y divide-brand-lavender/20">
+        <div className="bg-white rounded-3xl border border-brand-lilac/30 shadow-sm overflow-hidden divide-y divide-brand-lilac/20">
           {menuItems.map((item) => {
             const Icon = item.icon;
             return (
               <Link
                 key={item.label}
                 to={item.to}
-                className="flex items-center justify-between p-4 hover:bg-brand-ivory transition group"
+                className="flex items-center justify-between p-4 hover:bg-brand-ivory/60 transition group"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-brand-lavender/20 text-brand-purple flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-brand-lilac/20 text-brand-plum flex items-center justify-center">
                     <Icon className="w-4 h-4" />
                   </div>
-                  <span className="text-sm font-medium text-brand-dark group-hover:text-brand-purple">
+                  <span className="text-sm font-medium text-brand-deepPlum group-hover:text-brand-plum">
                     {item.label}
                   </span>
                 </div>
-                <ChevronRight className="w-4 h-4 text-brand-dark/40 group-hover:text-brand-purple" />
+                <ChevronRight className="w-4 h-4 text-brand-deepPlum/40 group-hover:text-brand-plum" />
               </Link>
             );
           })}
@@ -74,7 +79,7 @@ export default function MorePage() {
                 <Trash2 className="w-4 h-4" />
               </div>
               <span className="text-sm font-medium text-red-600">
-                Clear saved items on this phone
+                Clear saved items on this device
               </span>
             </div>
             <ChevronRight className="w-4 h-4 text-red-400" />
@@ -82,36 +87,36 @@ export default function MorePage() {
         </div>
 
         {/* Need Help Box */}
-        <div className="p-4 rounded-3xl bg-brand-ivory border border-brand-purple/20 space-y-2 text-center">
-          <span className="text-xs font-bold text-brand-purple uppercase tracking-wider block">
+        <div className="p-5 rounded-3xl bg-white border border-brand-lilac/30 space-y-2 text-center shadow-xs">
+          <span className="text-xs font-bold text-brand-plum uppercase tracking-wider block">
             Need styling advice or order help?
           </span>
-          <p className="text-xs text-brand-dark/70">
+          <p className="text-xs text-brand-deepPlum/70">
             Chat directly with our concierge team on WhatsApp.
           </p>
-          <div className="pt-1">
+          <div className="pt-2">
             <a
-              href={getChatUrl("Hi Miss Malli, I'd like assistance with a saree")}
+              href={getChatUrl("Hi Miss Malli, I would like assistance with a saree")}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition shadow-sm"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition shadow-sm"
             >
               <MessageCircle className="w-4 h-4" />
-              <span>WhatsApp {formatted}</span>
+              <span>Chat on WhatsApp</span>
             </a>
           </div>
-          <span className="text-[10px] text-brand-dark/50 block">Available Mon – Sat, 10 AM – 8 PM IST</span>
+          <span className="text-[10px] text-brand-deepPlum/50 block pt-1">Available Mon – Sat, 10 AM – 8 PM IST</span>
         </div>
 
         {/* Admin Link */}
         <div className="text-center pt-2">
-          <Link to="/admin" className="text-xs text-brand-purple/70 hover:text-brand-purple underline">
+          <Link to="/admin" className="text-xs text-brand-plum/70 hover:text-brand-plum underline">
             Seller Admin Portal
           </Link>
         </div>
       </main>
 
-      <BottomNav />
+      <Footer />
     </div>
   );
 }

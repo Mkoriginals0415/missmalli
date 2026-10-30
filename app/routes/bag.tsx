@@ -141,7 +141,7 @@ export default function ShoppingBagPage() {
             </h1>
             <p className="text-xs text-brand-deepPlum/60 mt-0.5">
               Send several drapes in one single WhatsApp request ·{" "}
-              <Link to="/my-requests" className="underline text-brand-plum font-semibold">
+              <Link to="/track" className="underline text-brand-plum font-semibold">
                 Track previous orders
               </Link>
             </p>

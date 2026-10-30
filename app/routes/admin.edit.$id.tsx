@@ -4,8 +4,10 @@ import { useLoaderData, useFetcher, useNavigate, Link } from "@remix-run/react";
 import { ArrowLeft, Save, Upload, Eye, Plus, Trash2, Loader2 } from "lucide-react";
 import { getProductById, upsertProduct, deleteProduct } from "~/db/d1.server";
 import { processImageFile } from "~/components/ui/ImageUpload";
+import { requireAdmin } from "~/utils/auth.server";
 
-export async function loader({ params, context }: LoaderFunctionArgs) {
+export async function loader({ request, params, context }: LoaderFunctionArgs) {
+  await requireAdmin(request);
   const env = (context as any)?.cloudflare?.env;
   const idStr = params.id;
   const isNew = idStr === "new";
@@ -40,6 +42,7 @@ export async function loader({ params, context }: LoaderFunctionArgs) {
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
+  await requireAdmin(request);
   const env = (context as any)?.cloudflare?.env;
   const formData = await request.formData();
   const intent = formData.get("intent");
@@ -126,16 +129,16 @@ export default function AdminProductEditor() {
   return (
     <div className="space-y-6">
       {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-brand-lavender/30">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-brand-lilac/30">
         <div className="flex items-center gap-2.5">
-          <Link to="/admin/products" className="p-2 -ml-2 text-brand-dark/60 hover:text-brand-deepPlum min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg">
+          <Link to="/admin/products" className="p-2 -ml-2 text-brand-deepPlum/60 hover:text-brand-deepPlum min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
             <h1 className="text-xl sm:text-2xl font-serif font-bold text-brand-plum">
               {isNew ? "Add New Saree" : "Edit Saree"}
             </h1>
-            <span className="text-xs text-brand-dark/60">
+            <span className="text-xs text-brand-deepPlum/60">
               Configure product details, gallery, and variant inventory
             </span>
           </div>
@@ -178,11 +181,11 @@ export default function AdminProductEditor() {
         {/* Left Form Column */}
         <div className="lg:col-span-2 space-y-5">
           {/* Photos Box */}
-          <div className="bg-white rounded-3xl p-5 border border-brand-lavender/30 shadow-sm space-y-3">
+          <div className="bg-white rounded-3xl p-5 border border-brand-lilac/30 shadow-sm space-y-3">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-serif font-bold text-sm text-brand-plum">Photos</h3>
-                <p className="text-[11px] text-brand-dark/60">
+                <p className="text-[11px] text-brand-deepPlum/60">
                   First photo is the cover and image WhatsApp displays in preview cards
                 </p>
               </div>
@@ -214,10 +217,10 @@ export default function AdminProductEditor() {
 
             <div className="flex gap-3 overflow-x-auto no-scrollbar py-2">
               {images.map((img, idx) => (
-                <div key={idx} className="relative w-24 h-32 rounded-2xl overflow-hidden border border-brand-lavender/40 group shrink-0">
+                <div key={idx} className="relative w-24 h-32 rounded-2xl overflow-hidden border border-brand-lilac/40 group shrink-0">
                   <img src={img} alt={`Product photo ${idx + 1}`} className="w-full h-full object-cover" />
                   {idx === 0 && (
-                    <span className="absolute top-1 left-1 bg-brand-purple text-white text-[9px] px-1.5 py-0.5 rounded font-bold">
+                    <span className="absolute top-1 left-1 bg-brand-deepPlum text-white text-[9px] px-1.5 py-0.5 rounded font-bold">
                       Cover
                     </span>
                   )}
@@ -233,9 +236,9 @@ export default function AdminProductEditor() {
           </div>
 
           {/* Saree Details Box */}
-          <div className="bg-white rounded-3xl p-5 border border-brand-lavender/30 shadow-sm space-y-4 text-xs">
+          <div className="bg-white rounded-3xl p-5 border border-brand-lilac/30 shadow-sm space-y-4 text-xs">
             <div>
-              <label className="font-semibold text-brand-dark block mb-1">Saree Name</label>
+              <label className="font-semibold text-brand-deepPlum block mb-1">Saree Name</label>
               <input
                 type="text"
                 value={name}
@@ -243,27 +246,27 @@ export default function AdminProductEditor() {
                   setName(e.target.value);
                   setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, "-"));
                 }}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-brand-lavender/40 text-brand-dark focus:ring-1 focus:ring-brand-purple"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-brand-lilac/40 text-brand-deepPlum focus:ring-1 focus:ring-brand-plum"
                 placeholder="e.g. Ruby Red Banarasi Silk Saree"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="font-semibold text-brand-dark block mb-1">Price (₹)</label>
+                <label className="font-semibold text-brand-deepPlum block mb-1">Price (₹)</label>
                 <input
                   type="number"
                   value={price}
                   onChange={(e) => setPrice(Number(e.target.value))}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-brand-lavender/40 text-brand-dark focus:ring-1 focus:ring-brand-purple"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-brand-lilac/40 text-brand-deepPlum focus:ring-1 focus:ring-brand-plum"
                 />
               </div>
               <div>
-                <label className="font-semibold text-brand-dark block mb-1">Collection</label>
+                <label className="font-semibold text-brand-deepPlum block mb-1">Collection</label>
                 <select
                   value={collection}
                   onChange={(e) => setCollection(e.target.value as any)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-brand-lavender/40 text-brand-dark focus:ring-1 focus:ring-brand-purple"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-brand-lilac/40 text-brand-deepPlum focus:ring-1 focus:ring-brand-plum"
                 >
                   <option value="silk">Pure Silk</option>
                   <option value="festive">Festive Specials</option>
@@ -273,23 +276,23 @@ export default function AdminProductEditor() {
             </div>
 
             <div>
-              <label className="font-semibold text-brand-dark block mb-1">Fabric & Weave</label>
+              <label className="font-semibold text-brand-deepPlum block mb-1">Fabric & Weave</label>
               <input
                 type="text"
                 value={fabric}
                 onChange={(e) => setFabric(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-brand-lavender/40 text-brand-dark focus:ring-1 focus:ring-brand-purple"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-brand-lilac/40 text-brand-deepPlum focus:ring-1 focus:ring-brand-plum"
                 placeholder="e.g. Pure Katan Silk with Golden Zari"
               />
             </div>
 
             <div>
-              <label className="font-semibold text-brand-dark block mb-1">Description & Story</label>
+              <label className="font-semibold text-brand-deepPlum block mb-1">Description & Story</label>
               <textarea
                 rows={3}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-brand-lavender/40 text-brand-dark focus:ring-1 focus:ring-brand-purple"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-brand-lilac/40 text-brand-deepPlum focus:ring-1 focus:ring-brand-plum"
               />
             </div>
 
@@ -361,8 +364,8 @@ export default function AdminProductEditor() {
         {/* Right Preview Column (Screen A4 Preview Simulator) */}
         <div className="space-y-5">
           {/* WhatsApp Preview Card Simulator */}
-          <div className="bg-white rounded-3xl p-5 border border-brand-lavender/30 shadow-sm space-y-3">
-            <span className="text-xs uppercase tracking-wider font-bold text-brand-dark/60 block">
+          <div className="bg-white rounded-3xl p-5 border border-brand-lilac/30 shadow-sm space-y-3">
+            <span className="text-xs uppercase tracking-wider font-bold text-brand-deepPlum/60 block">
               WhatsApp Link Preview Card
             </span>
             <div className="rounded-2xl border border-gray-200 bg-[#E5DDD5]/30 p-3 shadow-inner">
@@ -373,27 +376,27 @@ export default function AdminProductEditor() {
                   className="w-full h-36 object-cover"
                 />
                 <div className="p-3 space-y-1">
-                  <h4 className="font-serif font-bold text-xs text-brand-dark line-clamp-1">
+                  <h4 className="font-serif font-bold text-xs text-brand-deepPlum line-clamp-1">
                     {name || "Ruby Red Banarasi Silk Saree"}
                   </h4>
                   <p className="text-[11px] text-gray-500 line-clamp-1">
                     ₹ {price.toLocaleString("en-IN")} · Handloom Silk · Miss Malli
                   </p>
-                  <span className="text-[9px] text-gray-400 block pt-0.5">missmalli.com</span>
+                  <span className="text-[9px] text-gray-400 block pt-0.5">missmalli.in</span>
                 </div>
               </div>
             </div>
-            <p className="text-[10px] text-brand-dark/50">
+            <p className="text-[10px] text-brand-deepPlum/50">
               Generated dynamically via edge SSR OpenGraph tags on Cloudflare.
             </p>
           </div>
 
           {/* Search Appearance */}
-          <div className="bg-white rounded-3xl p-5 border border-brand-lavender/30 shadow-sm space-y-2 text-xs">
-            <span className="font-bold text-brand-dark/70 block uppercase tracking-wider text-[10px]">
+          <div className="bg-white rounded-3xl p-5 border border-brand-lilac/30 shadow-sm space-y-2 text-xs">
+            <span className="font-bold text-brand-deepPlum/70 block uppercase tracking-wider text-[10px]">
               Search Appearance
             </span>
-            <p className="font-mono text-[11px] text-brand-purple bg-brand-ivory p-2 rounded-xl border border-brand-lavender/30 break-all">
+            <p className="font-mono text-[11px] text-brand-plum bg-brand-ivory p-2 rounded-xl border border-brand-lilac/30 break-all">
               /p/{slug || "ruby-red-banarasi"}
             </p>
           </div>

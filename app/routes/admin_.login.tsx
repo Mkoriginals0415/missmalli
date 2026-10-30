@@ -27,7 +27,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
   // Allow any username as long as administrator password is correct
   if (password !== validPassword) {
     return json({ 
-      error: "Incorrect password. Default administrator password is: missmalli2026" 
+      error: "Incorrect password. Please verify your administrator credentials." 
     }, { status: 401 });
   }
 

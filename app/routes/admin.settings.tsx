@@ -23,8 +23,10 @@ import {
 import { getStoreSettings, updateStoreSettings } from "~/db/d1.server";
 import { DEFAULT_THEME_COLORS, StoreThemeColors, DEFAULT_NAV_LINKS, NavLinkItem } from "~/db/mock-data";
 import { normalizeWhatsAppPhone, formatPhoneDisplay } from "~/utils/whatsapp";
+import { requireAdmin } from "~/utils/auth.server";
 
-export async function loader({ context }: LoaderFunctionArgs) {
+export async function loader({ request, context }: LoaderFunctionArgs) {
+  await requireAdmin(request);
   const env = (context as any)?.cloudflare?.env;
   const settings = await getStoreSettings(env);
 
@@ -46,6 +48,7 @@ export async function loader({ context }: LoaderFunctionArgs) {
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
+  await requireAdmin(request);
   const env = (context as any)?.cloudflare?.env;
   const formData = await request.formData();
 

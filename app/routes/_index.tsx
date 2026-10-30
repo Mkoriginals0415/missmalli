@@ -16,17 +16,20 @@ import {
 import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
 import { INITIAL_PRODUCTS } from "~/db/mock-data";
-import { getHomepageContent } from "~/db/d1.server";
+import { getHomepageContent, getAllProducts } from "~/db/d1.server";
 import { useSavedSarees } from "~/hooks/useLocalStorage";
 import { Hero3DCoverFlow } from "~/components/home/Hero3DCoverFlow";
 
 export async function loader({ context }: LoaderFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
-  const content = await getHomepageContent(env);
+  const [content, allProducts] = await Promise.all([
+    getHomepageContent(env),
+    getAllProducts(env),
+  ]);
 
   return json({
-    products: INITIAL_PRODUCTS,
-    newArrivals: INITIAL_PRODUCTS.slice(0, content.newArrivals?.productLimit || 4),
+    products: allProducts,
+    newArrivals: allProducts.slice(0, content.newArrivals?.productLimit || 4),
     content,
   });
 }
@@ -174,64 +177,16 @@ export default function HomePage() {
 
               return (
                 <section key="hero" className="relative max-w-7xl mx-auto px-4 sm:px-8 pt-6 sm:pt-10 pb-6">
-                  {/* Top Bar: Circular Badge + Central Headline + Social Avatars */}
-                  <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8 sm:mb-10">
-                    {/* Circular Rotating Badge (Desktop) */}
-                    <div className="hidden lg:flex items-center gap-3">
-                      <Link to="/artisans" className="relative w-20 h-20 flex items-center justify-center cursor-pointer hover:scale-105 transition" title="Learn about our master artisans">
-                        <svg className="w-full h-full animate-[spin_14s_linear_infinite]" viewBox="0 0 100 100">
-                          <path
-                            id="circlePath"
-                            d="M 50, 50 m -36, 0 a 36,36 0 1,1 72,0 a 36,36 0 1,1 -72,0"
-                            fill="none"
-                          />
-                          <text className="text-[9.5px] uppercase tracking-[0.25em] font-bold fill-brand-deepPlum">
-                            <textPath xlinkHref="#circlePath">
-                              {hero.badgeText || "Learn about our master artisans •"}
-                            </textPath>
-                          </text>
-                        </svg>
-                        <div className="absolute inset-0 m-auto w-9 h-9 rounded-full bg-brand-deepPlum text-white flex items-center justify-center shadow-md">
-                          <Play className="w-3.5 h-3.5 fill-white ml-0.5" />
-                        </div>
-                      </Link>
-                    </div>
-
-                    {/* Central Headline */}
-                    <div className="text-center max-w-3xl mx-auto space-y-2">
-                      <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-bold tracking-tight text-brand-deepPlum leading-[1.12]">
-                        {hero.headline}
-                      </h1>
-                      {hero.subheadline && (
-                        <p className="text-xs sm:text-sm text-brand-deepPlum/70 font-medium max-w-xl mx-auto">
-                          {hero.subheadline}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Social Proof Avatar Cluster (Desktop) */}
-                    <div className="hidden lg:flex items-center gap-2">
-                      <div className="flex -space-x-2.5">
-                        <img
-                          src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
-                          alt="Collector"
-                          className="w-9 h-9 rounded-full border-2 border-brand-ivory object-cover shadow-sm"
-                        />
-                        <img
-                          src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80"
-                          alt="Collector"
-                          className="w-9 h-9 rounded-full border-2 border-brand-ivory object-cover shadow-sm"
-                        />
-                        <img
-                          src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80"
-                          alt="Collector"
-                          className="w-9 h-9 rounded-full border-2 border-brand-ivory object-cover shadow-sm"
-                        />
-                      </div>
-                      <div className="w-8 h-8 rounded-full bg-brand-deepPlum text-white text-xs font-bold flex items-center justify-center shadow-sm">
-                        +
-                      </div>
-                    </div>
+                  {/* Central Headline */}
+                  <div className="text-center max-w-3xl mx-auto space-y-2.5 mb-8 sm:mb-10">
+                    <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-bold tracking-tight text-brand-deepPlum leading-[1.12]">
+                      {hero.headline}
+                    </h1>
+                    {hero.subheadline && (
+                      <p className="text-xs sm:text-sm text-brand-deepPlum/70 font-medium max-w-xl mx-auto">
+                        {hero.subheadline}
+                      </p>
+                    )}
                   </div>
 
                   {/* ----------------------------------------------------------
