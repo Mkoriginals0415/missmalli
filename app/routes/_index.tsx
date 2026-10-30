@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { json, type LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { useLoaderData, Link } from "@remix-run/react";
 import { 
@@ -36,7 +36,47 @@ export default function HomePage() {
 
   // Floating notification toast for user interactions
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [isHeroPaused, setIsHeroPaused] = useState(false);
+
+  // Scroll-driven horizontal translation for hero cutouts with momentum Lerp
+  const heroContainerRef = useRef<HTMLDivElement>(null);
+  const heroTrackRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let animationFrameId: number;
+    let targetX = 0;
+    let currentX = 0;
+
+    const onScroll = () => {
+      if (!heroContainerRef.current || !heroTrackRef.current) return;
+      const rect = heroContainerRef.current.getBoundingClientRect();
+      // Distance scrolled past the top of the hero container
+      const scrollDistance = Math.max(0, -rect.top + 60);
+      const maxScroll = Math.max(0, heroTrackRef.current.scrollWidth - window.innerWidth + 80);
+      // As website is scrolled, track moves smoothly from right to left
+      targetX = -Math.min(maxScroll, scrollDistance * 0.7);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    onScroll();
+
+    // 60-120fps buttery smooth Lerp loop
+    const lerp = () => {
+      currentX += (targetX - currentX) * 0.09;
+      if (heroTrackRef.current) {
+        heroTrackRef.current.style.transform = `translate3d(${currentX.toFixed(2)}px, 0, 0)`;
+      }
+      animationFrameId = requestAnimationFrame(lerp);
+    };
+
+    animationFrameId = requestAnimationFrame(lerp);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
 
   const handleToggleSave = (productId: number, productName: string) => {
     toggleSave(productId);
@@ -102,7 +142,7 @@ export default function HomePage() {
 
           switch (section.id) {
             /* =========================================================
-               1. HERO SECTION (Customizable images, titles, 3D smooth ribbon)
+               1. HERO SECTION (Scroll-driven editorial cutout moodboard)
                ========================================================= */
             case "hero": {
               const heroCards = [
@@ -112,6 +152,7 @@ export default function HomePage() {
                   title: "Pure Kanjivaram Silk",
                   subtitle: "Heirloom Gold Zari Drape",
                   tag: "Royal Heritage",
+                  cutoutClass: "cutout-arch",
                   link: "/sarees?collection=kanjivaram",
                 },
                 {
@@ -120,6 +161,7 @@ export default function HomePage() {
                   title: "Lilac Handloom Silk",
                   subtitle: "Soft Georgette Fall",
                   tag: "Pure Weave",
+                  cutoutClass: "cutout-leaf-tl",
                   link: "/sarees?collection=handloom",
                 },
                 {
@@ -128,6 +170,7 @@ export default function HomePage() {
                   title: "Antique Zari Brocade",
                   subtitle: "Festive Crimson & Zari",
                   tag: "Bridal Trousseau",
+                  cutoutClass: "cutout-capsule",
                   link: "/sarees?collection=banarasi",
                 },
                 {
@@ -136,6 +179,7 @@ export default function HomePage() {
                   title: "Lustrous Satin Crepe",
                   subtitle: "Contemporary Emerald Glow",
                   tag: "Modern Festive",
+                  cutoutClass: "cutout-inverted-arch",
                   link: "/sarees?collection=crepe",
                 },
                 {
@@ -144,6 +188,7 @@ export default function HomePage() {
                   title: "Master Weaver Looms",
                   subtitle: "Handcrafted Heritage Art",
                   tag: "Artisan Loom",
+                  cutoutClass: "cutout-bento-organic",
                   link: "/artisans",
                 },
                 {
@@ -152,10 +197,28 @@ export default function HomePage() {
                   title: "Blossom Organza Weave",
                   subtitle: "Pastel Drapes & Resham",
                   tag: "Lightweight Luxury",
+                  cutoutClass: "cutout-squircle",
                   link: "/sarees?collection=organza",
                 },
+                {
+                  id: "card-7",
+                  image: hero.desktopImages[0] || "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1200&q=85",
+                  title: "Temple Border Silk",
+                  subtitle: "Pure Mulberry Weave",
+                  tag: "Temple Zari",
+                  cutoutClass: "cutout-leaf-tr",
+                  link: "/sarees",
+                },
+                {
+                  id: "card-8",
+                  image: hero.desktopImages[1] || "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1200&q=85",
+                  title: "Chanderi Gold Motif",
+                  subtitle: "Featherlight Grace",
+                  tag: "Classic Weave",
+                  cutoutClass: "cutout-capsule",
+                  link: "/sarees",
+                },
               ];
-              const loopedCards = [...heroCards, ...heroCards];
 
               return (
                 <section key="hero" className="relative max-w-7xl mx-auto px-4 sm:px-8 pt-6 sm:pt-10 pb-6">
@@ -220,30 +283,27 @@ export default function HomePage() {
                   </div>
 
                   {/* ----------------------------------------------------------
-                      UNIFIED 3D INFINITE HERO SHOWCASE (Desktop & Mobile)
+                      SCROLL-DRIVEN EDITORIAL CUTOUT SHOWCASE (Desktop & Mobile)
                      ---------------------------------------------------------- */}
                   <div className="space-y-6">
-                    {/* Infinite 3D Smooth Gallery Track */}
+                    {/* Scroll-Driven Horizontal Track */}
                     <div
-                      className="relative w-screen -ml-[calc((100vw-100%)/2)] overflow-hidden hero-perspective-container py-4 select-none cursor-grab active:cursor-grabbing"
-                      onMouseEnter={() => setIsHeroPaused(true)}
-                      onMouseLeave={() => setIsHeroPaused(false)}
-                      onTouchStart={() => setIsHeroPaused(true)}
-                      onTouchEnd={() => setIsHeroPaused(false)}
+                      ref={heroContainerRef}
+                      className="relative w-screen -ml-[calc((100vw-100%)/2)] overflow-hidden hero-perspective-container py-4 select-none"
                     >
                       {/* Left & Right Soft Blur Edge Fades */}
                       <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-24 bg-gradient-to-r from-brand-ivory via-brand-ivory/80 to-transparent z-10 pointer-events-none" />
                       <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-24 bg-gradient-to-l from-brand-ivory via-brand-ivory/80 to-transparent z-10 pointer-events-none" />
 
                       <div
-                        className={`hero-smooth-track flex gap-4 sm:gap-6 lg:gap-8 items-center px-4 ${isHeroPaused ? "is-paused" : ""}`}
-                        style={{ animationPlayState: isHeroPaused ? "paused" : "running" }}
+                        ref={heroTrackRef}
+                        className="hero-scroll-track flex gap-4 sm:gap-6 lg:gap-8 items-center px-4"
                       >
-                        {loopedCards.map((card, idx) => (
+                        {heroCards.map((card, idx) => (
                           <Link
                             key={`${card.id}-${idx}`}
                             to={card.link}
-                            className="hero-card-3d group relative shrink-0 w-[220px] sm:w-[270px] lg:w-[310px] h-[350px] sm:h-[420px] lg:h-[480px] rounded-[30px] sm:rounded-[38px] lg:rounded-[44px] overflow-hidden bg-white/60 border border-brand-lilac/30 shadow-md hover:shadow-[0_24px_50px_rgba(42,18,53,0.22)] hover:border-brand-gold/60 transition-all duration-500 block"
+                            className={`${card.cutoutClass} hero-card-3d group relative shrink-0 w-[220px] sm:w-[270px] lg:w-[310px] h-[350px] sm:h-[420px] lg:h-[480px] overflow-hidden bg-white/60 border border-brand-lilac/30 shadow-md hover:shadow-[0_24px_50px_rgba(42,18,53,0.22)] hover:border-brand-gold/60 transition-all duration-500 block`}
                           >
                             <img
                               src={card.image}
@@ -252,7 +312,7 @@ export default function HomePage() {
                               loading={idx < 4 ? "eager" : "lazy"}
                             />
                             {/* Luxury Gradient & Info Overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/90 via-brand-deepPlum/20 to-transparent flex flex-col justify-between p-4 sm:p-6 text-white transition-opacity duration-300">
+                            <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/90 via-brand-deepPlum/20 to-transparent flex flex-col justify-between p-5 sm:p-6 text-white transition-opacity duration-300">
                               {/* Top Micro-Badge Tag */}
                               <div className="flex items-center justify-between">
                                 <span className="px-3 py-1 rounded-full text-[10px] tracking-widest uppercase font-bold bg-brand-deepPlum/70 backdrop-blur-md text-brand-gold border border-brand-gold/30 shadow-xs">
@@ -281,8 +341,8 @@ export default function HomePage() {
                     {/* Interactive Micro-hint & Controls */}
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-1 max-w-5xl mx-auto px-4">
                       <div className="flex items-center gap-2 text-[11px] font-medium text-brand-deepPlum/65">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span>Hover or touch to pause · Tap card to explore drape</span>
+                        <span className="w-2 h-2 rounded-full bg-brand-plum animate-pulse" />
+                        <span>Scroll down to glide through editorial moodboard · Tap card to explore drape</span>
                       </div>
 
                       {/* Action Pill Buttons */}

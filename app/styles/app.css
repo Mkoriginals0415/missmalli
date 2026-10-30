@@ -61,33 +61,55 @@
   scrollbar-width: none;
 }
 
-/* Smooth Infinite Hero Ribbon */
-@keyframes heroGlide {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  100% {
-    transform: translate3d(-50%, 0, 0);
-  }
+/* Custom Editorial Cutout Silhouettes from User Template */
+.cutout-arch {
+  border-top-left-radius: 9999px;
+  border-top-right-radius: 9999px;
+  border-bottom-left-radius: 36px;
+  border-bottom-right-radius: 36px;
 }
 
-.hero-smooth-track {
+.cutout-capsule {
+  border-radius: 9999px;
+}
+
+.cutout-inverted-arch {
+  border-top-left-radius: 36px;
+  border-top-right-radius: 36px;
+  border-bottom-left-radius: 9999px;
+  border-bottom-right-radius: 9999px;
+}
+
+.cutout-leaf-tl {
+  border-top-left-radius: 80px;
+  border-bottom-right-radius: 80px;
+  border-top-right-radius: 28px;
+  border-bottom-left-radius: 28px;
+}
+
+.cutout-leaf-tr {
+  border-top-right-radius: 80px;
+  border-bottom-left-radius: 80px;
+  border-top-left-radius: 28px;
+  border-bottom-right-radius: 28px;
+}
+
+.cutout-bento-organic {
+  border-top-left-radius: 48px;
+  border-top-right-radius: 48px;
+  border-bottom-left-radius: 48px;
+  border-bottom-right-radius: 18px;
+}
+
+.cutout-squircle {
+  border-radius: 42px;
+}
+
+/* Scroll-Driven Horizontal Ribbon */
+.hero-scroll-track {
   display: flex;
   width: max-content;
   will-change: transform;
-  animation: heroGlide 40s linear infinite;
-}
-
-@media (max-width: 640px) {
-  .hero-smooth-track {
-    animation-duration: 30s;
-  }
-}
-
-.hero-smooth-track:hover,
-.hero-smooth-track:active,
-.hero-smooth-track.is-paused {
-  animation-play-state: paused !important;
 }
 
 /* 3D Perspective Card Tilt */
@@ -99,7 +121,7 @@
 .hero-card-3d {
   transform-style: preserve-3d;
   backface-visibility: hidden;
-  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s ease;
+  transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.45s ease;
 }
 
 .hero-card-3d:hover {
