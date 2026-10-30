@@ -60,3 +60,48 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Smooth Infinite Hero Ribbon */
+@keyframes heroGlide {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.hero-smooth-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: heroGlide 40s linear infinite;
+}
+
+@media (max-width: 640px) {
+  .hero-smooth-track {
+    animation-duration: 30s;
+  }
+}
+
+.hero-smooth-track:hover,
+.hero-smooth-track:active,
+.hero-smooth-track.is-paused {
+  animation-play-state: paused !important;
+}
+
+/* 3D Perspective Card Tilt */
+.hero-perspective-container {
+  perspective: 1200px;
+  perspective-origin: center center;
+}
+
+.hero-card-3d {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s ease;
+}
+
+.hero-card-3d:hover {
+  transform: translate3d(0, -8px, 16px) scale(1.03);
+}

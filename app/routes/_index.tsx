@@ -36,6 +36,7 @@ export default function HomePage() {
 
   // Floating notification toast for user interactions
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isHeroPaused, setIsHeroPaused] = useState(false);
 
   const handleToggleSave = (productId: number, productName: string) => {
     toggleSave(productId);
@@ -101,11 +102,63 @@ export default function HomePage() {
 
           switch (section.id) {
             /* =========================================================
-               1. HERO SECTION (Customizable images, titles, review strip)
+               1. HERO SECTION (Customizable images, titles, 3D smooth ribbon)
                ========================================================= */
-            case "hero":
+            case "hero": {
+              const heroCards = [
+                {
+                  id: "card-1",
+                  image: hero.desktopImages[0] || "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1200&q=85",
+                  title: "Pure Kanjivaram Silk",
+                  subtitle: "Heirloom Gold Zari Drape",
+                  tag: "Royal Heritage",
+                  link: "/sarees?collection=kanjivaram",
+                },
+                {
+                  id: "card-2",
+                  image: hero.desktopImages[1] || "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1200&q=85",
+                  title: "Lilac Handloom Silk",
+                  subtitle: "Soft Georgette Fall",
+                  tag: "Pure Weave",
+                  link: "/sarees?collection=handloom",
+                },
+                {
+                  id: "card-3",
+                  image: hero.desktopImages[2] || "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1200&q=85",
+                  title: "Antique Zari Brocade",
+                  subtitle: "Festive Crimson & Zari",
+                  tag: "Bridal Trousseau",
+                  link: "/sarees?collection=banarasi",
+                },
+                {
+                  id: "card-4",
+                  image: hero.desktopImages[3] || "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=1200&q=85",
+                  title: "Lustrous Satin Crepe",
+                  subtitle: "Contemporary Emerald Glow",
+                  tag: "Modern Festive",
+                  link: "/sarees?collection=crepe",
+                },
+                {
+                  id: "card-5",
+                  image: hero.desktopImages[4] || "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1200&q=85",
+                  title: "Master Weaver Looms",
+                  subtitle: "Handcrafted Heritage Art",
+                  tag: "Artisan Loom",
+                  link: "/artisans",
+                },
+                {
+                  id: "card-6",
+                  image: hero.desktopImages[5] || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=85",
+                  title: "Blossom Organza Weave",
+                  subtitle: "Pastel Drapes & Resham",
+                  tag: "Lightweight Luxury",
+                  link: "/sarees?collection=organza",
+                },
+              ];
+              const loopedCards = [...heroCards, ...heroCards];
+
               return (
-                <section key="hero" className="relative max-w-7xl mx-auto px-4 sm:px-8 pt-6 sm:pt-10 pb-4">
+                <section key="hero" className="relative max-w-7xl mx-auto px-4 sm:px-8 pt-6 sm:pt-10 pb-6">
                   {/* Top Bar: Circular Badge + Central Headline + Social Avatars */}
                   <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8 sm:mb-10">
                     {/* Circular Rotating Badge (Desktop) */}
@@ -167,236 +220,104 @@ export default function HomePage() {
                   </div>
 
                   {/* ----------------------------------------------------------
-                      MOBILE HERO VIEW: Interlocking Bento Moodboard Showcase
+                      UNIFIED 3D INFINITE HERO SHOWCASE (Desktop & Mobile)
                      ---------------------------------------------------------- */}
-                  <div className="block lg:hidden space-y-4">
-                    <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory -mx-4 px-4 py-1 scroll-smooth">
-                      {/* Card 1: Tall Arched Pill */}
-                      <div className="snap-center shrink-0 w-[65vw] sm:w-[45vw] h-[360px] rounded-t-full rounded-b-[32px] overflow-hidden relative shadow-md bg-brand-plum/20">
-                        <img
-                          src={hero.mobileImages[0] || hero.desktopImages[0]}
-                          alt="Heritage Silk"
-                          className="w-full h-full object-cover object-top"
-                          loading="eager"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/85 via-transparent to-transparent flex items-end p-4">
-                          <div className="text-white">
-                            <span className="text-[10px] uppercase font-bold tracking-widest text-brand-lilac block">Heirloom Weave</span>
-                            <span className="text-sm font-serif italic">Pure Handloom Silk</span>
-                          </div>
-                        </div>
-                      </div>
+                  <div className="space-y-6">
+                    {/* Infinite 3D Smooth Gallery Track */}
+                    <div
+                      className="relative w-screen -ml-[calc((100vw-100%)/2)] overflow-hidden hero-perspective-container py-4 select-none cursor-grab active:cursor-grabbing"
+                      onMouseEnter={() => setIsHeroPaused(true)}
+                      onMouseLeave={() => setIsHeroPaused(false)}
+                      onTouchStart={() => setIsHeroPaused(true)}
+                      onTouchEnd={() => setIsHeroPaused(false)}
+                    >
+                      {/* Left & Right Soft Blur Edge Fades */}
+                      <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-24 bg-gradient-to-r from-brand-ivory via-brand-ivory/80 to-transparent z-10 pointer-events-none" />
+                      <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-24 bg-gradient-to-l from-brand-ivory via-brand-ivory/80 to-transparent z-10 pointer-events-none" />
 
-                      {/* Card 2: Stack of 2 Rounded Bento Blocks */}
-                      <div className="snap-center shrink-0 w-[65vw] sm:w-[45vw] h-[360px] flex flex-col gap-3">
-                        <div className="flex-1 rounded-[28px] overflow-hidden relative shadow-sm bg-brand-gold/20">
-                          <img
-                            src={hero.mobileImages[2] || hero.desktopImages[2]}
-                            alt="Antique Gold Zari"
-                            className="w-full h-full object-cover object-center"
-                            loading="lazy"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/70 via-transparent to-transparent flex items-end p-3.5">
-                            <span className="text-xs font-serif text-white">Antique Zari Brocade</span>
-                          </div>
-                        </div>
-                        <div className="h-[140px] rounded-full overflow-hidden relative shadow-sm bg-brand-lilac/30">
-                          <img
-                            src={hero.mobileImages[4] || hero.desktopImages[4]}
-                            alt="Master Loom"
-                            className="w-full h-full object-cover object-center"
-                            loading="lazy"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/70 via-transparent to-transparent flex items-end p-3.5 px-5">
-                            <span className="text-[11px] font-serif italic text-white">Master Weaver Looms</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Card 3: Tall Rounded Rectangle with Inverted Arch */}
-                      <div className="snap-center shrink-0 w-[65vw] sm:w-[45vw] h-[360px] rounded-t-[32px] rounded-b-full overflow-hidden relative shadow-md bg-brand-blush/30">
-                        <img
-                          src={hero.mobileImages[1] || hero.desktopImages[1]}
-                          alt="Georgette Drape"
-                          className="w-full h-full object-cover object-top"
-                          loading="lazy"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/85 via-transparent to-transparent flex items-end p-4">
-                          <div className="text-white">
-                            <span className="text-[10px] uppercase font-bold tracking-widest text-brand-lilac block">Fluid Grace</span>
-                            <span className="text-sm font-serif italic">Serene Georgette Fall</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Card 4: Stack of Horizontal Pill & Square Card */}
-                      <div className="snap-center shrink-0 w-[65vw] sm:w-[45vw] h-[360px] flex flex-col gap-3">
-                        <div className="h-[140px] rounded-full overflow-hidden relative shadow-sm bg-brand-plum/30">
-                          <img
-                            src={hero.mobileImages[3] || hero.desktopImages[3]}
-                            alt="Satin Crepe"
-                            className="w-full h-full object-cover object-center"
-                            loading="lazy"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/70 via-transparent to-transparent flex items-end p-3.5 px-5">
-                            <span className="text-[11px] font-serif italic text-white">Lustrous Satin Drape</span>
-                          </div>
-                        </div>
-                        <div className="flex-1 rounded-[28px] overflow-hidden relative shadow-sm bg-brand-gold/30">
-                          <img
-                            src={hero.mobileImages[0] || hero.desktopImages[0]}
-                            alt="Palace Drape"
-                            className="w-full h-full object-cover object-top"
-                            loading="lazy"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/70 via-transparent to-transparent flex items-end p-3.5">
-                            <span className="text-xs font-serif text-white">Crafted for Milestones</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between px-1 text-[11px] text-brand-deepPlum/60 font-semibold">
-                      <span>Swipe to explore editorial moodboard</span>
-                      <span>→</span>
-                    </div>
-
-                    {/* Centered Explore Button on Mobile */}
-                    <div className="pt-1">
-                      <Link
-                        to={hero.buttonLink || "/sarees"}
-                        className="w-full py-3.5 px-6 rounded-full bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-lg flex items-center justify-center gap-2"
+                      <div
+                        className={`hero-smooth-track flex gap-4 sm:gap-6 lg:gap-8 items-center px-4 ${isHeroPaused ? "is-paused" : ""}`}
+                        style={{ animationPlayState: isHeroPaused ? "paused" : "running" }}
                       >
-                        <span>{hero.buttonText}</span>
-                        <span>↗</span>
-                      </Link>
-                    </div>
+                        {loopedCards.map((card, idx) => (
+                          <Link
+                            key={`${card.id}-${idx}`}
+                            to={card.link}
+                            className="hero-card-3d group relative shrink-0 w-[220px] sm:w-[270px] lg:w-[310px] h-[350px] sm:h-[420px] lg:h-[480px] rounded-[30px] sm:rounded-[38px] lg:rounded-[44px] overflow-hidden bg-white/60 border border-brand-lilac/30 shadow-md hover:shadow-[0_24px_50px_rgba(42,18,53,0.22)] hover:border-brand-gold/60 transition-all duration-500 block"
+                          >
+                            <img
+                              src={card.image}
+                              alt={card.title}
+                              className="w-full h-full object-cover object-top group-hover:scale-108 transition-transform duration-700 ease-out"
+                              loading={idx < 4 ? "eager" : "lazy"}
+                            />
+                            {/* Luxury Gradient & Info Overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/90 via-brand-deepPlum/20 to-transparent flex flex-col justify-between p-4 sm:p-6 text-white transition-opacity duration-300">
+                              {/* Top Micro-Badge Tag */}
+                              <div className="flex items-center justify-between">
+                                <span className="px-3 py-1 rounded-full text-[10px] tracking-widest uppercase font-bold bg-brand-deepPlum/70 backdrop-blur-md text-brand-gold border border-brand-gold/30 shadow-xs">
+                                  {card.tag}
+                                </span>
+                                <span className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:scale-105 group-hover:bg-brand-gold group-hover:text-brand-deepPlum transition-all duration-300">
+                                  ↗
+                                </span>
+                              </div>
 
-                    {/* Quick Category Chips */}
-                    <div className="flex justify-center gap-2 pt-1 flex-wrap">
-                      <Link
-                        to="/sarees"
-                        className="px-4 py-1.5 rounded-full bg-white border border-brand-deepPlum/20 text-xs font-semibold text-brand-deepPlum hover:bg-brand-deepPlum hover:text-white transition shadow-2xs"
-                      >
-                        Sarees
-                      </Link>
-                      <Link
-                        to="/sarees?collection=dresses"
-                        className="px-4 py-1.5 rounded-full bg-white border border-brand-deepPlum/20 text-xs font-semibold text-brand-deepPlum hover:bg-brand-deepPlum hover:text-white transition shadow-2xs"
-                      >
-                        Dresses
-                      </Link>
-                      <Link
-                        to="/sarees?filter=sale"
-                        className="px-4 py-1.5 rounded-full bg-white border border-brand-deepPlum/20 text-xs font-semibold text-brand-deepPlum hover:bg-brand-deepPlum hover:text-white transition shadow-2xs"
-                      >
-                        Sale
-                      </Link>
-                    </div>
-                  </div>
-
-                  {/* ----------------------------------------------------------
-                      DESKTOP HERO VIEW: Interlocking Bento Moodboard Showcase
-                     ---------------------------------------------------------- */}
-                  <div className="hidden lg:grid grid-cols-12 gap-3.5 h-[520px] items-stretch bento-hero-mosaic">
-                    {/* Column 1 (span 3): Horizontal pill top + tall vertical card bottom */}
-                    <div className="col-span-3 flex flex-col gap-3.5">
-                      <div className="relative h-[160px] rounded-[36px] overflow-hidden bg-brand-lilac/30 shadow-sm group">
-                        <img
-                          src={hero.desktopImages[4] || hero.desktopImages[0]}
-                          alt="Master Loom Weaving"
-                          className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-700"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/70 via-transparent to-transparent flex items-end p-4">
-                          <span className="text-[11px] font-serif italic text-white/95">Master Weaver Looms</span>
-                        </div>
-                      </div>
-                      <div className="relative flex-1 rounded-[36px] overflow-hidden bg-brand-gold/20 shadow-md group border border-brand-gold/30">
-                        <img
-                          src={hero.desktopImages[0]}
-                          alt="Heritage Silk Drape"
-                          className="w-full h-full object-cover object-top group-hover:scale-105 transition duration-700"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/75 via-transparent to-transparent flex items-end p-4">
-                          <span className="text-xs font-serif text-white font-medium">Pure Kanjivaram Silk</span>
-                        </div>
+                              {/* Bottom Details */}
+                              <div className="space-y-1">
+                                <h3 className="font-serif italic text-base sm:text-xl font-bold leading-tight text-white group-hover:text-brand-gold transition-colors">
+                                  {card.title}
+                                </h3>
+                                <p className="text-[11px] sm:text-xs text-white/80 font-sans font-medium line-clamp-1">
+                                  {card.subtitle}
+                                </p>
+                              </div>
+                            </div>
+                          </Link>
+                        ))}
                       </div>
                     </div>
 
-                    {/* Column 2 (span 3): Tall Arched Organic Card + Explore Pill */}
-                    <div className="col-span-3 flex flex-col gap-3.5">
-                      <div className="relative flex-1 rounded-t-full rounded-b-[36px] overflow-hidden bg-brand-plum/20 shadow-lg group">
-                        <img
-                          src={hero.desktopImages[1]}
-                          alt="Lilac Handloom Silk"
-                          className="w-full h-full object-cover object-top group-hover:scale-105 transition duration-700"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/80 via-transparent to-transparent flex items-end p-5">
-                          <div className="text-white space-y-0.5">
-                            <span className="text-[10px] tracking-widest uppercase font-bold text-brand-lilac block">Heirloom Weave</span>
-                            <span className="text-sm font-serif italic">Soft Georgette Fall</span>
-                          </div>
-                        </div>
+                    {/* Interactive Micro-hint & Controls */}
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-1 max-w-5xl mx-auto px-4">
+                      <div className="flex items-center gap-2 text-[11px] font-medium text-brand-deepPlum/65">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span>Hover or touch to pause · Tap card to explore drape</span>
                       </div>
-                      <Link
-                        to={hero.buttonLink || "/sarees"}
-                        className="h-[56px] rounded-full bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md flex items-center justify-between px-6 group"
-                      >
-                        <span>{hero.buttonText}</span>
-                        <span className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-1 transition">↗</span>
-                      </Link>
-                    </div>
 
-                    {/* Column 3 (span 3): Square Rounded Card + Inverted Arched Card */}
-                    <div className="col-span-3 flex flex-col gap-3.5">
-                      <div className="relative h-[230px] rounded-[36px] overflow-hidden bg-brand-blush/30 shadow-md group">
-                        <img
-                          src={hero.desktopImages[2]}
-                          alt="Antique Gold Zari"
-                          className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-700"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/65 via-transparent to-transparent flex items-end p-4">
-                          <span className="text-xs font-serif text-white">Antique Gold Zari Brocade</span>
-                        </div>
-                      </div>
-                      <div className="relative flex-1 rounded-t-[36px] rounded-b-full overflow-hidden bg-brand-lilac/30 shadow-sm group">
-                        <img
-                          src={hero.desktopImages[5] || hero.desktopImages[1]}
-                          alt="Artisan Craftsmanship"
-                          className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-700"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/70 via-transparent to-transparent flex items-end p-4">
-                          <span className="text-[11px] font-serif italic text-white/95">Centuries of Heritage</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Column 4 (span 3): Tall Vertical Card + Horizontal Pill */}
-                    <div className="col-span-3 flex flex-col gap-3.5">
-                      <div className="relative flex-1 rounded-[36px] overflow-hidden bg-brand-gold/30 shadow-md group">
-                        <img
-                          src={hero.desktopImages[3]}
-                          alt="Emerald Satin Crepe"
-                          className="w-full h-full object-cover object-top group-hover:scale-105 transition duration-700"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/75 via-transparent to-transparent flex items-end p-4">
-                          <span className="text-xs font-serif text-white">Lustrous Satin Crepe</span>
-                        </div>
-                      </div>
-                      <div className="relative h-[150px] rounded-full overflow-hidden bg-brand-deepPlum/20 shadow-sm group">
-                        <img
-                          src={hero.desktopImages[4] || hero.desktopImages[2]}
-                          alt="Artisan Loom"
-                          className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-700"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-r from-brand-deepPlum/80 via-transparent to-transparent flex items-center px-6">
-                          <span className="text-xs font-serif italic text-white">Crafted by Master Hands</span>
-                        </div>
+                      {/* Action Pill Buttons */}
+                      <div className="flex items-center gap-2 flex-wrap justify-center">
+                        <Link
+                          to={hero.buttonLink || "/sarees"}
+                          className="px-5 py-2 rounded-full bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md flex items-center gap-1.5"
+                        >
+                          <span>{hero.buttonText}</span>
+                          <span>↗</span>
+                        </Link>
+                        <Link
+                          to="/sarees"
+                          className="px-4 py-1.5 rounded-full bg-white border border-brand-deepPlum/15 text-xs font-semibold text-brand-deepPlum hover:bg-brand-deepPlum hover:text-white transition shadow-2xs"
+                        >
+                          Sarees
+                        </Link>
+                        <Link
+                          to="/sarees?collection=dresses"
+                          className="px-4 py-1.5 rounded-full bg-white border border-brand-deepPlum/15 text-xs font-semibold text-brand-deepPlum hover:bg-brand-deepPlum hover:text-white transition shadow-2xs"
+                        >
+                          Dresses
+                        </Link>
+                        <Link
+                          to="/sarees?filter=sale"
+                          className="px-4 py-1.5 rounded-full bg-white border border-brand-deepPlum/15 text-xs font-semibold text-brand-deepPlum hover:bg-brand-deepPlum hover:text-white transition shadow-2xs"
+                        >
+                          Sale
+                        </Link>
                       </div>
                     </div>
                   </div>
                 </section>
               );
+            }
 
             /* =========================================================
                2. TRUST BADGES / BRAND GUARANTEES
