@@ -395,38 +395,6 @@ export default function HomePage() {
                       </div>
                     </div>
                   </div>
-
-                  {/* Bottom Hero Review Strip */}
-                  <div className="mt-12 pt-6 border-t border-brand-lilac/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div className="flex items-start gap-3 max-w-xl">
-                      <span className="text-4xl font-serif text-brand-plum leading-none">“</span>
-                      <div>
-                        <p className="text-xs sm:text-sm text-brand-deepPlum/90 leading-relaxed font-sans font-medium">
-                          {hero.reviewQuote}
-                        </p>
-                        <div className="mt-1.5 flex items-center gap-2">
-                          <span className="font-serif italic font-bold text-sm text-brand-deepPlum bg-yellow-200/80 px-2 py-0.5 rounded shadow-2xs">
-                            {hero.reviewAuthor}
-                          </span>
-                          <span className="text-[11px] text-brand-deepPlum/60 font-semibold">{hero.reviewLocation}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <Link
-                      to="/sarees"
-                      className="flex items-center gap-3 text-brand-deepPlum hover:text-brand-plum transition group"
-                    >
-                      <div>
-                        <span className="text-2xl font-bold font-sans">01</span>
-                        <span className="text-xs text-brand-deepPlum/60 ml-1 font-semibold">/ Sarees</span>
-                        <h3 className="text-sm font-bold tracking-tight">Drape Your Way With Traditional Crafts</h3>
-                      </div>
-                      <div className="w-9 h-9 rounded-full bg-brand-ivory border border-brand-deepPlum/40 flex items-center justify-center group-hover:bg-brand-deepPlum group-hover:text-white transition">
-                        <ArrowRight className="w-4 h-4" />
-                      </div>
-                    </Link>
-                  </div>
                 </section>
               );
 
