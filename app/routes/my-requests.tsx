@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link } from "@remix-run/react";
-import { MessageSquare, ChevronRight, ArrowRight } from "lucide-react";
+import { Link, useNavigate } from "@remix-run/react";
+import { MessageSquare, ChevronRight, ArrowRight, Search } from "lucide-react";
 import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
 import { useMyRequests } from "~/hooks/useLocalStorage";
@@ -8,6 +8,16 @@ import { useMyRequests } from "~/hooks/useLocalStorage";
 export default function MyRequestsPage() {
   const { requestsList, isLoaded } = useMyRequests();
   const [tab, setTab] = useState<"active" | "done">("active");
+  const [searchInput, setSearchInput] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const clean = searchInput.trim().replace(/^#/, "");
+    if (clean) {
+      navigate(`/r/${encodeURIComponent(clean)}`);
+    }
+  };
 
   const filtered = requestsList.filter((r) => {
     const isDone = r.status === "dispatched" || r.status === "closed";
@@ -27,6 +37,26 @@ export default function MyRequestsPage() {
             No account required · Live trackers saved privately on this device
           </p>
         </div>
+
+        {/* Search by Request ID */}
+        <form onSubmit={handleSearch} className="flex gap-2">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Track with Request ID (e.g. #1042)"
+              className="w-full px-4 py-2.5 pl-10 rounded-full border border-brand-lilac/40 focus:border-brand-plum focus:ring-2 focus:ring-brand-plum/20 outline-none text-sm font-medium text-brand-deepPlum bg-white"
+            />
+            <Search className="w-4 h-4 text-brand-deepPlum/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          </div>
+          <button
+            type="submit"
+            className="px-5 py-2.5 rounded-full bg-brand-deepPlum text-white font-semibold text-xs hover:bg-brand-plum transition shadow-xs shrink-0"
+          >
+            Track
+          </button>
+        </form>
 
         {/* Tab Filter */}
         <div className="flex gap-2">

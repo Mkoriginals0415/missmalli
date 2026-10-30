@@ -29,7 +29,10 @@ export function BottomNav({ hidden = false }: BottomNavProps) {
   ];
 
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-brand-ivory border-t border-brand-deepPlum/10 shadow-[0_-4px_25px_rgba(42,18,53,0.08)] transition-all">
+    <nav
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-brand-deepPlum/10 shadow-[0_-4px_25px_rgba(42,18,53,0.08)] transition-all"
+      style={{ backgroundColor: "rgb(var(--color-brand-ivory-rgb, 251 248 242))" }}
+    >
       <div className="flex items-center justify-around h-16 pb-[env(safe-area-inset-bottom)] px-3 max-w-lg mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;

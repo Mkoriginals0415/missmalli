@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
-import { json, type LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { useLoaderData, Link } from "@remix-run/react";
-import { Search, ExternalLink, Clock } from "lucide-react";
-import { getAllRequests } from "~/db/d1.server";
+import { json, type LoaderFunctionArgs, type ActionFunctionArgs } from "@remix-run/cloudflare";
+import { useLoaderData, useFetcher, Link } from "@remix-run/react";
+import { Search, ExternalLink, Clock, Check } from "lucide-react";
+import { getAllRequests, updateRequestStatus } from "~/db/d1.server";
 
 export async function loader({ context }: LoaderFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
@@ -14,11 +14,32 @@ export async function loader({ context }: LoaderFunctionArgs) {
   }
 }
 
+export async function action({ request, context }: ActionFunctionArgs) {
+  const env = (context as any)?.cloudflare?.env;
+  const formData = await request.formData();
+  const requestId = Number(formData.get("requestId"));
+  const status = String(formData.get("status") || "");
+
+  if (requestId && status) {
+    const updated = await updateRequestStatus(requestId, { status }, env);
+    return json({ success: true, updated });
+  }
+  return json({ success: false }, { status: 400 });
+}
+
 export default function AdminRequestsPage() {
   const data = useLoaderData<typeof loader>();
+  const fetcher = useFetcher();
   const requests = Array.isArray(data?.requests) ? data.requests : [];
   const [activeFilter, setActiveFilter] = useState<string>("needs_reply");
   const [searchQuery, setSearchQuery] = useState("");
+
+  const handleQuickStatusChange = (requestId: number, newStatus: string) => {
+    const fd = new FormData();
+    fd.append("requestId", String(requestId));
+    fd.append("status", newStatus);
+    fetcher.submit(fd, { method: "post" });
+  };
 
   const filterTabs = [
     { key: "needs_reply", label: "Needs reply", count: requests.filter((r) => r?.status === "needs_reply").length },
@@ -145,7 +166,7 @@ export default function AdminRequestsPage() {
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between pt-1">
+                  <div className="flex items-center justify-between pt-1 gap-2">
                     <div>
                       <span className="text-[10px] text-brand-dark/60 uppercase tracking-wider block font-semibold">Total Amount</span>
                       <span className="text-sm font-bold text-brand-plum">
@@ -153,13 +174,27 @@ export default function AdminRequestsPage() {
                       </span>
                     </div>
 
-                    <Link
-                      to={`/r/${req.secretToken}?view=admin`}
-                      className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-xs min-h-[40px]"
-                    >
-                      <span>Open Tracker</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </Link>
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={req.status}
+                        onChange={(e) => handleQuickStatusChange(req.id, e.target.value)}
+                        className="text-[11px] font-semibold py-1.5 px-2 rounded-lg border border-brand-lavender/50 bg-brand-ivory text-brand-deepPlum focus:ring-1 focus:ring-brand-plum"
+                      >
+                        <option value="needs_reply">Needs Reply</option>
+                        <option value="replied">Replied</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="dispatched">Dispatched</option>
+                        <option value="closed">Closed</option>
+                      </select>
+
+                      <Link
+                        to={`/r/${req.secretToken}?view=admin`}
+                        className="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-xs min-h-[34px]"
+                      >
+                        <span>Open</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -176,6 +211,7 @@ export default function AdminRequestsPage() {
                     <th className="py-3 px-4">Items</th>
                     <th className="py-3 px-4">Total</th>
                     <th className="py-3 px-4">Source</th>
+                    <th className="py-3 px-4">Status</th>
                     <th className="py-3 px-4">Age</th>
                     <th className="py-3 px-4 text-right">Action</th>
                   </tr>
@@ -200,6 +236,19 @@ export default function AdminRequestsPage() {
                         }`}>
                           {req.source === "bag" ? "Bag" : "Buy now"}
                         </span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <select
+                          value={req.status}
+                          onChange={(e) => handleQuickStatusChange(req.id, e.target.value)}
+                          className="text-[11px] font-semibold py-1 px-2 rounded-lg border border-brand-lavender/50 bg-white text-brand-deepPlum focus:ring-1 focus:ring-brand-plum"
+                        >
+                          <option value="needs_reply">Needs Reply</option>
+                          <option value="replied">Replied</option>
+                          <option value="confirmed">Confirmed</option>
+                          <option value="dispatched">Dispatched</option>
+                          <option value="closed">Closed</option>
+                        </select>
                       </td>
                       <td className="py-3 px-4 text-brand-dark/60">
                         {getAge(req.createdAt)}

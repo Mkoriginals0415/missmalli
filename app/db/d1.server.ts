@@ -365,7 +365,14 @@ export async function updateRequestStatus(
   env?: { DB?: D1Database }
 ) {
   await getAllRequests(env);
-  const req = runtimeRequests.find((r) => r.id === requestId);
+  const req = runtimeRequests.find(
+    (r) =>
+      Number(r.id) === Number(requestId) ||
+      String(r.id) === String(requestId) ||
+      r.secretToken === String(requestId) ||
+      r.requestNumber === String(requestId) ||
+      r.requestNumber === `#${String(requestId).replace(/^#/, "")}`
+  );
   if (req) {
     if (updates.status !== undefined) req.status = updates.status;
     if (updates.internalNote !== undefined) req.internalNote = updates.internalNote;

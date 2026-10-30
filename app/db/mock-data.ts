@@ -726,6 +726,23 @@ export const DEFAULT_THEME_COLORS: StoreThemeColors = {
   accentBlush: "#E8B4C4",
 };
 
+export interface NavLinkItem {
+  id: string;
+  label: string;
+  to: string;
+  enabled?: boolean;
+}
+
+export const DEFAULT_NAV_LINKS: NavLinkItem[] = [
+  { id: "home", label: "Home", to: "/" },
+  { id: "sarees", label: "Sarees", to: "/sarees" },
+  { id: "sale", label: "Sale", to: "/sale" },
+  { id: "dresses", label: "Dresses", to: "/dresses" },
+  { id: "materials", label: "Dress Materials", to: "/materials" },
+  { id: "exclusive", label: "Exclusive", to: "/exclusive" },
+  { id: "artisans", label: "Our Story", to: "/artisans" },
+];
+
 export const INITIAL_SETTINGS = {
   seller_whatsapp_number: "919876543210",
   buy_now_message_template: "Hi Miss Malli, I'd like to order: {saree} (Product ID: {code})\nPrice: ₹{price}\nRequest #{request}\nLink: {link}",
@@ -733,4 +750,5 @@ export const INITIAL_SETTINGS = {
   auto_expire_unanswered: "true",
   notify_email: "orders@missmalli.com",
   theme_colors: JSON.stringify(DEFAULT_THEME_COLORS),
+  nav_links: JSON.stringify(DEFAULT_NAV_LINKS),
 };

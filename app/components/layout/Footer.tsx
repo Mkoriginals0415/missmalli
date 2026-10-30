@@ -98,7 +98,7 @@ export function Footer() {
                 openSection === "help" ? "block" : "hidden lg:block"
               }`}
             >
-              <li><Link to="/my-requests" className="hover:text-brand-lilac transition block py-1">Track WhatsApp Order</Link></li>
+              <li><Link to="/track" className="hover:text-brand-lilac transition block py-1">Track Order & Request</Link></li>
               <li><Link to="/info?tab=shipping" className="hover:text-brand-lilac transition block py-1">Shipping & Delivery</Link></li>
               <li><Link to="/info?tab=returns" className="hover:text-brand-lilac transition block py-1">Returns & Exchanges</Link></li>
               <li><Link to="/info?tab=contact" className="hover:text-brand-lilac transition block py-1">FAQs</Link></li>

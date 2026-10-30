@@ -12,7 +12,7 @@ import {
 } from "@remix-run/react";
 import stylesheet from "~/styles/app.css?url";
 import { getStoreSettings } from "~/db/d1.server";
-import { DEFAULT_THEME_COLORS, StoreThemeColors } from "~/db/mock-data";
+import { DEFAULT_THEME_COLORS, StoreThemeColors, DEFAULT_NAV_LINKS, NavLinkItem } from "~/db/mock-data";
 import { BottomNav } from "~/components/layout/BottomNav";
 
 export async function loader({ context }: LoaderFunctionArgs) {
@@ -28,9 +28,21 @@ export async function loader({ context }: LoaderFunctionArgs) {
     // Fallback to default
   }
 
+  let navLinks: NavLinkItem[] = DEFAULT_NAV_LINKS;
+  try {
+    if (settings.nav_links) {
+      const parsed = JSON.parse(settings.nav_links);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        navLinks = parsed;
+      }
+    }
+  } catch (e) {
+    // Fallback to default
+  }
+
   const sellerPhone = settings.seller_whatsapp_number || "919876543210";
 
-  return json({ themeColors, sellerPhone });
+  return json({ themeColors, sellerPhone, navLinks });
 }
 
 export const links: LinksFunction = () => [

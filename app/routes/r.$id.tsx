@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { json, type LoaderFunctionArgs, type MetaFunction } from "@remix-run/cloudflare";
+import { useState, useEffect } from "react";
+import { json, type LoaderFunctionArgs, type ActionFunctionArgs, type MetaFunction } from "@remix-run/cloudflare";
 import { useLoaderData, useFetcher, Link } from "@remix-run/react";
 import { MessageCircle, Truck, Check, ArrowLeft, ExternalLink } from "lucide-react";
 import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
-import { getRequestByTokenOrNumber, getStoreSettings } from "~/db/d1.server";
+import { getRequestByTokenOrNumber, getStoreSettings, updateRequestStatus } from "~/db/d1.server";
 import { normalizeWhatsAppPhone } from "~/utils/whatsapp";
 
 export async function loader({ params, request, context }: LoaderFunctionArgs) {
@@ -24,6 +24,34 @@ export async function loader({ params, request, context }: LoaderFunctionArgs) {
     isAdminView: !!isAdminView,
     sellerPhone: settings.seller_whatsapp_number || "919876543210",
   });
+}
+
+export async function action({ request, params, context }: ActionFunctionArgs) {
+  const env = (context as any)?.cloudflare?.env;
+  const idOrToken = params.id;
+  if (!idOrToken) return json({ error: "Missing ID" }, { status: 400 });
+
+  const formData = await request.formData();
+  const status = formData.get("status") ? String(formData.get("status")) : undefined;
+  const internalNote = formData.get("internalNote") !== null ? String(formData.get("internalNote")) : undefined;
+  const trackingNote = formData.get("trackingNote") !== null ? String(formData.get("trackingNote")) : undefined;
+  const isPaymentReceived = formData.get("isPaymentReceived") !== null ? Number(formData.get("isPaymentReceived")) : undefined;
+
+  const current = await getRequestByTokenOrNumber(idOrToken, env);
+  if (!current) return json({ error: "Request not found" }, { status: 404 });
+
+  const updated = await updateRequestStatus(
+    current.id,
+    {
+      status,
+      internalNote,
+      trackingNote,
+      isPaymentReceived,
+    },
+    env
+  );
+
+  return json({ success: true, request: updated });
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -58,6 +86,13 @@ export default function RequestTrackerPage() {
   const [isPaymentReceived, setIsPaymentReceived] = useState(request.isPaymentReceived === 1);
   const [quickReplyCopied, setQuickReplyCopied] = useState<string | null>(null);
 
+  useEffect(() => {
+    setStatus(request.status);
+    setTrackingNote(request.trackingNote || "");
+    setInternalNote(request.internalNote || "");
+    setIsPaymentReceived(request.isPaymentReceived === 1);
+  }, [request]);
+
   const steps = [
     { key: "sent", label: "Sent" },
     { key: "replied", label: "Replied" },
@@ -79,16 +114,12 @@ export default function RequestTrackerPage() {
 
   const handleAdminUpdate = (newStatus: string) => {
     setStatus(newStatus);
-    fetcher.submit(
-      JSON.stringify({
-        requestId: request.id,
-        status: newStatus,
-        internalNote,
-        trackingNote,
-        isPaymentReceived: isPaymentReceived ? 1 : 0,
-      }),
-      { method: "PATCH", action: "/api/requests", encType: "application/json" }
-    );
+    const fd = new FormData();
+    fd.append("status", newStatus);
+    fd.append("internalNote", internalNote);
+    fd.append("trackingNote", trackingNote);
+    fd.append("isPaymentReceived", isPaymentReceived ? "1" : "0");
+    fetcher.submit(fd, { method: "post" });
   };
 
   const copyQuickReply = (text: string, label: string) => {

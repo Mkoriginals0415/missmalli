@@ -11,10 +11,17 @@ import {
   Phone,
   Clock,
   Mail,
-  MessageCircle
+  MessageCircle,
+  Menu,
+  ArrowUp,
+  ArrowDown,
+  Plus,
+  Trash2,
+  Eye,
+  EyeOff
 } from "lucide-react";
 import { getStoreSettings, updateStoreSettings } from "~/db/d1.server";
-import { DEFAULT_THEME_COLORS, StoreThemeColors } from "~/db/mock-data";
+import { DEFAULT_THEME_COLORS, StoreThemeColors, DEFAULT_NAV_LINKS, NavLinkItem } from "~/db/mock-data";
 import { normalizeWhatsAppPhone, formatPhoneDisplay } from "~/utils/whatsapp";
 
 export async function loader({ context }: LoaderFunctionArgs) {
@@ -28,7 +35,14 @@ export async function loader({ context }: LoaderFunctionArgs) {
     }
   } catch (e) {}
 
-  return json({ settings, themeColors });
+  let navLinks: NavLinkItem[] = DEFAULT_NAV_LINKS;
+  try {
+    if (settings.nav_links) {
+      navLinks = JSON.parse(settings.nav_links);
+    }
+  } catch (e) {}
+
+  return json({ settings, themeColors, navLinks });
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
@@ -47,6 +61,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
     theme_colors: String(formData.get("theme_colors") || JSON.stringify(DEFAULT_THEME_COLORS)),
   };
 
+  if (formData.has("nav_links")) {
+    updates.nav_links = String(formData.get("nav_links") || JSON.stringify(DEFAULT_NAV_LINKS));
+  }
+
   const updated = await updateStoreSettings(updates, env);
   return json({ success: true, settings: updated });
 }
@@ -55,6 +73,7 @@ export default function AdminSettingsPage() {
   const data = useLoaderData<typeof loader>();
   const settings = data?.settings || ({} as any);
   const initialThemeColors = data?.themeColors || DEFAULT_THEME_COLORS;
+  const initialNavLinks = data?.navLinks || DEFAULT_NAV_LINKS;
   const fetcher = useFetcher<typeof action>();
 
   const [whatsappNumber, setWhatsappNumber] = useState(settings.seller_whatsapp_number || "919876543210");
@@ -68,6 +87,9 @@ export default function AdminSettingsPage() {
 
   // Brand Theme Colors State
   const [colors, setColors] = useState<StoreThemeColors>(initialThemeColors);
+
+  // Navigation Links State
+  const [navLinks, setNavLinks] = useState<NavLinkItem[]>(initialNavLinks);
 
   useEffect(() => {
     if (fetcher.data?.settings?.seller_whatsapp_number) {
@@ -86,6 +108,40 @@ export default function AdminSettingsPage() {
     setColors(DEFAULT_THEME_COLORS);
   };
 
+  const moveLink = (index: number, direction: "up" | "down") => {
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= navLinks.length) return;
+    const updated = [...navLinks];
+    const [moved] = updated.splice(index, 1);
+    updated.splice(targetIndex, 0, moved);
+    setNavLinks(updated);
+  };
+
+  const toggleLink = (index: number) => {
+    const updated = [...navLinks];
+    updated[index] = { ...updated[index], enabled: updated[index].enabled === false ? true : false };
+    setNavLinks(updated);
+  };
+
+  const updateLink = (index: number, field: "label" | "to", val: string) => {
+    const updated = [...navLinks];
+    updated[index] = { ...updated[index], [field]: val };
+    setNavLinks(updated);
+  };
+
+  const removeLink = (index: number) => {
+    setNavLinks(navLinks.filter((_, i) => i !== index));
+  };
+
+  const addLink = () => {
+    const newId = `link_${Date.now()}`;
+    setNavLinks([...navLinks, { id: newId, label: "New Link", to: "/sarees", enabled: true }]);
+  };
+
+  const handleResetNavLinks = () => {
+    setNavLinks(DEFAULT_NAV_LINKS);
+  };
+
   const handleSaveAll = () => {
     const formData = new FormData();
     formData.append("seller_whatsapp_number", whatsappNumber);
@@ -94,6 +150,7 @@ export default function AdminSettingsPage() {
     formData.append("auto_expire_unanswered", String(autoExpire));
     formData.append("notify_email", notifyEmail);
     formData.append("theme_colors", JSON.stringify(colors));
+    formData.append("nav_links", JSON.stringify(navLinks));
 
     fetcher.submit(formData, { method: "post" });
   };
@@ -512,6 +569,129 @@ export default function AdminSettingsPage() {
               </span>
             </label>
           </div>
+        </div>
+      </div>
+
+      {/* ========================================================
+          3. NAVIGATION BAR LINKS & ORDER
+         ======================================================== */}
+      <div className="bg-white rounded-[22px] p-6 border border-brand-deepPlum/15 shadow-sm space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-brand-deepPlum/10 pb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-brand-plum/10 text-brand-plum flex items-center justify-center">
+              <Menu className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-brand-deepPlum">
+                Navigation Bar Links & Order
+              </h2>
+              <p className="text-xs text-brand-deepPlum/70 font-medium">
+                Reorder, customize labels, change paths, or toggle visibility. Changes reflect immediately on the storefront navbar and mobile drawer.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleResetNavLinks}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-brand-deepPlum/20 text-brand-deepPlum text-xs font-semibold hover:bg-brand-ivory transition"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Reset Default Links</span>
+            </button>
+            <button
+              type="button"
+              onClick={addLink}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-deepPlum text-white text-xs font-semibold hover:bg-brand-plum transition shadow-xs"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Add Link</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Links List */}
+        <div className="space-y-3">
+          {navLinks.map((link, idx) => (
+            <div
+              key={link.id || idx}
+              className={`p-3.5 rounded-2xl border transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                link.enabled === false
+                  ? "bg-brand-ivory/40 border-dashed border-brand-deepPlum/20 opacity-60"
+                  : "bg-brand-ivory/60 border-brand-deepPlum/15 shadow-xs"
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-6 rounded-full bg-brand-deepPlum/10 text-brand-deepPlum text-xs font-bold flex items-center justify-center shrink-0">
+                  {idx + 1}
+                </span>
+
+                <div className="flex flex-1 sm:flex-initial items-center gap-2">
+                  <input
+                    type="text"
+                    value={link.label}
+                    onChange={(e) => updateLink(idx, "label", e.target.value)}
+                    placeholder="Link Label"
+                    className="px-3 py-1.5 rounded-xl border border-brand-deepPlum/20 text-xs font-bold text-brand-deepPlum bg-white w-36"
+                  />
+                  <input
+                    type="text"
+                    value={link.to}
+                    onChange={(e) => updateLink(idx, "to", e.target.value)}
+                    placeholder="Path (e.g. /sarees)"
+                    className="px-3 py-1.5 rounded-xl border border-brand-deepPlum/20 text-xs font-mono text-brand-deepPlum/80 bg-white flex-1 sm:w-48"
+                  />
+                </div>
+              </div>
+
+              {/* Actions: Reorder, Toggle Visibility, Delete */}
+              <div className="flex items-center gap-1.5 self-end sm:self-auto">
+                <button
+                  type="button"
+                  onClick={() => moveLink(idx, "up")}
+                  disabled={idx === 0}
+                  className="p-1.5 rounded-lg border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-white disabled:opacity-30 disabled:pointer-events-none transition"
+                  title="Move Up"
+                  aria-label="Move Up"
+                >
+                  <ArrowUp className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moveLink(idx, "down")}
+                  disabled={idx === navLinks.length - 1}
+                  className="p-1.5 rounded-lg border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-white disabled:opacity-30 disabled:pointer-events-none transition"
+                  title="Move Down"
+                  aria-label="Move Down"
+                >
+                  <ArrowDown className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => toggleLink(idx)}
+                  className={`p-1.5 rounded-lg border transition ${
+                    link.enabled === false
+                      ? "border-amber-400 bg-amber-50 text-amber-700"
+                      : "border-brand-deepPlum/20 text-brand-deepPlum hover:bg-white"
+                  }`}
+                  title={link.enabled === false ? "Hidden (Click to show)" : "Visible (Click to hide)"}
+                  aria-label={link.enabled === false ? "Show link" : "Hide link"}
+                >
+                  {link.enabled === false ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => removeLink(idx)}
+                  className="p-1.5 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50 transition"
+                  title="Delete Link"
+                  aria-label="Delete Link"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
