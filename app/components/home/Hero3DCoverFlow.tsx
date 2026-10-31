@@ -47,15 +47,14 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
     wheelTimeout: null as any,
   });
 
-  const autoScrollTimerRef = useRef<any>(null);
   const isInteractingRef = useRef(false);
   const resumeTimeoutRef = useRef<any>(null);
 
   const snapToCardIndex = useCallback((index: number) => {
     if (!trackRef.current) return;
     const isMobile = window.innerWidth < 768;
-    const cardWidth = isMobile ? 240 : 340;
-    const cardGap = isMobile ? 20 : 30;
+    const cardWidth = isMobile ? 228 : 310;
+    const cardGap = isMobile ? 24 : 36;
     const itemSpacing = cardWidth + cardGap;
     const totalTrackWidth = totalItems * itemSpacing;
 
@@ -100,36 +99,32 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
       friction: 0.92, // Momentum decay per frame
       dragSensitivity: 1.18,
       wheelSensitivity: 0.85,
-      snapSpring: 0.08, // Buttery smooth ease-out snap
+      snapSpring: 0.12, // Crisp snap spring stiffness
       snapTriggerVelocity: 16, // Velocity below which auto-snap activates
       perspective: 1100, // Dramatic perspective depth
-      cardWidthDesktop: 330,  // Standard center card width
-      cardHeightDesktop: 440, // Standard center card height
-      cardWidthMobile: 235,   // Mobile card width
-      cardHeightMobile: 340,  // Mobile card height
-      cardGapDesktop: 32,
-      cardGapMobile: 20,
+      cardWidthDesktop: 310,
+      cardHeightDesktop: 420,
+      cardWidthMobile: 228,
+      cardHeightMobile: 330,
+      cardGapDesktop: 36,
+      cardGapMobile: 24,
       cardBorderRadiusDesktop: 28,
       cardBorderRadiusMobile: 24,
-      // Flatter tilt so flanking images stay wide and prominent in the whitespace beside the title
-      maxRotationDesktop: 24, 
-      maxRotationMobile: 22,  
-      maxFanRollDesktop: 1.2,
-      maxFanRollMobile: 1.0,
-      centerScale: 1.0,       // Center card is standard size
-      sideScaleDesktop: 1.20, // Flanking cards scale UP to fill whitespace beside the title!
-      sideScaleMobile: 1.08,  // Balanced mobile scale
-      centerTranslateYDesktop: 42,  // Sits comfortably below the headline
-      centerTranslateYMobile: 16,
-      sideTranslateYDesktop: -78,   // Elevates UP to fill whitespace on the sides of the title!
-      sideTranslateYMobile: -20,
-      minTranslateZDesktop: -90,    // Gentle 3D amphitheater curve
-      minTranslateZMobile: -60,
+      // High dramatic tilt matching user request (same dramatic 3D on mobile)
+      maxRotationDesktop: 42, // 42° tilt on desktop
+      maxRotationMobile: 40,  // 40° tilt on mobile (parity with desktop)
+      maxFanRollDesktop: 2.5, // Subtle rotateZ arching
+      maxFanRollMobile: 2.0,
+      centerScale: 1.0,
+      minScaleDesktop: 0.76,
+      minScaleMobile: 0.80,
+      minTranslateZDesktop: -290,
+      minTranslateZMobile: -190,
       centerOpacity: 1.0,
-      minOpacity: 0.88,       // Flanking cards stay clearly visible
-      minBrightnessOverlay: 0.16, // Delicate periphery depth
-      influenceRangeDesktop: 2.8,
-      influenceRangeMobile: 1.8,
+      minOpacity: 0.45,
+      minBrightnessOverlay: 0.42,
+      influenceRangeDesktop: 2.4,
+      influenceRangeMobile: 1.7,
       lenticularParallaxShift: 16, // px of counter-parallax inside image
     };
 
@@ -234,7 +229,7 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
             p.isSnapping = true;
           }
         } else if (!isInteractingRef.current && document.visibilityState === "visible") {
-          // Smooth continuous 60fps auto-scroll drift on mobile and desktop
+          // Smooth continuous 60fps auto-scroll drift
           p.scrollX += 48 * dt;
         } else {
           p.velocity = 0;
@@ -260,33 +255,23 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
         }
 
         const norm = Math.min(1.0, absDist / influenceDistance);
-        // Non-linear rotation curve: center card stays face-forward, flanks gently tilt
+        // Non-linear rotation curve: center card stays face-forward, flanks sharply tilt
         const rotCurve = Math.pow(Math.min(1.0, absDist / (itemSpacing * 1.35)), 0.85);
+        const scaleCurve = Math.pow(norm, 1.15);
         const zCurve = Math.pow(norm, 1.12);
         const opacityCurve = Math.pow(norm, 1.4);
-
-        // Dynamic scale & vertical elevation curves
-        // Center card is 1.0 (previous center size); flanking cards scale UP and elevate into whitespace beside the title
-        const flankRatio = Math.min(1.0, absDist / itemSpacing);
-        const flankCurve = Math.pow(flankRatio, 0.85);
-
-        const targetSideScale = layoutMetrics.isMobile ? CONFIG.sideScaleMobile : CONFIG.sideScaleDesktop;
-        const scale = CONFIG.centerScale + (targetSideScale - CONFIG.centerScale) * flankCurve;
-
-        const centerY = layoutMetrics.isMobile ? CONFIG.centerTranslateYMobile : CONFIG.centerTranslateYDesktop;
-        const sideY = layoutMetrics.isMobile ? CONFIG.sideTranslateYMobile : CONFIG.sideTranslateYDesktop;
-        const translateY = centerY + (sideY - centerY) * flankCurve;
 
         const sign = dist >= 0 ? -1 : 1;
         const rotateY = sign * rotCurve * maxRotation;
         const rotateZ = -sign * rotCurve * maxFanRoll; // Subtle arching fan tilt
+        const scale = CONFIG.centerScale - (CONFIG.centerScale - minScale) * scaleCurve;
         const translateZ = minTranslateZ * zCurve;
         const opacity = CONFIG.centerOpacity - (CONFIG.centerOpacity - CONFIG.minOpacity) * opacityCurve;
         const overlayOpacity = CONFIG.minBrightnessOverlay * norm;
         const zIndex = Math.max(1, Math.round(1000 - absDist));
 
-        // 3D Card Transform with dynamic scaling & elevation
-        card.style.transform = `translate3d(${dist.toFixed(2)}px, ${translateY.toFixed(2)}px, ${translateZ.toFixed(2)}px) rotateY(${rotateY.toFixed(2)}deg) rotateZ(${rotateZ.toFixed(2)}deg) scale(${scale.toFixed(4)})`;
+        // 3D Card Transform
+        card.style.transform = `translate3d(${dist.toFixed(2)}px, 0px, ${translateZ.toFixed(2)}px) rotateY(${rotateY.toFixed(2)}deg) rotateZ(${rotateZ.toFixed(2)}deg) scale(${scale.toFixed(4)})`;
         card.style.opacity = opacity.toFixed(3);
         card.style.zIndex = zIndex.toString();
 
@@ -424,8 +409,8 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
   const handleCardClick = (index: number, link: string) => {
     if (Math.abs(physicsRef.current.velocity) > 25) return;
     const isMobile = window.innerWidth < 768;
-    const cardWidth = isMobile ? 240 : 340;
-    const cardGap = isMobile ? 20 : 30;
+    const cardWidth = isMobile ? 228 : 310;
+    const cardGap = isMobile ? 24 : 36;
     const itemSpacing = cardWidth + cardGap;
     const totalTrackWidth = totalItems * itemSpacing;
 
@@ -452,11 +437,11 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
         ref={stageRef}
         onPointerEnter={() => { isInteractingRef.current = true; }}
         onPointerLeave={() => { isInteractingRef.current = false; }}
-        className="carousel-perspective-stage relative w-full h-[400px] sm:h-[480px] lg:h-[510px] flex items-center justify-center overflow-visible select-none cursor-grab active:cursor-grabbing touch-pan-y"
+        className="carousel-perspective-stage relative w-full h-[360px] sm:h-[430px] lg:h-[460px] flex items-center justify-center overflow-visible select-none cursor-grab active:cursor-grabbing touch-pan-y"
       >
         {/* Soft Vignette Fades on edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-6 sm:w-16 bg-gradient-to-r from-brand-ivory/60 via-brand-ivory/20 to-transparent z-40 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-6 sm:w-16 bg-gradient-to-l from-brand-ivory/60 via-brand-ivory/20 to-transparent z-40 pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-28 bg-gradient-to-r from-brand-ivory via-brand-ivory/80 to-transparent z-40 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-28 bg-gradient-to-l from-brand-ivory via-brand-ivory/80 to-transparent z-40 pointer-events-none" />
 
         {/* Carousel 3D Track */}
         <div ref={trackRef} className="relative w-full h-full" style={{ transformStyle: "preserve-3d" }}>

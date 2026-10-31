@@ -157,12 +157,12 @@ export default function HomePage() {
               return (
                 <section key="hero" className="relative max-w-7xl mx-auto px-4 sm:px-8 pt-4 sm:pt-6 pb-2">
                   {/* Central Headline */}
-                  <div className="text-center max-w-2xl mx-auto space-y-2 mb-2 sm:mb-4 relative z-20 pointer-events-none px-4">
-                    <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-bold tracking-tight text-brand-deepPlum leading-[1.12] pointer-events-auto">
+                  <div className="text-center max-w-3xl mx-auto space-y-2 mb-4 sm:mb-6">
+                    <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-bold tracking-tight text-brand-deepPlum leading-[1.12]">
                       {hero.headline}
                     </h1>
                     {hero.subheadline && (
-                      <p className="text-xs sm:text-sm text-brand-deepPlum/70 font-medium max-w-lg mx-auto pointer-events-auto">
+                      <p className="text-xs sm:text-sm text-brand-deepPlum/70 font-medium max-w-xl mx-auto">
                         {hero.subheadline}
                       </p>
                     )}
@@ -171,7 +171,7 @@ export default function HomePage() {
                   {/* ----------------------------------------------------------
                       3D COVER-FLOW GALLERY SHOWCASE (Desktop & Mobile)
                      ---------------------------------------------------------- */}
-                  <div className="space-y-4 -mt-8 sm:-mt-20 lg:-mt-24 relative z-10">
+                  <div className="space-y-4">
                     <Hero3DCoverFlow items={heroCards} />
 
                     {/* Action Pill Buttons */}
