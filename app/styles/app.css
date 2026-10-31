@@ -30,20 +30,19 @@
   }
 }
 
-/* Page transitions & micro-motion */
-@keyframes fadeInPage {
+/* Page transitions & micro-motion: flicker-free, zero-layout-shift opacity transition */
+@keyframes pageFadeIn {
   from {
-    opacity: 0;
-    transform: translateY(3px);
+    opacity: 0.88;
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
-.page-enter {
-  animation: fadeInPage 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.page-fade-transition {
+  animation: pageFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity;
 }
 
 /* Nav underline expansion animation */

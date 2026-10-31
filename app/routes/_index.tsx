@@ -81,7 +81,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-brand-ivory flex flex-col font-sans selection:bg-brand-lilac selection:text-brand-deepPlum">
       <Navbar />
 
-      <main className="flex-1 space-y-8 sm:space-y-14 pb-20 lg:pb-16">
+      <main className="flex-1 space-y-6 sm:space-y-10 pb-16 lg:pb-12">
         {sections.map((section) => {
           if (!section.enabled) return null;
 
@@ -158,9 +158,9 @@ export default function HomePage() {
               ];
 
               return (
-                <section key="hero" className="relative max-w-7xl mx-auto px-4 sm:px-8 pt-6 sm:pt-10 pb-6">
+                <section key="hero" className="relative max-w-7xl mx-auto px-4 sm:px-8 pt-4 sm:pt-6 pb-2">
                   {/* Central Headline */}
-                  <div className="text-center max-w-3xl mx-auto space-y-2.5 mb-8 sm:mb-10">
+                  <div className="text-center max-w-3xl mx-auto space-y-2 mb-4 sm:mb-6">
                     <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-bold tracking-tight text-brand-deepPlum leading-[1.12]">
                       {hero.headline}
                     </h1>
@@ -251,24 +251,30 @@ export default function HomePage() {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
                     {categories.items.filter((cat) => cat.onHome !== false).map((cat, idx) => (
                       <Link
                         key={cat.id || idx}
                         to={`/sarees?collection=${cat.slug}`}
-                        className={`group relative overflow-hidden aspect-[3/4] bg-white border border-brand-lilac/30 shadow-sm hover:shadow-lg transition flex flex-col justify-end p-5 ${
+                        className={`group relative overflow-hidden aspect-[3/4] bg-white border border-brand-lilac/30 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-end p-5 ${
                           categories.layout === "notched" && idx % 2 === 0 ? "notched-tl" : "rounded-[22px]"
                         }`}
                       >
                         <img
                           src={cat.image}
                           alt={cat.name}
-                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                          loading="lazy"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-brand-deepPlum/90 via-brand-deepPlum/20 to-transparent" />
-                        <div className="relative z-10 text-white space-y-0.5">
-                          <h3 className="font-sans text-base sm:text-lg font-bold">{cat.name}</h3>
-                          <p className="text-xs text-brand-lilac font-medium">{cat.count}</p>
+                        {/* High-contrast scrim gradient ensuring crystal-clear text readability */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 via-35% to-transparent pointer-events-none group-hover:from-black/90 transition-colors duration-300" />
+                        <div className="relative z-10 space-y-1">
+                          <h3 className="font-serif text-lg sm:text-xl font-bold !text-white tracking-wide drop-shadow-md">
+                            {cat.name}
+                          </h3>
+                          <p className="text-xs font-semibold text-brand-lilac/95 tracking-wider uppercase drop-shadow-xs">
+                            {cat.count}
+                          </p>
                         </div>
                       </Link>
                     ))}

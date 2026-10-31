@@ -9,6 +9,7 @@ import {
   isRouteErrorResponse,
   useRouteLoaderData,
   Link,
+  useLocation,
 } from "@remix-run/react";
 import stylesheet from "~/styles/app.css?url";
 import { getStoreSettings } from "~/db/d1.server";
@@ -166,7 +167,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         )}
       </head>
       <body className="h-full bg-brand-ivory text-brand-dark overflow-x-hidden antialiased pb-20 lg:pb-0 selection:bg-brand-lilac/30 selection:text-brand-deepPlum">
-        <div className="page-enter min-h-full flex flex-col">
+        <div className="min-h-full flex flex-col">
           {children}
         </div>
         <ToastContainer />
@@ -179,7 +180,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  const location = useLocation();
+  return (
+    <div key={location.pathname} className="min-h-full flex flex-col page-fade-transition">
+      <Outlet />
+    </div>
+  );
 }
 
 export function ErrorBoundary() {

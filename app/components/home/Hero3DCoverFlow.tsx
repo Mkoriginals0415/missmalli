@@ -408,11 +408,11 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
   const currentItem = items[rawActiveIdx] || items[0];
 
   return (
-    <div className="relative w-full overflow-hidden select-none py-2 sm:py-4">
+    <div className="relative w-full overflow-hidden select-none py-1 sm:py-2">
       {/* 3D Perspective Stage Container */}
       <div
         ref={stageRef}
-        className="carousel-perspective-stage relative w-full h-[380px] sm:h-[460px] lg:h-[500px] flex items-center justify-center overflow-visible select-none cursor-grab active:cursor-grabbing touch-pan-y"
+        className="carousel-perspective-stage relative w-full h-[360px] sm:h-[430px] lg:h-[460px] flex items-center justify-center overflow-visible select-none cursor-grab active:cursor-grabbing touch-pan-y"
       >
         {/* Soft Vignette Fades on edges */}
         <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-28 bg-gradient-to-r from-brand-ivory via-brand-ivory/80 to-transparent z-40 pointer-events-none" />
@@ -485,7 +485,7 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
       </div>
 
       {/* Bottom Controls & Active Item Metadata Bar */}
-      <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 mt-2 border-t border-brand-lilac/25">
+      <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 mt-1 border-t border-brand-lilac/25">
         {/* Active Center Card Metadata Display */}
         <div className="flex items-center gap-3 text-left">
           <span className="font-serif text-lg text-brand-deepPlum font-semibold">

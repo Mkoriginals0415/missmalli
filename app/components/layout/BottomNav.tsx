@@ -2,6 +2,7 @@ import { Link, useLocation } from "@remix-run/react";
 import { Home, Sparkles, Heart, ShoppingBag, MessageCircle } from "lucide-react";
 import { useBag, useSavedSarees } from "~/hooks/useLocalStorage";
 import { useSellerPhone } from "~/hooks/useSellerPhone";
+import { isRouteActive } from "./Navbar";
 
 interface BottomNavProps {
   hidden?: boolean;
@@ -36,7 +37,7 @@ export function BottomNav({ hidden = false }: BottomNavProps) {
       <div className="flex items-center justify-around h-16 pb-[env(safe-area-inset-bottom)] px-3 max-w-lg mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = item.to === "/" ? currentPath === "/" : currentPath.startsWith(item.to);
+          const isActive = isRouteActive(item.to, location.pathname, location.search);
 
           return (
             <Link

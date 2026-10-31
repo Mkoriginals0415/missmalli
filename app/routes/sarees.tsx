@@ -6,6 +6,7 @@ import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
 import { getAllProducts } from "~/db/d1.server";
 import { useSavedSarees } from "~/hooks/useLocalStorage";
+import { showToast } from "~/components/ui/ToastNotification";
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
@@ -56,15 +57,10 @@ export default function SareesListingPage() {
   const { products, categoryTitle, categorySubtitle, breadcrumbName } = useLoaderData<typeof loader>();
   const [searchParams] = useSearchParams();
   const { isSaved, toggleSave } = useSavedSarees();
-
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
-  const handleToggleSave = (productId: number, productName: string) => {
+  const handleToggleSave = (productId: number) => {
     toggleSave(productId);
-    const wasSaved = isSaved(productId);
-    setToastMessage(wasSaved ? `Removed "${productName}" from Wishlist` : `Saved "${productName}" to Wishlist`);
-    setTimeout(() => setToastMessage(null), 2800);
   };
 
   const [selectedFabric, setSelectedFabric] = useState<string>("all");
@@ -303,14 +299,14 @@ export default function SareesListingPage() {
                   <Link
                     key={product.id}
                     to={`/p/${product.slug}`}
-                    className="group bg-white rounded-[18px] sm:rounded-[22px] overflow-hidden border border-brand-lilac/30 shadow-xs hover:shadow-md transition flex flex-col justify-between"
+                    className="group bg-white rounded-[18px] sm:rounded-[22px] overflow-hidden border border-brand-lilac/30 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
                   >
                     {/* Photo container - 2:3 vertical portrait with object-top */}
                     <div className="relative aspect-[2/3] bg-brand-ivory/60 overflow-hidden">
                       <img
                         src={product.images[0]}
                         alt={product.name}
-                        className="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500"
+                        className="w-full h-full object-cover object-top group-hover:scale-108 transition-transform duration-500 ease-out"
                         loading="lazy"
                       />
 
@@ -328,13 +324,13 @@ export default function SareesListingPage() {
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          handleToggleSave(product.id, product.name);
+                          handleToggleSave(product.id);
                         }}
-                        className="absolute top-2.5 right-2.5 p-2 rounded-full bg-white/90 backdrop-blur-xs text-brand-deepPlum hover:text-brand-plum transition shadow-xs min-w-[38px] min-h-[38px] flex items-center justify-center"
+                        className="absolute top-2.5 right-2.5 p-2 rounded-full bg-white/90 backdrop-blur-xs text-brand-deepPlum hover:text-brand-plum active:scale-125 transition-all shadow-xs min-w-[38px] min-h-[38px] flex items-center justify-center"
                         aria-label="Wishlist"
                       >
                         <Heart
-                          className={`w-4 h-4 ${isSaved(product.id) ? "fill-brand-plum text-brand-plum" : ""}`}
+                          className={`w-4 h-4 transition-colors ${isSaved(product.id) ? "fill-brand-plum text-brand-plum animate-heart-burst" : ""}`}
                         />
                       </button>
                     </div>
@@ -369,7 +365,7 @@ export default function SareesListingPage() {
             {/* Load More Button */}
             <div className="text-center pt-2 pb-6">
               <button
-                onClick={() => setToastMessage("All master handloom editions are currently loaded")}
+                onClick={() => showToast("All master handloom editions are currently loaded", "info")}
                 className="px-8 py-3 rounded-full border border-brand-deepPlum text-brand-deepPlum text-xs font-bold hover:bg-brand-deepPlum hover:text-white transition shadow-xs min-h-[44px]"
               >
                 Load more designs
@@ -492,22 +488,6 @@ export default function SareesListingPage() {
                 Show {filtered.length} Sarees
               </button>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Floating Interactive Toast */}
-      {toastMessage && (
-        <div className="fixed bottom-20 lg:bottom-6 right-6 z-50 animate-in slide-in-from-bottom-4 duration-300">
-          <div className="px-4 py-3 rounded-2xl bg-brand-deepPlum text-white text-xs font-bold shadow-xl flex items-center gap-2 border border-brand-lilac/30">
-            <Check className="w-4 h-4 text-emerald-400 stroke-[3]" />
-            <span>{toastMessage}</span>
-            <Link
-              to="/wishlist"
-              className="ml-2 px-2.5 py-1 rounded-lg bg-white/20 text-white hover:bg-white/30 transition text-[11px] underline"
-            >
-              View Wishlist →
-            </Link>
           </div>
         </div>
       )}
