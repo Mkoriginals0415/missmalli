@@ -34,7 +34,7 @@ export default function SearchPage() {
   }, [products, query]);
 
   return (
-    <div className="min-h-screen bg-brand-ivory flex flex-col font-sans">
+    <div className="min-h-screen bg-transparent flex flex-col font-sans">
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-8 py-8 space-y-8">
         <div className="space-y-4 text-center max-w-xl mx-auto">
           <h1 className="text-3xl font-bold text-brand-deepPlum">

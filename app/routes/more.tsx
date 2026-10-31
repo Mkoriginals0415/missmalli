@@ -33,7 +33,7 @@ export default function MorePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-brand-ivory flex flex-col font-sans">
+    <div className="min-h-screen bg-transparent flex flex-col font-sans">
       <main className="flex-1 max-w-xl mx-auto w-full px-4 sm:px-8 py-8 space-y-6">
         <div>
           <h1 className="text-2xl sm:text-3xl font-serif font-bold text-brand-deepPlum">

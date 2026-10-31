@@ -106,7 +106,7 @@ export default function SareesListingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-ivory flex flex-col font-sans">
+    <div className="min-h-screen bg-transparent flex flex-col font-sans">
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-5 sm:py-8 space-y-6 sm:space-y-8">
         {/* Breadcrumb & Header */}
         <div>

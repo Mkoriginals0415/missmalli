@@ -225,9 +225,9 @@
   z-index: 0;
   background-image: url('/brand/floral-pattern.png');
   background-repeat: repeat;
-  background-size: 640px 320px;
+  background-size: 720px 360px;
   background-position: 0 0;
-  opacity: 0.32;
+  opacity: 0.82;
   mix-blend-mode: multiply;
   will-change: transform;
   animation: floralDrift 70s ease-in-out infinite;
@@ -247,8 +247,8 @@
 
 @media (max-width: 768px) {
   .floral-background-layer {
-    background-size: 420px 210px;
-    opacity: 0.24;
+    background-size: 460px 230px;
+    opacity: 0.75;
     animation-duration: 85s;
   }
 }

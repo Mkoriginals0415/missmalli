@@ -241,7 +241,7 @@ export default function ProductDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-ivory flex flex-col font-sans">
+    <div className="min-h-screen bg-transparent flex flex-col font-sans">
       {/* Structured Data: Product & Breadcrumb */}
       {productSchema && (
         <script

@@ -103,28 +103,32 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
       snapSpring: 0.08, // Buttery smooth ease-out snap
       snapTriggerVelocity: 16, // Velocity below which auto-snap activates
       perspective: 1100, // Dramatic perspective depth
-      cardWidthDesktop: 340,  // Enhanced width to fill horizontal gaps
-      cardHeightDesktop: 450, // Enhanced height
-      cardWidthMobile: 240,   // Enhanced mobile width
-      cardHeightMobile: 345,  // Enhanced mobile height
-      cardGapDesktop: 30,
+      cardWidthDesktop: 330,  // Standard center card width
+      cardHeightDesktop: 440, // Standard center card height
+      cardWidthMobile: 235,   // Mobile card width
+      cardHeightMobile: 340,  // Mobile card height
+      cardGapDesktop: 32,
       cardGapMobile: 20,
       cardBorderRadiusDesktop: 28,
       cardBorderRadiusMobile: 24,
-      // Refined rotation so flanking images stay wider and flatter to the viewer
-      maxRotationDesktop: 32, // Flatter tilt for high visibility of saree artwork
-      maxRotationMobile: 30,  // Parity on mobile
-      maxFanRollDesktop: 1.8,
-      maxFanRollMobile: 1.4,
-      centerScale: 1.0,
-      minScaleDesktop: 0.88,  // Substantially bigger side cards (was 0.76)
-      minScaleMobile: 0.86,   // Substantially bigger mobile side cards (was 0.80)
-      minTranslateZDesktop: -150, // Brought forward from -290 so flanking cards are prominent
-      minTranslateZMobile: -100,  // Brought forward from -190
+      // Flatter tilt so flanking images stay wide and prominent in the whitespace beside the title
+      maxRotationDesktop: 24, 
+      maxRotationMobile: 22,  
+      maxFanRollDesktop: 1.2,
+      maxFanRollMobile: 1.0,
+      centerScale: 1.0,       // Center card is standard size
+      sideScaleDesktop: 1.20, // Flanking cards scale UP to fill whitespace beside the title!
+      sideScaleMobile: 1.08,  // Balanced mobile scale
+      centerTranslateYDesktop: 42,  // Sits comfortably below the headline
+      centerTranslateYMobile: 16,
+      sideTranslateYDesktop: -78,   // Elevates UP to fill whitespace on the sides of the title!
+      sideTranslateYMobile: -20,
+      minTranslateZDesktop: -90,    // Gentle 3D amphitheater curve
+      minTranslateZMobile: -60,
       centerOpacity: 1.0,
-      minOpacity: 0.75,       // High contrast & clarity on side cards (was 0.45)
-      minBrightnessOverlay: 0.22, // Soft subtle dimming preserving brilliant saree colors
-      influenceRangeDesktop: 2.6,
+      minOpacity: 0.88,       // Flanking cards stay clearly visible
+      minBrightnessOverlay: 0.16, // Delicate periphery depth
+      influenceRangeDesktop: 2.8,
       influenceRangeMobile: 1.8,
       lenticularParallaxShift: 16, // px of counter-parallax inside image
     };
@@ -256,23 +260,33 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
         }
 
         const norm = Math.min(1.0, absDist / influenceDistance);
-        // Non-linear rotation curve: center card stays face-forward, flanks sharply tilt
+        // Non-linear rotation curve: center card stays face-forward, flanks gently tilt
         const rotCurve = Math.pow(Math.min(1.0, absDist / (itemSpacing * 1.35)), 0.85);
-        const scaleCurve = Math.pow(norm, 1.15);
         const zCurve = Math.pow(norm, 1.12);
         const opacityCurve = Math.pow(norm, 1.4);
+
+        // Dynamic scale & vertical elevation curves
+        // Center card is 1.0 (previous center size); flanking cards scale UP and elevate into whitespace beside the title
+        const flankRatio = Math.min(1.0, absDist / itemSpacing);
+        const flankCurve = Math.pow(flankRatio, 0.85);
+
+        const targetSideScale = layoutMetrics.isMobile ? CONFIG.sideScaleMobile : CONFIG.sideScaleDesktop;
+        const scale = CONFIG.centerScale + (targetSideScale - CONFIG.centerScale) * flankCurve;
+
+        const centerY = layoutMetrics.isMobile ? CONFIG.centerTranslateYMobile : CONFIG.centerTranslateYDesktop;
+        const sideY = layoutMetrics.isMobile ? CONFIG.sideTranslateYMobile : CONFIG.sideTranslateYDesktop;
+        const translateY = centerY + (sideY - centerY) * flankCurve;
 
         const sign = dist >= 0 ? -1 : 1;
         const rotateY = sign * rotCurve * maxRotation;
         const rotateZ = -sign * rotCurve * maxFanRoll; // Subtle arching fan tilt
-        const scale = CONFIG.centerScale - (CONFIG.centerScale - minScale) * scaleCurve;
         const translateZ = minTranslateZ * zCurve;
         const opacity = CONFIG.centerOpacity - (CONFIG.centerOpacity - CONFIG.minOpacity) * opacityCurve;
         const overlayOpacity = CONFIG.minBrightnessOverlay * norm;
         const zIndex = Math.max(1, Math.round(1000 - absDist));
 
-        // 3D Card Transform
-        card.style.transform = `translate3d(${dist.toFixed(2)}px, 0px, ${translateZ.toFixed(2)}px) rotateY(${rotateY.toFixed(2)}deg) rotateZ(${rotateZ.toFixed(2)}deg) scale(${scale.toFixed(4)})`;
+        // 3D Card Transform with dynamic scaling & elevation
+        card.style.transform = `translate3d(${dist.toFixed(2)}px, ${translateY.toFixed(2)}px, ${translateZ.toFixed(2)}px) rotateY(${rotateY.toFixed(2)}deg) rotateZ(${rotateZ.toFixed(2)}deg) scale(${scale.toFixed(4)})`;
         card.style.opacity = opacity.toFixed(3);
         card.style.zIndex = zIndex.toString();
 
@@ -438,11 +452,11 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
         ref={stageRef}
         onPointerEnter={() => { isInteractingRef.current = true; }}
         onPointerLeave={() => { isInteractingRef.current = false; }}
-        className="carousel-perspective-stage relative w-full h-[380px] sm:h-[460px] lg:h-[490px] flex items-center justify-center overflow-visible select-none cursor-grab active:cursor-grabbing touch-pan-y"
+        className="carousel-perspective-stage relative w-full h-[400px] sm:h-[480px] lg:h-[510px] flex items-center justify-center overflow-visible select-none cursor-grab active:cursor-grabbing touch-pan-y"
       >
         {/* Soft Vignette Fades on edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-6 sm:w-16 bg-gradient-to-r from-brand-ivory via-brand-ivory/80 to-transparent z-40 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-6 sm:w-16 bg-gradient-to-l from-brand-ivory via-brand-ivory/80 to-transparent z-40 pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 w-6 sm:w-16 bg-gradient-to-r from-brand-ivory/60 via-brand-ivory/20 to-transparent z-40 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-6 sm:w-16 bg-gradient-to-l from-brand-ivory/60 via-brand-ivory/20 to-transparent z-40 pointer-events-none" />
 
         {/* Carousel 3D Track */}
         <div ref={trackRef} className="relative w-full h-full" style={{ transformStyle: "preserve-3d" }}>

@@ -33,7 +33,7 @@ export default function RequestCreatedPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-ivory flex flex-col font-sans">
+    <div className="min-h-screen bg-transparent flex flex-col font-sans">
       <main className="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-lg mx-auto py-16">
         <div className="w-16 h-16 rounded-full bg-brand-plum text-white flex items-center justify-center mb-6 shadow-md">
           <Check className="w-8 h-8 stroke-[3]" />

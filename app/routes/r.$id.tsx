@@ -144,7 +144,7 @@ export default function RequestTrackerPage() {
   )}`;
 
   return (
-    <div className="min-h-screen bg-brand-ivory flex flex-col font-sans">
+    <div className="min-h-screen bg-transparent flex flex-col font-sans">
       <main className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-8 py-8 space-y-6">
         {/* Header Bar */}
         <div className="flex items-center justify-between">

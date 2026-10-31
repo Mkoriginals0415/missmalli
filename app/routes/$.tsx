@@ -12,7 +12,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function NotFoundPage() {
   return (
-    <div className="min-h-screen bg-brand-ivory flex flex-col font-sans">
+    <div className="min-h-screen bg-transparent flex flex-col font-sans">
       <main className="flex-1 flex flex-col items-center justify-center p-6 text-center max-w-md mx-auto my-12">
         <div className="w-16 h-16 rounded-full bg-brand-blush/30 flex items-center justify-center mb-4 text-brand-plum text-xl font-serif">
           MM

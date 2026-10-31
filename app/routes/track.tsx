@@ -20,7 +20,7 @@ export default function TrackOrderPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-ivory flex flex-col font-sans">
+    <div className="min-h-screen bg-transparent flex flex-col font-sans">
       <main className="flex-1 max-w-xl mx-auto w-full px-4 sm:px-8 py-14 space-y-8">
         <div className="text-center space-y-2.5">
           <div className="w-16 h-16 mx-auto rounded-full bg-brand-plum/10 text-brand-plum flex items-center justify-center shadow-xs">
