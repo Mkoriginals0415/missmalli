@@ -87,7 +87,6 @@ export function Navbar() {
 
   // Dynamic sliding pill state with persistence across navigations
   const navRef = useRef<HTMLElement>(null);
-  const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
   const [hasPositioned, setHasPositioned] = useState(false);
   const [pillStyle, setPillStyle] = useState<{
     left: number;
@@ -111,15 +110,16 @@ export function Navbar() {
   });
 
   const updatePill = (enableTransitionImmediately = false) => {
+    if (!navRef.current) return;
+    const links = Array.from(navRef.current.querySelectorAll("a"));
     const activeIdx = navLinks.findIndex((link) =>
       isRouteActive(link.to, location.pathname, location.search)
     );
 
-    if (activeIdx >= 0 && linkRefs.current[activeIdx] && navRef.current) {
-      const targetEl = linkRefs.current[activeIdx]!;
-      const navEl = navRef.current;
+    if (activeIdx >= 0 && links[activeIdx]) {
+      const targetEl = links[activeIdx];
+      const navRect = navRef.current.getBoundingClientRect();
       const targetRect = targetEl.getBoundingClientRect();
-      const navRect = navEl.getBoundingClientRect();
 
       const newPos = {
         left: targetRect.left - navRect.left,
@@ -154,7 +154,7 @@ export function Navbar() {
     const handleResize = () => updatePill(false);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [location.pathname, location.search, navLinks]);
+  }, [location.pathname, location.search, navLinks.length]);
 
   return (
     <>
@@ -222,19 +222,18 @@ export function Navbar() {
               }}
             />
 
-            {navLinks.map((link, idx) => {
+            {navLinks.map((link) => {
               const isActive = isRouteActive(link.to, location.pathname, location.search);
               return (
                 <Link
                   key={link.label}
-                  ref={(el) => { linkRefs.current[idx] = el; }}
                   to={link.to}
-                  onClick={() => {
-                    const targetEl = linkRefs.current[idx];
+                  onClick={(e) => {
                     const navEl = navRef.current;
-                    if (targetEl && navEl) {
-                      const targetRect = targetEl.getBoundingClientRect();
+                    if (navEl) {
+                      const targetEl = e.currentTarget;
                       const navRect = navEl.getBoundingClientRect();
+                      const targetRect = targetEl.getBoundingClientRect();
                       const nextPos = {
                         left: targetRect.left - navRect.left,
                         width: targetRect.width,
