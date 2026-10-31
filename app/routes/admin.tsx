@@ -11,7 +11,8 @@ import {
   Store,
   Menu,
   X,
-  LogOut
+  LogOut,
+  Globe
 } from "lucide-react";
 import { getAllRequests } from "~/db/d1.server";
 import { requireAdmin, destroyAdminSession, sessionStorage } from "~/utils/auth.server";
@@ -58,6 +59,7 @@ export default function AdminLayout() {
     { label: "Homepage Editor", to: "/admin/homepage", icon: LayoutTemplate },
     { label: "Products & Stock", to: "/admin/products", icon: Package },
     { label: "Collections", to: "/admin/collections", icon: FolderTree },
+    { label: "SEO & Search", to: "/admin/seo", icon: Globe },
     { label: "Settings & Colors", to: "/admin/settings", icon: SettingsIcon },
   ];
 

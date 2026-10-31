@@ -22,8 +22,9 @@ import { ACCESSORIES, SeedProduct } from "~/db/mock-data";
 import { getProductBySlug, getStoreSettings } from "~/db/d1.server";
 import { useSavedSarees, useBag, useMyRequests } from "~/hooks/useLocalStorage";
 import { generateWhatsAppBuyUrl, generateWhatsAppQuestionUrl } from "~/utils/whatsapp";
+import { getSeoSettings, buildProductSchema, buildBreadcrumbSchema } from "~/utils/seo.server";
 
-export async function loader({ params, context }: LoaderFunctionArgs) {
+export async function loader({ params, request, context }: LoaderFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
   const slug = params.slug;
   const product = await getProductBySlug(slug as string, env);
@@ -31,13 +32,29 @@ export async function loader({ params, context }: LoaderFunctionArgs) {
     throw new Response("Product Not Found", { status: 404 });
   }
 
-  const settings = await getStoreSettings(env);
+  const [settings, seo] = await Promise.all([
+    getStoreSettings(env),
+    getSeoSettings(env),
+  ]);
+
+  const domain = (seo.canonicalDomain || "https://missmalli.in").replace(/\/+$/, "");
+  const override = seo.productOverrides[product.slug] || {};
+
+  const breadcrumbs = [
+    { name: "Home", url: "/" },
+    { name: "Sarees", url: "/sarees" },
+    { name: product.name, url: `/p/${product.slug}` },
+  ];
 
   return json({
     product,
     accessories: ACCESSORIES,
     sellerPhone: settings.seller_whatsapp_number || "919876543210",
     buyTemplate: settings.buy_now_message_template || "",
+    productSchema: buildProductSchema(domain, product),
+    breadcrumbSchema: buildBreadcrumbSchema(domain, breadcrumbs),
+    seoOverride: override,
+    canonicalUrl: override.canonicalUrl || `${domain}/p/${product.slug}`,
   });
 }
 
@@ -46,12 +63,12 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
     return [{ title: "Product Not Found | Miss Malli" }];
   }
 
-  const { product } = data;
-  const title = `${product.name} (#${product.code}) · ₹ ${product.price.toLocaleString("en-IN")} | Miss Malli`;
-  const description = `${product.fabric}. ${product.description}`;
-  const image = product.images[0] || "/brand/logo.png";
+  const { product, seoOverride, canonicalUrl } = data;
+  const title = seoOverride?.title || `${product.name} (#${product.code}) · ₹ ${product.price.toLocaleString("en-IN")} | Miss Malli`;
+  const description = seoOverride?.description || `${product.fabric}. ${product.description || ""}`;
+  const image = seoOverride?.ogImage || product.images[0] || "/brand/logo.png";
 
-  return [
+  const metaList: any[] = [
     { title },
     { name: "description", content: description },
     { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" },
@@ -64,10 +81,20 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
     { property: "twitter:description", content: description },
     { property: "twitter:image", content: image },
   ];
+
+  if (canonicalUrl) {
+    metaList.push({ tagName: "link", rel: "canonical", href: canonicalUrl });
+  }
+
+  if (seoOverride?.noIndex) {
+    metaList.push({ name: "robots", content: "noindex, nofollow" });
+  }
+
+  return metaList;
 };
 
 export default function ProductDetailPage() {
-  const { product, accessories, sellerPhone, buyTemplate } = useLoaderData<typeof loader>();
+  const { product, accessories, sellerPhone, buyTemplate, productSchema, breadcrumbSchema } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
 
   const [activePhoto, setActivePhoto] = useState(0);
@@ -216,6 +243,19 @@ export default function ProductDetailPage() {
 
   return (
     <div className="min-h-screen bg-brand-ivory flex flex-col font-sans">
+      {/* Structured Data: Product & Breadcrumb */}
+      {productSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+        />
+      )}
+      {breadcrumbSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        />
+      )}
       <Navbar />
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 space-y-16">

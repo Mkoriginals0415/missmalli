@@ -18,15 +18,20 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
           {/* Brand Info */}
           <div className="space-y-4">
-            <Link to="/" className="inline-flex items-center gap-3">
+            <Link to="/" className="inline-flex items-center gap-3 group">
               <img
                 src="/brand/logo.png"
                 alt="Miss Malli"
-                className="h-10 w-10 rounded-full object-cover ring-2 ring-white/10 shrink-0"
+                className="h-11 w-11 rounded-full object-cover ring-2 ring-brand-lilac/30 shrink-0"
               />
-              <span className="font-serif italic text-3xl text-brand-ivory tracking-tight">
-                miss malli
-              </span>
+              <div className="flex flex-col">
+                <span className="font-serif italic text-2xl text-brand-ivory tracking-tight leading-none">
+                  miss malli
+                </span>
+                <span className="font-serif italic text-[10px] tracking-widest text-brand-lilac/80 uppercase mt-1">
+                  Made for Her Moments
+                </span>
+              </div>
             </Link>
             <p className="text-xs text-brand-ivory/70 leading-relaxed max-w-xs font-sans">
               Exclusive handpicked weaves, festive collections, and pure silks crafted by master artisans across India.
@@ -48,7 +53,7 @@ export function Footer() {
           <div className="border-b border-white/10 pb-4 lg:border-none lg:pb-0 text-xs">
             <button
               onClick={() => toggleSection("shop")}
-              className="w-full flex items-center justify-between font-bold text-sm tracking-wider uppercase text-brand-lilac py-2 lg:py-0 lg:cursor-default"
+              className="w-full flex items-center justify-between font-serif font-bold text-sm tracking-wider uppercase text-brand-lilac py-2 lg:py-0 lg:cursor-default"
             >
               <span>Shop</span>
               <ChevronDown
@@ -74,7 +79,7 @@ export function Footer() {
           <div className="border-b border-white/10 pb-4 lg:border-none lg:pb-0 text-xs">
             <button
               onClick={() => toggleSection("help")}
-              className="w-full flex items-center justify-between font-bold text-sm tracking-wider uppercase text-brand-lilac py-2 lg:py-0 lg:cursor-default"
+              className="w-full flex items-center justify-between font-serif font-bold text-sm tracking-wider uppercase text-brand-lilac py-2 lg:py-0 lg:cursor-default"
             >
               <span>Help & Service</span>
               <ChevronDown
@@ -99,7 +104,7 @@ export function Footer() {
           <div className="border-b border-white/10 pb-4 lg:border-none lg:pb-0 text-xs">
             <button
               onClick={() => toggleSection("company")}
-              className="w-full flex items-center justify-between font-bold text-sm tracking-wider uppercase text-brand-lilac py-2 lg:py-0 lg:cursor-default"
+              className="w-full flex items-center justify-between font-serif font-bold text-sm tracking-wider uppercase text-brand-lilac py-2 lg:py-0 lg:cursor-default"
             >
               <span>About Malli</span>
               <ChevronDown

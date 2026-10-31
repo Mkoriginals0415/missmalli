@@ -38,16 +38,8 @@ export default function HomePage() {
   const { products, newArrivals, content } = useLoaderData<typeof loader>();
   const { isSaved, toggleSave } = useSavedSarees();
 
-  // Floating notification toast for user interactions
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  const handleToggleSave = (productId: number, productName: string) => {
+  const handleToggleSave = (productId: number) => {
     toggleSave(productId);
-    const wasSaved = isSaved(productId);
-    setToastMessage(wasSaved ? `Removed "${productName}" from Wishlist` : `Saved "${productName}" to Wishlist`);
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 2800);
   };
 
   // Safe fallback configurations
@@ -89,17 +81,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-brand-ivory flex flex-col font-sans selection:bg-brand-lilac selection:text-brand-deepPlum">
       <Navbar />
 
-      {/* Floating Interactive Toast */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-4 duration-300">
-          <div className="px-4 py-3 rounded-2xl bg-brand-deepPlum text-white text-xs font-bold shadow-xl flex items-center gap-2 border border-brand-lilac/30">
-            <Check className="w-4 h-4 text-emerald-400 stroke-[3]" />
-            <span>{toastMessage}</span>
-          </div>
-        </div>
-      )}
-
-      <main className="flex-1 space-y-12 sm:space-y-24 pb-24 lg:pb-16">
+      <main className="flex-1 space-y-8 sm:space-y-14 pb-20 lg:pb-16">
         {sections.map((section) => {
           if (!section.enabled) return null;
 
@@ -346,7 +328,7 @@ export default function HomePage() {
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
-                              handleToggleSave(product.id, product.name);
+                              handleToggleSave(product.id);
                             }}
                             className="absolute top-3 right-3 p-2 rounded-full bg-white/90 backdrop-blur-sm text-brand-deepPlum hover:text-brand-plum transition shadow-sm"
                             aria-label="Wishlist"

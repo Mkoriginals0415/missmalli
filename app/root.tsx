@@ -14,12 +14,17 @@ import stylesheet from "~/styles/app.css?url";
 import { getStoreSettings } from "~/db/d1.server";
 import { DEFAULT_THEME_COLORS, StoreThemeColors, DEFAULT_NAV_LINKS, NavLinkItem } from "~/db/mock-data";
 import { BottomNav } from "~/components/layout/BottomNav";
+import { ToastContainer } from "~/components/ui/ToastNotification";
+import { getSeoSettings, buildOrganizationSchema, buildWebSiteSchema } from "~/utils/seo.server";
 
-export async function loader({ context }: LoaderFunctionArgs) {
+export async function loader({ request, context }: LoaderFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
-  const settings = await getStoreSettings(env);
-  let themeColors: StoreThemeColors = DEFAULT_THEME_COLORS;
+  const [settings, seoSettings] = await Promise.all([
+    getStoreSettings(env),
+    getSeoSettings(env),
+  ]);
 
+  let themeColors: StoreThemeColors = DEFAULT_THEME_COLORS;
   try {
     if (settings.theme_colors) {
       themeColors = { ...DEFAULT_THEME_COLORS, ...JSON.parse(settings.theme_colors) };
@@ -41,8 +46,19 @@ export async function loader({ context }: LoaderFunctionArgs) {
   }
 
   const sellerPhone = settings.seller_whatsapp_number || "919876543210";
+  const url = new URL(request.url);
+  const domain = (seoSettings.canonicalDomain || "https://missmalli.in").replace(/\/+$/, "");
+  const canonicalUrl = `${domain}${url.pathname === "/" ? "" : url.pathname}`;
 
-  return json({ themeColors, sellerPhone, navLinks });
+  return json({
+    themeColors,
+    sellerPhone,
+    navLinks,
+    seoSettings,
+    canonicalUrl,
+    orgSchema: buildOrganizationSchema(domain, sellerPhone),
+    webSiteSchema: buildWebSiteSchema(domain),
+  });
 }
 
 export const links: LinksFunction = () => [
@@ -62,6 +78,10 @@ export const meta: MetaFunction = () => {
 export function Layout({ children }: { children: React.ReactNode }) {
   const data = useRouteLoaderData<typeof loader>("root");
   const themeColors = data?.themeColors || DEFAULT_THEME_COLORS;
+  const seo = data?.seoSettings;
+  const canonicalUrl = data?.canonicalUrl;
+  const orgSchema = data?.orgSchema;
+  const webSiteSchema = data?.webSiteSchema;
 
   const hexToRgb = (hex: string, fallback: string) => {
     const clean = hex?.replace(/^#/, "");
@@ -77,6 +97,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+        {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+        {seo?.googleSiteVerification && (
+          <meta name="google-site-verification" content={seo.googleSiteVerification} />
+        )}
+        {seo?.bingSiteVerification && (
+          <meta name="msvalidate.01" content={seo.bingSiteVerification} />
+        )}
+        {seo?.robotsIndexing === "noindex" ? (
+          <meta name="robots" content="noindex, nofollow" />
+        ) : (
+          <meta name="robots" content="index, follow" />
+        )}
         <Meta />
         <Links />
         <style
@@ -99,9 +131,45 @@ export function Layout({ children }: { children: React.ReactNode }) {
             `,
           }}
         />
+        {/* Google Analytics 4 (if configured) */}
+        {seo?.ga4MeasurementId && (
+          <>
+            <script
+              async
+              src={`https://www.googletagmanager.com/gtag/js?id=${seo.ga4MeasurementId}`}
+            />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${seo.ga4MeasurementId}');
+                `,
+              }}
+            />
+          </>
+        )}
+        {/* Structured Data: Organization */}
+        {orgSchema && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+          />
+        )}
+        {/* Structured Data: WebSite */}
+        {webSiteSchema && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteSchema) }}
+          />
+        )}
       </head>
       <body className="h-full bg-brand-ivory text-brand-dark overflow-x-hidden antialiased pb-20 lg:pb-0 selection:bg-brand-lilac/30 selection:text-brand-deepPlum">
-        {children}
+        <div className="page-enter min-h-full flex flex-col">
+          {children}
+        </div>
+        <ToastContainer />
         <BottomNav />
         <ScrollRestoration />
         <Scripts />

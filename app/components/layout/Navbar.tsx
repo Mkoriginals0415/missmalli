@@ -32,57 +32,65 @@ export function Navbar() {
             </button>
           </div>
 
-          {/* Mobile Dead-Centered Logo */}
+          {/* Mobile Dead-Centered Logo Lockup */}
           <div className="lg:hidden absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-auto">
-            <Link to="/" className="flex items-center py-1">
+            <Link to="/" className="flex flex-col items-center py-1 group focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
               <img
                 src="/brand/logo.png"
                 alt="Miss Malli"
-                className="h-9 w-auto object-contain hover:opacity-95 transition"
+                className="h-8 w-auto object-contain hover:opacity-95 transition"
               />
+              <span className="font-serif italic text-[8.5px] tracking-wider text-brand-plum/90 uppercase -mt-0.5 whitespace-nowrap">
+                Made for Her Moments
+              </span>
             </Link>
           </div>
 
-          {/* Desktop Brand Logo */}
-          <Link to="/" className="hidden lg:flex items-center group py-1">
+          {/* Desktop Brand Logo Lockup */}
+          <Link to="/" className="hidden lg:flex items-center gap-3 group py-1 focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
             <img
               src="/brand/logo.png"
               alt="Miss Malli"
               className="h-11 w-auto object-contain hover:opacity-95 transition"
             />
+            <div className="flex flex-col">
+              <span className="font-serif text-lg font-bold tracking-tight text-brand-deepPlum group-hover:text-brand-plum transition leading-none">
+                Miss Malli
+              </span>
+              <span className="font-serif italic text-[10px] tracking-widest text-brand-plum/80 uppercase mt-0.5">
+                Made for Her Moments
+              </span>
+            </div>
           </Link>
 
           {/* Center Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8 text-[14px] font-semibold text-brand-deepPlum">
+          <nav className="hidden lg:flex items-center gap-8 text-[14px] font-medium text-brand-deepPlum">
             {navLinks.map((link) => {
               const isActive = currentPath === link.to;
               return (
                 <Link
                   key={link.label}
                   to={link.to}
-                  className={`transition-colors hover:text-brand-plum relative py-1 ${
-                    isActive ? "text-brand-plum font-bold" : ""
+                  className={`nav-link-animated py-1.5 transition-colors hover:text-brand-plum focus-visible:ring-2 focus-visible:ring-brand-plum rounded-md ${
+                    isActive ? "active text-brand-plum font-bold" : ""
                   }`}
                 >
                   {link.label}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-plum rounded-full" />
-                  )}
                 </Link>
               );
             })}
           </nav>
 
-          {/* Right Action Icons (Search removed per user request) */}
+          {/* Right Action Icons */}
           <div className="flex items-center gap-1 sm:gap-4">
             <Link
               to="/wishlist"
-              className="p-2 text-brand-deepPlum hover:text-brand-plum transition relative min-w-[44px] min-h-[44px] flex items-center justify-center"
+              className="p-2 text-brand-deepPlum hover:text-brand-plum active:scale-90 transition relative min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-brand-plum rounded-full"
               aria-label="Wishlist"
             >
               <Heart className="w-5 h-5 stroke-[2.2]" />
               {savedIds.length > 0 && (
-                <span className="absolute top-1.5 right-1.5 bg-brand-plum text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs">
+                <span className="absolute top-1.5 right-1.5 bg-brand-plum text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs animate-heart-burst">
                   {savedIds.length}
                 </span>
               )}
@@ -90,12 +98,12 @@ export function Navbar() {
 
             <Link
               to="/bag"
-              className="p-2 text-brand-deepPlum hover:text-brand-plum transition relative min-w-[44px] min-h-[44px] flex items-center justify-center"
+              className="p-2 text-brand-deepPlum hover:text-brand-plum active:scale-90 transition relative min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-brand-plum rounded-full"
               aria-label="Shopping Bag"
             >
               <ShoppingBag className="w-5 h-5 stroke-[2.2]" />
               {bagCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 bg-brand-plum text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs">
+                <span className="absolute top-1.5 right-1.5 bg-brand-plum text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs animate-heart-burst">
                   {bagCount}
                 </span>
               )}
@@ -106,7 +114,7 @@ export function Navbar() {
               href={getChatUrl("Hi Miss Malli, I'd like assistance with an order")}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-deepPlum text-white text-[13px] font-semibold hover:bg-brand-plum transition shadow-md"
+              className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-deepPlum text-white text-[13px] font-semibold hover:bg-brand-plum active:scale-95 transition shadow-md focus-visible:ring-2 focus-visible:ring-brand-plum"
             >
               <MessageCircle className="w-4 h-4 text-emerald-400" />
               <span>WhatsApp Order</span>
@@ -139,8 +147,8 @@ export function Navbar() {
                     <span className="font-serif font-bold text-base tracking-wide text-brand-deepPlum block leading-tight">
                       MISS MALLI
                     </span>
-                    <span className="text-[10px] tracking-widest uppercase font-semibold text-brand-plum block">
-                      HERITAGE SILKS
+                    <span className="font-serif italic text-[10px] tracking-wider text-brand-plum block mt-0.5">
+                      Made for Her Moments
                     </span>
                   </div>
                 </div>

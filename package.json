@@ -4,7 +4,7 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "build": "remix vite:build",
+    "build": "node --max-old-space-size=4096 ./node_modules/@remix-run/dev/dist/cli.js vite:build",
     "dev": "remix vite:dev",
     "preview": "wrangler pages dev ./build/client",
     "typecheck": "tsc"

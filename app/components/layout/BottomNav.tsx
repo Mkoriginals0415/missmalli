@@ -42,7 +42,7 @@ export function BottomNav({ hidden = false }: BottomNavProps) {
             <Link
               key={item.label}
               to={item.to}
-              className={`flex flex-col items-center justify-center flex-1 py-1 transition-colors relative touch-manipulation ${
+              className={`flex flex-col items-center justify-center flex-1 py-1 transition-all active:scale-90 relative touch-manipulation focus-visible:outline-hidden ${
                 isActive ? "text-brand-plum font-semibold" : "text-brand-deepPlum/65 hover:text-brand-plum"
               }`}
             >

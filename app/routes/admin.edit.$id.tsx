@@ -5,6 +5,7 @@ import { ArrowLeft, Save, Upload, Eye, Plus, Trash2, Loader2 } from "lucide-reac
 import { getProductById, upsertProduct, deleteProduct } from "~/db/d1.server";
 import { processImageFile } from "~/components/ui/ImageUpload";
 import { requireAdmin } from "~/utils/auth.server";
+import { getSeoSettings, updateSeoSettings } from "~/utils/seo.server";
 
 export async function loader({ request, params, context }: LoaderFunctionArgs) {
   await requireAdmin(request);
@@ -16,6 +17,14 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
   if (!isNew && idStr) {
     product = await getProductById(Number(idStr), env);
   }
+
+  const seo = await getSeoSettings(env);
+  const productSeo = (product && product.slug && seo.productOverrides[product.slug]) || {
+    title: "",
+    description: "",
+    canonicalUrl: "",
+    noIndex: false,
+  };
 
   return json({
     product: product || {
@@ -38,6 +47,7 @@ export async function loader({ request, params, context }: LoaderFunctionArgs) {
       ],
     },
     isNew,
+    productSeo,
   });
 }
 
@@ -64,6 +74,22 @@ export async function action({ request, context }: ActionFunctionArgs) {
   try {
     const parsed = JSON.parse(rawJson);
     await upsertProduct(parsed, env);
+
+    const rawSeo = formData.get("seoJson");
+    if (rawSeo && typeof rawSeo === "string") {
+      const seoOverride = JSON.parse(rawSeo);
+      const currentSeo = await getSeoSettings(env);
+      await updateSeoSettings(
+        {
+          productOverrides: {
+            ...currentSeo.productOverrides,
+            [parsed.slug]: seoOverride,
+          },
+        },
+        env
+      );
+    }
+
     return redirect("/admin/products");
   } catch (err: any) {
     return json({ error: err.message || "Failed to save product" }, { status: 400 });
@@ -71,7 +97,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 }
 
 export default function AdminProductEditor() {
-  const { product: initialProduct, isNew } = useLoaderData<typeof loader>();
+  const { product: initialProduct, isNew, productSeo } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
   const fetcher = useFetcher<typeof action>();
 
@@ -85,6 +111,12 @@ export default function AdminProductEditor() {
   const [status, setStatus] = useState(initialProduct.status || "live");
   const [images, setImages] = useState<string[]>(initialProduct.images);
   const [variants, setVariants] = useState(initialProduct.variants);
+
+  // Product-level SEO fields
+  const [seoTitle, setSeoTitle] = useState(productSeo?.title || "");
+  const [seoDescription, setSeoDescription] = useState(productSeo?.description || "");
+  const [seoCanonicalUrl, setSeoCanonicalUrl] = useState(productSeo?.canonicalUrl || "");
+  const [seoNoIndex, setSeoNoIndex] = useState(Boolean(productSeo?.noIndex));
 
   const isSaving = fetcher.state === "submitting" || fetcher.state === "loading";
 
@@ -105,8 +137,16 @@ export default function AdminProductEditor() {
       variants,
     };
 
+    const seoPayload = {
+      title: seoTitle,
+      description: seoDescription,
+      canonicalUrl: seoCanonicalUrl,
+      noIndex: seoNoIndex,
+    };
+
     const formData = new FormData();
     formData.append("productJson", JSON.stringify(payload));
+    formData.append("seoJson", JSON.stringify(seoPayload));
     fetcher.submit(formData, { method: "post" });
   };
 
@@ -356,6 +396,75 @@ export default function AdminProductEditor() {
                     </button>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* SEO & Search Appearance Section */}
+            <div className="pt-3 border-t border-brand-deepPlum/10 space-y-4">
+              <div>
+                <h4 className="font-bold text-xs text-brand-deepPlum flex items-center gap-1.5">
+                  <span>Product SEO & Search Appearance</span>
+                  <span className="text-[10px] text-brand-plum font-normal">(Optional Overrides)</span>
+                </h4>
+                <p className="text-[10px] text-brand-deepPlum/60">
+                  Custom metadata for Google search indexing and social cards. Defaults to product name and fabric if left empty.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-brand-deepPlum mb-1">
+                    Custom Meta Title
+                  </label>
+                  <input
+                    type="text"
+                    value={seoTitle}
+                    onChange={(e) => setSeoTitle(e.target.value)}
+                    placeholder={name ? `${name} | Miss Malli` : "Custom product title for Google..."}
+                    className="w-full px-3 py-2 rounded-xl border border-brand-deepPlum/20 text-xs text-brand-deepPlum bg-brand-ivory/50 outline-hidden"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-brand-deepPlum mb-1">
+                    Custom Meta Description
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={seoDescription}
+                    onChange={(e) => setSeoDescription(e.target.value)}
+                    placeholder={description ? description.slice(0, 150) : "Custom description snippet for search engines..."}
+                    className="w-full px-3 py-2 rounded-xl border border-brand-deepPlum/20 text-xs text-brand-deepPlum bg-brand-ivory/50 outline-hidden"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-brand-deepPlum mb-1">
+                      Custom Canonical URL
+                    </label>
+                    <input
+                      type="url"
+                      value={seoCanonicalUrl}
+                      onChange={(e) => setSeoCanonicalUrl(e.target.value)}
+                      placeholder="https://missmalli.in/p/..."
+                      className="w-full px-3 py-2 rounded-xl border border-brand-deepPlum/20 text-xs text-brand-deepPlum bg-brand-ivory/50 outline-hidden"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-5">
+                    <input
+                      type="checkbox"
+                      id="seoNoIndexCheckbox"
+                      checked={seoNoIndex}
+                      onChange={(e) => setSeoNoIndex(e.target.checked)}
+                      className="w-4 h-4 rounded border-brand-deepPlum/20 text-brand-plum focus:ring-brand-plum"
+                    />
+                    <label htmlFor="seoNoIndexCheckbox" className="text-xs font-semibold text-brand-deepPlum cursor-pointer">
+                      Block Search Engines (noindex)
+                    </label>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

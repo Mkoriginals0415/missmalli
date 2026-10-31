@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { showToast } from "~/components/ui/ToastNotification";
 
 export interface BagItem {
   productId: number;
@@ -36,19 +37,41 @@ export function useSavedSarees() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    try {
-      const data = localStorage.getItem(STORAGE_KEYS.SAVED);
-      if (data) setSavedIds(JSON.parse(data));
-    } catch {
-      // ignore
-    }
-    setIsLoaded(true);
+    const load = () => {
+      try {
+        const data = localStorage.getItem(STORAGE_KEYS.SAVED);
+        if (data) setSavedIds(JSON.parse(data));
+        else setSavedIds([]);
+      } catch {
+        // ignore
+      }
+      setIsLoaded(true);
+    };
+
+    load();
+    window.addEventListener("mm_saved_updated", load);
+    window.addEventListener("storage", load);
+    return () => {
+      window.removeEventListener("mm_saved_updated", load);
+      window.removeEventListener("storage", load);
+    };
   }, []);
 
   const toggleSave = (id: number) => {
     setSavedIds((prev) => {
-      const next = prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id];
-      localStorage.setItem(STORAGE_KEYS.SAVED, JSON.stringify(next));
+      const isCurrentlySaved = prev.includes(id);
+      const next = isCurrentlySaved ? prev.filter((x) => x !== id) : [...prev, id];
+      try {
+        localStorage.setItem(STORAGE_KEYS.SAVED, JSON.stringify(next));
+        window.dispatchEvent(new Event("mm_saved_updated"));
+        if (isCurrentlySaved) {
+          showToast("Removed from wishlist", "info");
+        } else {
+          showToast("Saved to your wishlist", "heart");
+        }
+      } catch {
+        showToast("Unable to update wishlist. Storage might be full.", "info");
+      }
       return next;
     });
   };
@@ -63,13 +86,24 @@ export function useBag() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    try {
-      const data = localStorage.getItem(STORAGE_KEYS.BAG);
-      if (data) setItems(JSON.parse(data));
-    } catch {
-      // ignore
-    }
-    setIsLoaded(true);
+    const load = () => {
+      try {
+        const data = localStorage.getItem(STORAGE_KEYS.BAG);
+        if (data) setItems(JSON.parse(data));
+        else setItems([]);
+      } catch {
+        // ignore
+      }
+      setIsLoaded(true);
+    };
+
+    load();
+    window.addEventListener("mm_bag_updated", load);
+    window.addEventListener("storage", load);
+    return () => {
+      window.removeEventListener("mm_bag_updated", load);
+      window.removeEventListener("storage", load);
+    };
   }, []);
 
   const addToBag = (item: BagItem) => {
@@ -91,7 +125,13 @@ export function useBag() {
         next = [...prev, { ...item, quantity: addQty }];
       }
 
-      localStorage.setItem(STORAGE_KEYS.BAG, JSON.stringify(next));
+      try {
+        localStorage.setItem(STORAGE_KEYS.BAG, JSON.stringify(next));
+        window.dispatchEvent(new Event("mm_bag_updated"));
+        showToast("Added to shopping bag", "cart");
+      } catch {
+        showToast("Unable to update shopping bag", "info");
+      }
       return next;
     });
   };
@@ -101,10 +141,13 @@ export function useBag() {
       if (quantity <= 0) {
         const next = prev.filter((_, i) => i !== index);
         localStorage.setItem(STORAGE_KEYS.BAG, JSON.stringify(next));
+        window.dispatchEvent(new Event("mm_bag_updated"));
+        showToast("Item removed from bag", "info");
         return next;
       }
       const next = prev.map((item, i) => (i === index ? { ...item, quantity } : item));
       localStorage.setItem(STORAGE_KEYS.BAG, JSON.stringify(next));
+      window.dispatchEvent(new Event("mm_bag_updated"));
       return next;
     });
   };
@@ -113,6 +156,8 @@ export function useBag() {
     setItems((prev) => {
       const next = prev.filter((_, i) => i !== index);
       localStorage.setItem(STORAGE_KEYS.BAG, JSON.stringify(next));
+      window.dispatchEvent(new Event("mm_bag_updated"));
+      showToast("Item removed from bag", "info");
       return next;
     });
   };

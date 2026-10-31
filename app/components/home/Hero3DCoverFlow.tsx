@@ -436,6 +436,9 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
                   alt={item.title}
                   className="flow-card-img absolute inset-0 w-full h-full object-cover transition-transform duration-75 will-change-transform"
                   loading={idx < 6 ? "eager" : "lazy"}
+                  // @ts-ignore - React 18 / DOM fetchPriority support
+                  fetchPriority={idx === 0 ? "high" : "auto"}
+                  decoding={idx < 3 ? "sync" : "async"}
                   draggable={false}
                 />
               </div>
