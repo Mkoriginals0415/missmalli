@@ -214,3 +214,47 @@
 .hero-card-3d:hover {
   transform: translate3d(0, -8px, 16px) scale(1.03);
 }
+
+/* Subtle Animated Botanical Floral Background Layer */
+.floral-background-layer {
+  position: fixed;
+  inset: -80px;
+  width: calc(100% + 160px);
+  height: calc(100% + 160px);
+  pointer-events: none;
+  z-index: 0;
+  background-image: url('/brand/floral-pattern.png');
+  background-repeat: repeat;
+  background-size: 640px 320px;
+  background-position: 0 0;
+  opacity: 0.32;
+  mix-blend-mode: multiply;
+  will-change: transform;
+  animation: floralDrift 70s ease-in-out infinite;
+}
+
+@keyframes floralDrift {
+  0% {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  50% {
+    transform: translate3d(50px, -35px, 0px);
+  }
+  100% {
+    transform: translate3d(0px, 0px, 0px);
+  }
+}
+
+@media (max-width: 768px) {
+  .floral-background-layer {
+    background-size: 420px 210px;
+    opacity: 0.24;
+    animation-duration: 85s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floral-background-layer {
+    animation: none !important;
+  }
+}

@@ -47,11 +47,15 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
     wheelTimeout: null as any,
   });
 
+  const autoScrollTimerRef = useRef<any>(null);
+  const isInteractingRef = useRef(false);
+  const resumeTimeoutRef = useRef<any>(null);
+
   const snapToCardIndex = useCallback((index: number) => {
     if (!trackRef.current) return;
     const isMobile = window.innerWidth < 768;
-    const cardWidth = isMobile ? 228 : 310;
-    const cardGap = isMobile ? 24 : 36;
+    const cardWidth = isMobile ? 240 : 340;
+    const cardGap = isMobile ? 20 : 30;
     const itemSpacing = cardWidth + cardGap;
     const totalTrackWidth = totalItems * itemSpacing;
 
@@ -66,14 +70,54 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
   }, [totalItems]);
 
   const handlePrev = () => {
+    isInteractingRef.current = true;
+    clearTimeout(resumeTimeoutRef.current);
+    resumeTimeoutRef.current = setTimeout(() => {
+      isInteractingRef.current = false;
+    }, 4500);
     const prevIdx = (activeCenterIndex - 1 + totalItems) % totalItems;
     snapToCardIndex(prevIdx);
   };
 
   const handleNext = () => {
+    isInteractingRef.current = true;
+    clearTimeout(resumeTimeoutRef.current);
+    resumeTimeoutRef.current = setTimeout(() => {
+      isInteractingRef.current = false;
+    }, 4500);
     const nextIdx = (activeCenterIndex + 1) % totalItems;
     snapToCardIndex(nextIdx);
   };
+
+  // Continuous smooth auto-scroll loop (pauses during touch/hover interaction)
+  useEffect(() => {
+    if (totalItems === 0) return;
+
+    const startTimer = () => {
+      if (autoScrollTimerRef.current) clearInterval(autoScrollTimerRef.current);
+      autoScrollTimerRef.current = setInterval(() => {
+        if (
+          !isInteractingRef.current &&
+          !physicsRef.current.isDragging &&
+          document.visibilityState === "visible" &&
+          !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ) {
+          setActiveCenterIndex((prev) => {
+            const nextIdx = (prev + 1) % totalItems;
+            snapToCardIndex(nextIdx);
+            return nextIdx;
+          });
+        }
+      }, 3600);
+    };
+
+    startTimer();
+
+    return () => {
+      if (autoScrollTimerRef.current) clearInterval(autoScrollTimerRef.current);
+      if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
+    };
+  }, [totalItems, snapToCardIndex]);
 
   useEffect(() => {
     if (!stageRef.current || !trackRef.current || totalItems === 0) return;
@@ -86,32 +130,32 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
       friction: 0.92, // Momentum decay per frame
       dragSensitivity: 1.18,
       wheelSensitivity: 0.85,
-      snapSpring: 0.12, // Crisp snap spring stiffness
+      snapSpring: 0.08, // Buttery smooth ease-out snap
       snapTriggerVelocity: 16, // Velocity below which auto-snap activates
       perspective: 1100, // Dramatic perspective depth
-      cardWidthDesktop: 310,
-      cardHeightDesktop: 420,
-      cardWidthMobile: 228,
-      cardHeightMobile: 330,
-      cardGapDesktop: 36,
-      cardGapMobile: 24,
+      cardWidthDesktop: 340,  // Enhanced width to fill horizontal gaps
+      cardHeightDesktop: 450, // Enhanced height
+      cardWidthMobile: 240,   // Enhanced mobile width
+      cardHeightMobile: 345,  // Enhanced mobile height
+      cardGapDesktop: 30,
+      cardGapMobile: 20,
       cardBorderRadiusDesktop: 28,
       cardBorderRadiusMobile: 24,
-      // High dramatic tilt matching user request (same dramatic 3D on mobile)
-      maxRotationDesktop: 42, // 42° tilt on desktop
-      maxRotationMobile: 40,  // 40° tilt on mobile (parity with desktop)
-      maxFanRollDesktop: 2.5, // Subtle rotateZ arching
-      maxFanRollMobile: 2.0,
+      // Refined rotation so flanking images stay wider and flatter to the viewer
+      maxRotationDesktop: 32, // Flatter tilt for high visibility of saree artwork
+      maxRotationMobile: 30,  // Parity on mobile
+      maxFanRollDesktop: 1.8,
+      maxFanRollMobile: 1.4,
       centerScale: 1.0,
-      minScaleDesktop: 0.76,
-      minScaleMobile: 0.80,
-      minTranslateZDesktop: -290,
-      minTranslateZMobile: -190,
+      minScaleDesktop: 0.88,  // Substantially bigger side cards (was 0.76)
+      minScaleMobile: 0.86,   // Substantially bigger mobile side cards (was 0.80)
+      minTranslateZDesktop: -150, // Brought forward from -290 so flanking cards are prominent
+      minTranslateZMobile: -100,  // Brought forward from -190
       centerOpacity: 1.0,
-      minOpacity: 0.45,
-      minBrightnessOverlay: 0.42,
-      influenceRangeDesktop: 2.4,
-      influenceRangeMobile: 1.7,
+      minOpacity: 0.75,       // High contrast & clarity on side cards (was 0.45)
+      minBrightnessOverlay: 0.22, // Soft subtle dimming preserving brilliant saree colors
+      influenceRangeDesktop: 2.6,
+      influenceRangeMobile: 1.8,
       lenticularParallaxShift: 16, // px of counter-parallax inside image
     };
 
@@ -294,6 +338,8 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
     // Pointer Drag Listeners (Touch & Mouse unified)
     const onPointerDown = (e: PointerEvent) => {
       if ((e.target as HTMLElement).closest("button")) return;
+      isInteractingRef.current = true;
+      clearTimeout(resumeTimeoutRef.current);
       const p = physicsRef.current;
       p.isDragging = true;
       p.isSnapping = false;
@@ -331,6 +377,11 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
         stageEl.releasePointerCapture(e.pointerId);
       } catch (err) {}
       p.velocity = Math.max(-1400, Math.min(1400, p.velocity));
+
+      clearTimeout(resumeTimeoutRef.current);
+      resumeTimeoutRef.current = setTimeout(() => {
+        isInteractingRef.current = false;
+      }, 4000);
 
       // If user released with almost no velocity, auto-snap to nearest immediately
       if (Math.abs(p.velocity) < CONFIG.snapTriggerVelocity) {
@@ -386,8 +437,8 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
   const handleCardClick = (index: number, link: string) => {
     if (Math.abs(physicsRef.current.velocity) > 25) return;
     const isMobile = window.innerWidth < 768;
-    const cardWidth = isMobile ? 228 : 310;
-    const cardGap = isMobile ? 24 : 36;
+    const cardWidth = isMobile ? 240 : 340;
+    const cardGap = isMobile ? 20 : 30;
     const itemSpacing = cardWidth + cardGap;
     const totalTrackWidth = totalItems * itemSpacing;
 
@@ -412,11 +463,13 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
       {/* 3D Perspective Stage Container */}
       <div
         ref={stageRef}
-        className="carousel-perspective-stage relative w-full h-[360px] sm:h-[430px] lg:h-[460px] flex items-center justify-center overflow-visible select-none cursor-grab active:cursor-grabbing touch-pan-y"
+        onPointerEnter={() => { isInteractingRef.current = true; }}
+        onPointerLeave={() => { isInteractingRef.current = false; }}
+        className="carousel-perspective-stage relative w-full h-[380px] sm:h-[460px] lg:h-[490px] flex items-center justify-center overflow-visible select-none cursor-grab active:cursor-grabbing touch-pan-y"
       >
         {/* Soft Vignette Fades on edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-28 bg-gradient-to-r from-brand-ivory via-brand-ivory/80 to-transparent z-40 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-28 bg-gradient-to-l from-brand-ivory via-brand-ivory/80 to-transparent z-40 pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 w-6 sm:w-16 bg-gradient-to-r from-brand-ivory via-brand-ivory/80 to-transparent z-40 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-6 sm:w-16 bg-gradient-to-l from-brand-ivory via-brand-ivory/80 to-transparent z-40 pointer-events-none" />
 
         {/* Carousel 3D Track */}
         <div ref={trackRef} className="relative w-full h-full" style={{ transformStyle: "preserve-3d" }}>

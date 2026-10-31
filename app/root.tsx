@@ -168,9 +168,11 @@ export default function App() {
           />
         )}
       </head>
-      <body className="h-full bg-brand-ivory text-brand-dark overflow-x-hidden antialiased pb-20 lg:pb-0 selection:bg-brand-lilac/30 selection:text-brand-deepPlum">
+      <body className="h-full bg-brand-ivory text-brand-dark overflow-x-hidden antialiased pb-20 lg:pb-0 selection:bg-brand-lilac/30 selection:text-brand-deepPlum relative">
+        {/* Subtle Animated Floral Botanical Background Layer */}
+        <div className="floral-background-layer" aria-hidden="true" />
         <Navbar />
-        <div key={`${location.pathname}${location.search}`} className="min-h-full flex flex-col page-fade-transition">
+        <div key={`${location.pathname}${location.search}`} className="min-h-full flex flex-col page-fade-transition relative z-10">
           <Outlet />
         </div>
         <ToastContainer />
