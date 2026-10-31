@@ -14,7 +14,6 @@ import {
   ShieldCheck,
   Package
 } from "lucide-react";
-import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
 import { useBag, useSavedSarees, useMyRequests } from "~/hooks/useLocalStorage";
 import { generateWhatsAppBuyUrl } from "~/utils/whatsapp";
@@ -131,8 +130,6 @@ export default function ShoppingBagPage() {
 
   return (
     <div className="min-h-screen bg-brand-ivory flex flex-col font-sans">
-      <Navbar />
-
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 space-y-8">
         <div className="flex items-center justify-between">
           <div>

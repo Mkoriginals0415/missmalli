@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { json, type LoaderFunctionArgs, type ActionFunctionArgs, type MetaFunction } from "@remix-run/cloudflare";
 import { useLoaderData, useFetcher, Link } from "@remix-run/react";
 import { MessageCircle, Truck, Check, ArrowLeft, ExternalLink, ShieldCheck } from "lucide-react";
-import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
 import { getRequestByTokenOrNumber, getStoreSettings, updateRequestStatus } from "~/db/d1.server";
 import { normalizeWhatsAppPhone } from "~/utils/whatsapp";
@@ -146,8 +145,6 @@ export default function RequestTrackerPage() {
 
   return (
     <div className="min-h-screen bg-brand-ivory flex flex-col font-sans">
-      <Navbar />
-
       <main className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-8 py-8 space-y-6">
         {/* Header Bar */}
         <div className="flex items-center justify-between">

@@ -6,48 +6,52 @@ import { useSellerPhone } from "~/hooks/useSellerPhone";
 import { DEFAULT_NAV_LINKS, NavLinkItem } from "~/db/mock-data";
 
 export function isRouteActive(linkTo: string, pathname: string, search: string): boolean {
-  const params = new URLSearchParams(search);
-  const collection = params.get("collection") || "";
-  const filter = params.get("filter") || "";
+  const currentPath = (pathname || "").toLowerCase().replace(/\/+$/, "") || "/";
+  const params = new URLSearchParams(search || "");
+  const collection = (params.get("collection") || "").toLowerCase();
+  const filter = (params.get("filter") || "").toLowerCase();
+
+  // Normalize link target
+  const target = (linkTo || "").toLowerCase();
 
   // 1. Home
-  if (linkTo === "/") {
-    return pathname === "/";
+  if (target === "/") {
+    return currentPath === "/";
   }
 
   // 2. Sale
-  if (linkTo === "/sale" || linkTo.includes("filter=sale")) {
-    return pathname === "/sale" || filter === "sale";
+  if (target === "/sale" || target.includes("filter=sale")) {
+    return currentPath === "/sale" || filter === "sale";
   }
 
   // 3. Dresses
-  if (linkTo === "/dresses" || linkTo.includes("collection=dresses")) {
-    return pathname === "/dresses" || collection === "dresses";
+  if (target === "/dresses" || target.includes("collection=dresses")) {
+    return currentPath === "/dresses" || collection === "dresses";
   }
 
   // 4. Dress Materials
-  if (linkTo === "/materials" || linkTo.includes("collection=materials")) {
-    return pathname === "/materials" || collection === "materials";
+  if (target === "/materials" || target.includes("collection=materials")) {
+    return currentPath === "/materials" || collection === "materials";
   }
 
   // 5. Exclusive
-  if (linkTo === "/exclusive" || linkTo.includes("collection=exclusive")) {
-    return pathname === "/exclusive" || collection === "exclusive";
+  if (target === "/exclusive" || target.includes("collection=exclusive")) {
+    return currentPath === "/exclusive" || collection === "exclusive";
   }
 
   // 6. Artisans / Our Story
-  if (linkTo === "/artisans") {
-    return pathname === "/artisans";
+  if (target === "/artisans") {
+    return currentPath === "/artisans";
   }
 
   // 7. Info / About / Contact
-  if (linkTo === "/info") {
-    return pathname === "/info";
+  if (target === "/info") {
+    return currentPath === "/info";
   }
 
   // 8. Sarees (Pure Sarees page: MUST NOT be active if viewing other distinct collections/filters!)
-  if (linkTo === "/sarees") {
-    if (pathname !== "/sarees" && !pathname.startsWith("/p/")) {
+  if (target === "/sarees" || target.startsWith("/sarees")) {
+    if (currentPath !== "/sarees" && !currentPath.startsWith("/p/")) {
       return false;
     }
     if (
@@ -61,12 +65,18 @@ export function isRouteActive(linkTo: string, pathname: string, search: string):
     return true;
   }
 
-  return pathname === linkTo;
+  return currentPath === target.replace(/\/+$/, "");
 }
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+
+  // Hide on admin routes or feed (100dvh swipe reel)
+  if (location.pathname.startsWith("/admin") || location.pathname.startsWith("/feed")) {
+    return null;
+  }
+
   const { items: bagItems } = useBag();
   const { savedIds } = useSavedSarees();
   const { getChatUrl } = useSellerPhone();

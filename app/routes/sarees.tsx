@@ -2,7 +2,6 @@ import { useState, useMemo } from "react";
 import { json, type LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { useLoaderData, Link, useSearchParams } from "@remix-run/react";
 import { Heart, Check, SlidersHorizontal, X, ArrowUpDown } from "lucide-react";
-import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
 import { getAllProducts } from "~/db/d1.server";
 import { useSavedSarees } from "~/hooks/useLocalStorage";
@@ -43,6 +42,9 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
     categoryTitle = collection.charAt(0).toUpperCase() + collection.slice(1);
     breadcrumbName = categoryTitle;
     list = list.filter((p) => p.collectionSlug === collection);
+  } else {
+    // Sarees: show pure sarees
+    list = list.filter((p) => !p.collectionSlug || p.collectionSlug === "sarees");
   }
 
   return json({
@@ -105,8 +107,6 @@ export default function SareesListingPage() {
 
   return (
     <div className="min-h-screen bg-brand-ivory flex flex-col font-sans">
-      <Navbar />
-
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-5 sm:py-8 space-y-6 sm:space-y-8">
         {/* Breadcrumb & Header */}
         <div>

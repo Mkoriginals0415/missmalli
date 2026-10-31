@@ -15,6 +15,7 @@ import stylesheet from "~/styles/app.css?url";
 import { getStoreSettings } from "~/db/d1.server";
 import { DEFAULT_THEME_COLORS, StoreThemeColors, DEFAULT_NAV_LINKS, NavLinkItem } from "~/db/mock-data";
 import { BottomNav } from "~/components/layout/BottomNav";
+import { Navbar } from "~/components/layout/Navbar";
 import { ToastContainer } from "~/components/ui/ToastNotification";
 import { getSeoSettings, buildOrganizationSchema, buildWebSiteSchema } from "~/utils/seo.server";
 
@@ -167,6 +168,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         )}
       </head>
       <body className="h-full bg-brand-ivory text-brand-dark overflow-x-hidden antialiased pb-20 lg:pb-0 selection:bg-brand-lilac/30 selection:text-brand-deepPlum">
+        <Navbar />
         <div className="min-h-full flex flex-col">
           {children}
         </div>
@@ -180,12 +182,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const location = useLocation();
-  return (
-    <div key={location.pathname} className="min-h-full flex flex-col page-fade-transition">
-      <Outlet />
-    </div>
-  );
+  return <Outlet />;
 }
 
 export function ErrorBoundary() {

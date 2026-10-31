@@ -13,7 +13,6 @@ import {
   RotateCcw,
   Check
 } from "lucide-react";
-import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
 import { INITIAL_PRODUCTS } from "~/db/mock-data";
 import { getHomepageContent, getAllProducts } from "~/db/d1.server";
@@ -79,8 +78,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-brand-ivory flex flex-col font-sans selection:bg-brand-lilac selection:text-brand-deepPlum">
-      <Navbar />
-
       <main className="flex-1 space-y-6 sm:space-y-10 pb-16 lg:pb-12">
         {sections.map((section) => {
           if (!section.enabled) return null;

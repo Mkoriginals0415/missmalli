@@ -736,10 +736,10 @@ export interface NavLinkItem {
 export const DEFAULT_NAV_LINKS: NavLinkItem[] = [
   { id: "home", label: "Home", to: "/" },
   { id: "sarees", label: "Sarees", to: "/sarees" },
-  { id: "sale", label: "Sale", to: "/sale" },
-  { id: "dresses", label: "Dresses", to: "/dresses" },
-  { id: "materials", label: "Dress Materials", to: "/materials" },
-  { id: "exclusive", label: "Exclusive", to: "/exclusive" },
+  { id: "sale", label: "Sale", to: "/sarees?filter=sale" },
+  { id: "dresses", label: "Dresses", to: "/sarees?collection=dresses" },
+  { id: "materials", label: "Dress Materials", to: "/sarees?collection=materials" },
+  { id: "exclusive", label: "Exclusive", to: "/sarees?collection=exclusive" },
   { id: "artisans", label: "Our Story", to: "/artisans" },
 ];
 

@@ -2,7 +2,6 @@ import { useState, useMemo } from "react";
 import { json, type LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { useLoaderData, Link } from "@remix-run/react";
 import { Search as SearchIcon, X, Eye } from "lucide-react";
-import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
 import { QuickViewModal } from "~/components/product/QuickViewModal";
 import { SeedProduct } from "~/db/mock-data";
@@ -36,8 +35,6 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-screen bg-brand-ivory flex flex-col font-sans">
-      <Navbar />
-
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-8 py-8 space-y-8">
         <div className="space-y-4 text-center max-w-xl mx-auto">
           <h1 className="text-3xl font-bold text-brand-deepPlum">

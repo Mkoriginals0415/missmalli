@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "@remix-run/react";
 import { ChevronDown, ChevronUp, MessageCircle, ShieldCheck } from "lucide-react";
-import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
 import { useSellerPhone } from "~/hooks/useSellerPhone";
 
@@ -45,8 +44,6 @@ export default function StoreInfoPage() {
 
   return (
     <div className="min-h-screen bg-brand-ivory flex flex-col font-sans">
-      <Navbar />
-
       <main className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-8 py-8 space-y-6">
         <div>
           <h1 className="text-3xl font-serif font-bold text-brand-deepPlum">

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { json, type LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { useLoaderData, Link } from "@remix-run/react";
 import { Heart, ShoppingBag, Trash2, ArrowRight, Check } from "lucide-react";
-import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
 import { getAllProducts } from "~/db/d1.server";
 import { useSavedSarees, useBag } from "~/hooks/useLocalStorage";
@@ -46,8 +45,6 @@ export default function WishlistPage() {
 
   return (
     <div className="min-h-screen bg-brand-ivory flex flex-col font-sans">
-      <Navbar />
-
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>

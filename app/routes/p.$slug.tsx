@@ -16,7 +16,6 @@ import {
   Star,
   Check
 } from "lucide-react";
-import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
 import { ACCESSORIES, SeedProduct } from "~/db/mock-data";
 import { getProductBySlug, getStoreSettings } from "~/db/d1.server";
@@ -256,7 +255,6 @@ export default function ProductDetailPage() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
         />
       )}
-      <Navbar />
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 space-y-16">
         {/* Breadcrumb */}

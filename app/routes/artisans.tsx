@@ -1,6 +1,5 @@
 import { Link } from "@remix-run/react";
 import { ArrowRight, Sparkles, Award, Heart, CheckCircle2, ShieldCheck, Play } from "lucide-react";
-import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
 
 export default function ArtisansPage() {
@@ -43,8 +42,6 @@ export default function ArtisansPage() {
 
   return (
     <div className="min-h-screen bg-brand-ivory flex flex-col font-sans selection:bg-brand-lilac/40">
-      <Navbar />
-
       <main className="flex-1">
         {/* Editorial Story Hero */}
         <section className="relative py-16 sm:py-24 px-4 sm:px-8 border-b border-brand-lilac/30 overflow-hidden bg-gradient-to-b from-brand-ivory via-brand-ivory to-white">
