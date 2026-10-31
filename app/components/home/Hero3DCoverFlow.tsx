@@ -89,36 +89,6 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
     snapToCardIndex(nextIdx);
   };
 
-  // Continuous smooth auto-scroll loop (pauses during touch/hover interaction)
-  useEffect(() => {
-    if (totalItems === 0) return;
-
-    const startTimer = () => {
-      if (autoScrollTimerRef.current) clearInterval(autoScrollTimerRef.current);
-      autoScrollTimerRef.current = setInterval(() => {
-        if (
-          !isInteractingRef.current &&
-          !physicsRef.current.isDragging &&
-          document.visibilityState === "visible" &&
-          !window.matchMedia("(prefers-reduced-motion: reduce)").matches
-        ) {
-          setActiveCenterIndex((prev) => {
-            const nextIdx = (prev + 1) % totalItems;
-            snapToCardIndex(nextIdx);
-            return nextIdx;
-          });
-        }
-      }, 3600);
-    };
-
-    startTimer();
-
-    return () => {
-      if (autoScrollTimerRef.current) clearInterval(autoScrollTimerRef.current);
-      if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
-    };
-  }, [totalItems, snapToCardIndex]);
-
   useEffect(() => {
     if (!stageRef.current || !trackRef.current || totalItems === 0) return;
 
@@ -259,6 +229,9 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
             p.targetSnapScrollX = nearestCardIndex * itemSpacing;
             p.isSnapping = true;
           }
+        } else if (!isInteractingRef.current && document.visibilityState === "visible") {
+          // Smooth continuous 60fps auto-scroll drift on mobile and desktop
+          p.scrollX += 48 * dt;
         } else {
           p.velocity = 0;
         }
