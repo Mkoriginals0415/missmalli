@@ -18,7 +18,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
           {/* Brand Info */}
           <div className="space-y-4">
-            <Link to="/" className="inline-flex items-center gap-3 group">
+            <Link to="/" reloadDocument className="inline-flex items-center gap-3 group">
               <img
                 src="/brand/logo.png"
                 alt="Miss Malli"
@@ -67,11 +67,11 @@ export function Footer() {
                 openSection === "shop" ? "block" : "hidden lg:block"
               }`}
             >
-              <li><Link to="/sarees" className="hover:text-brand-lilac transition block py-1">Sarees</Link></li>
-              <li><Link to="/dresses" className="hover:text-brand-lilac transition block py-1">Dresses</Link></li>
-              <li><Link to="/materials" className="hover:text-brand-lilac transition block py-1">Dress Materials</Link></li>
-              <li><Link to="/exclusive" className="hover:text-brand-lilac transition block py-1">Exclusive</Link></li>
-              <li><Link to="/sale" className="hover:text-brand-lilac transition block py-1">Festive Sale</Link></li>
+              <li><Link to="/sarees" reloadDocument className="hover:text-brand-lilac transition block py-1">Sarees</Link></li>
+              <li><Link to="/dresses" reloadDocument className="hover:text-brand-lilac transition block py-1">Dresses</Link></li>
+              <li><Link to="/materials" reloadDocument className="hover:text-brand-lilac transition block py-1">Dress Materials</Link></li>
+              <li><Link to="/exclusive" reloadDocument className="hover:text-brand-lilac transition block py-1">Exclusive</Link></li>
+              <li><Link to="/sale" reloadDocument className="hover:text-brand-lilac transition block py-1">Festive Sale</Link></li>
             </ul>
           </div>
 
@@ -93,10 +93,10 @@ export function Footer() {
                 openSection === "help" ? "block" : "hidden lg:block"
               }`}
             >
-              <li><Link to="/track" className="hover:text-brand-lilac transition block py-1">Track Order & Request</Link></li>
-              <li><Link to="/info?tab=shipping" className="hover:text-brand-lilac transition block py-1">Shipping & Delivery</Link></li>
-              <li><Link to="/info?tab=returns" className="hover:text-brand-lilac transition block py-1">Returns & Exchanges</Link></li>
-              <li><Link to="/info?tab=contact" className="hover:text-brand-lilac transition block py-1">Studio & FAQs</Link></li>
+              <li><Link to="/track" reloadDocument className="hover:text-brand-lilac transition block py-1">Track Order & Request</Link></li>
+              <li><Link to="/info?tab=shipping" reloadDocument className="hover:text-brand-lilac transition block py-1">Shipping & Delivery</Link></li>
+              <li><Link to="/info?tab=returns" reloadDocument className="hover:text-brand-lilac transition block py-1">Returns & Exchanges</Link></li>
+              <li><Link to="/info?tab=contact" reloadDocument className="hover:text-brand-lilac transition block py-1">Studio & FAQs</Link></li>
             </ul>
           </div>
 
@@ -118,10 +118,10 @@ export function Footer() {
                 openSection === "company" ? "block" : "hidden lg:block"
               }`}
             >
-              <li><Link to="/artisans" className="hover:text-brand-lilac transition block py-1">Our Heritage & Artisans</Link></li>
-              <li><Link to="/info?tab=about" className="hover:text-brand-lilac transition block py-1">Our Story</Link></li>
-              <li><Link to="/info?tab=contact" className="hover:text-brand-lilac transition block py-1">Contact Concierge</Link></li>
-              <li><Link to="/admin" className="hover:text-brand-lilac transition block py-1">Seller Portal</Link></li>
+              <li><Link to="/artisans" reloadDocument className="hover:text-brand-lilac transition block py-1">Our Heritage & Artisans</Link></li>
+              <li><Link to="/info?tab=about" reloadDocument className="hover:text-brand-lilac transition block py-1">Our Story</Link></li>
+              <li><Link to="/info?tab=contact" reloadDocument className="hover:text-brand-lilac transition block py-1">Contact Concierge</Link></li>
+              <li><Link to="/admin" reloadDocument className="hover:text-brand-lilac transition block py-1">Seller Portal</Link></li>
             </ul>
           </div>
         </div>
@@ -130,9 +130,9 @@ export function Footer() {
         <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-brand-ivory/60">
           <p>© {new Date().getFullYear()} Miss Malli. All rights reserved.</p>
           <div className="flex items-center gap-6">
-            <Link to="/info?tab=privacy" className="hover:underline py-1">Privacy Policy</Link>
-            <Link to="/info?tab=terms" className="hover:underline py-1">Terms of Service</Link>
-            <Link to="/admin" className="hover:underline py-1">Seller Login</Link>
+            <Link to="/info?tab=privacy" reloadDocument className="hover:underline py-1">Privacy Policy</Link>
+            <Link to="/info?tab=terms" reloadDocument className="hover:underline py-1">Terms of Service</Link>
+            <Link to="/admin" reloadDocument className="hover:underline py-1">Seller Login</Link>
           </div>
         </div>
       </div>

@@ -142,7 +142,7 @@ export function Navbar() {
 
           {/* Mobile Dead-Centered Logo Lockup */}
           <div className="lg:hidden absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-auto">
-            <Link to="/" className="flex flex-col items-center py-1 group focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
+            <Link to="/" reloadDocument className="flex flex-col items-center py-1 group focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
               <img
                 src="/brand/logo.png"
                 alt="Miss Malli"
@@ -155,7 +155,7 @@ export function Navbar() {
           </div>
 
           {/* Desktop Brand Logo Lockup */}
-          <Link to="/" className="hidden lg:flex items-center gap-3 group py-1 focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
+          <Link to="/" reloadDocument className="hidden lg:flex items-center gap-3 group py-1 focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
             <img
               src="/brand/logo.png"
               alt="Miss Malli"
@@ -196,6 +196,7 @@ export function Navbar() {
                   key={link.label}
                   ref={(el) => { linkRefs.current[idx] = el; }}
                   to={link.to}
+                  reloadDocument
                   className={`relative z-10 px-4 py-2 rounded-full text-[13px] font-semibold transition-colors duration-200 select-none focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-plum ${
                     isActive
                       ? "!text-white font-bold"
@@ -212,6 +213,7 @@ export function Navbar() {
           <div className="flex items-center gap-1 sm:gap-4">
             <Link
               to="/wishlist"
+              reloadDocument
               className="p-2 text-brand-deepPlum hover:text-brand-plum active:scale-90 transition relative min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-brand-plum rounded-full"
               aria-label="Wishlist"
             >
@@ -225,6 +227,7 @@ export function Navbar() {
 
             <Link
               to="/bag"
+              reloadDocument
               className="p-2 text-brand-deepPlum hover:text-brand-plum active:scale-90 transition relative min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-brand-plum rounded-full"
               aria-label="Shopping Bag"
             >
@@ -296,6 +299,7 @@ export function Navbar() {
                     <Link
                       key={link.label}
                       to={link.to}
+                      reloadDocument
                       onClick={() => setMobileMenuOpen(false)}
                       className={`flex items-center justify-between px-4 py-3 rounded-xl text-base transition ${
                         isActive
@@ -328,6 +332,7 @@ export function Navbar() {
               <div className="flex items-center justify-between pt-2 text-xs font-medium text-brand-deepPlum/70">
                 <Link
                   to="/track"
+                  reloadDocument
                   onClick={() => setMobileMenuOpen(false)}
                   className="hover:text-brand-plum underline font-bold"
                 >
@@ -335,6 +340,7 @@ export function Navbar() {
                 </Link>
                 <Link
                   to="/admin"
+                  reloadDocument
                   onClick={() => setMobileMenuOpen(false)}
                   className="hover:text-brand-plum underline"
                 >

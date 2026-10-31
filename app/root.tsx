@@ -77,8 +77,9 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export default function App() {
   const data = useRouteLoaderData<typeof loader>("root");
+  const location = useLocation();
   const themeColors = data?.themeColors || DEFAULT_THEME_COLORS;
   const seo = data?.seoSettings;
   const canonicalUrl = data?.canonicalUrl;
@@ -169,8 +170,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="h-full bg-brand-ivory text-brand-dark overflow-x-hidden antialiased pb-20 lg:pb-0 selection:bg-brand-lilac/30 selection:text-brand-deepPlum">
         <Navbar />
-        <div className="min-h-full flex flex-col">
-          {children}
+        <div key={`${location.pathname}${location.search}`} className="min-h-full flex flex-col page-fade-transition">
+          <Outlet />
         </div>
         <ToastContainer />
         <BottomNav />
@@ -179,10 +180,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </body>
     </html>
   );
-}
-
-export default function App() {
-  return <Outlet />;
 }
 
 export function ErrorBoundary() {
@@ -201,34 +198,45 @@ export function ErrorBoundary() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center bg-brand-ivory font-sans">
-      <div className="w-16 h-16 rounded-full bg-brand-blush/30 flex items-center justify-center mb-4 text-brand-plum text-2xl font-serif">
-        MM
-      </div>
-      <h1 className="text-2xl font-serif text-brand-plum mb-2">
-        {title}
-      </h1>
-      <p className="text-brand-dark/70 max-w-sm mb-6 text-xs leading-relaxed">
-        {message}
-      </p>
-      <div className="flex items-center gap-3">
-        <button
-          onClick={() => {
-            if (typeof window !== "undefined") {
-              window.location.reload();
-            }
-          }}
-          className="px-6 py-2.5 rounded-full border border-brand-purple/40 text-brand-purple text-xs font-semibold hover:bg-brand-purple/5 transition"
-        >
-          Try Again
-        </button>
-        <Link
-          to="/"
-          className="px-6 py-2.5 rounded-full bg-brand-purple text-white text-xs font-semibold hover:bg-brand-plum transition shadow-sm"
-        >
-          Return to Home
-        </Link>
-      </div>
-    </div>
+    <html lang="en" className="h-full bg-brand-ivory">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+        <Meta />
+        <Links />
+      </head>
+      <body className="h-full bg-brand-ivory text-brand-dark">
+        <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center bg-brand-ivory font-sans">
+          <div className="w-16 h-16 rounded-full bg-brand-blush/30 flex items-center justify-center mb-4 text-brand-plum text-2xl font-serif">
+            MM
+          </div>
+          <h1 className="text-2xl font-serif text-brand-plum mb-2">
+            {title}
+          </h1>
+          <p className="text-brand-dark/70 max-w-sm mb-6 text-xs leading-relaxed">
+            {message}
+          </p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  window.location.reload();
+                }
+              }}
+              className="px-6 py-2.5 rounded-full border border-brand-purple/40 text-brand-purple text-xs font-semibold hover:bg-brand-purple/5 transition"
+            >
+              Try Again
+            </button>
+            <Link
+              to="/"
+              className="px-6 py-2.5 rounded-full bg-brand-purple text-white text-xs font-semibold hover:bg-brand-plum transition shadow-sm"
+            >
+              Return to Home
+            </Link>
+          </div>
+        </div>
+        <Scripts />
+      </body>
+    </html>
   );
 }
