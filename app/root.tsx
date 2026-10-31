@@ -16,6 +16,7 @@ import { getStoreSettings } from "~/db/d1.server";
 import { DEFAULT_THEME_COLORS, StoreThemeColors, DEFAULT_NAV_LINKS, NavLinkItem } from "~/db/mock-data";
 import { BottomNav } from "~/components/layout/BottomNav";
 import { Navbar } from "~/components/layout/Navbar";
+import { TopProgressBar } from "~/components/layout/TopProgressBar";
 import { ToastContainer } from "~/components/ui/ToastNotification";
 import { getSeoSettings, buildOrganizationSchema, buildWebSiteSchema } from "~/utils/seo.server";
 
@@ -169,10 +170,12 @@ export default function App() {
         )}
       </head>
       <body className="h-full bg-brand-ivory text-brand-dark overflow-x-hidden antialiased pb-20 lg:pb-0 selection:bg-brand-lilac/30 selection:text-brand-deepPlum relative">
+        {/* Subtle Top Navigation Progress Indicator */}
+        <TopProgressBar />
         {/* Subtle Animated Floral Botanical Background Layer */}
         <div className="floral-background-layer" aria-hidden="true" />
         <Navbar />
-        <div key={`${location.pathname}${location.search}`} className="min-h-full flex flex-col page-fade-transition relative z-10">
+        <div className="min-h-full flex flex-col relative z-10">
           <Outlet />
         </div>
         <ToastContainer />

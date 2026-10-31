@@ -160,7 +160,7 @@ export function Navbar() {
 
           {/* Mobile Dead-Centered Logo Lockup */}
           <div className="lg:hidden absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-auto">
-            <Link to="/" className="flex flex-col items-center py-1 group focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
+            <Link to="/" prefetch="intent" className="flex flex-col items-center py-1 group focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
               <img
                 src="/brand/logo.png"
                 alt="Miss Malli"
@@ -173,7 +173,7 @@ export function Navbar() {
           </div>
 
           {/* Desktop Brand Logo Lockup */}
-          <Link to="/" className="hidden lg:flex items-center gap-3 group py-1 focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
+          <Link to="/" prefetch="intent" className="hidden lg:flex items-center gap-3 group py-1 focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
             <img
               src="/brand/logo.png"
               alt="Miss Malli"
@@ -208,6 +208,7 @@ export function Navbar() {
                 <Link
                   key={link.label}
                   to={link.to}
+                  prefetch="intent"
                   onClick={(e) => {
                     const navEl = navRef.current;
                     const pillEl = pillRef.current;
@@ -247,6 +248,7 @@ export function Navbar() {
           <div className="flex items-center gap-1 sm:gap-4">
             <Link
               to="/wishlist"
+              prefetch="intent"
               className="p-2 text-brand-deepPlum hover:text-brand-plum active:scale-90 transition relative min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-brand-plum rounded-full"
               aria-label="Wishlist"
             >
@@ -260,6 +262,7 @@ export function Navbar() {
 
             <Link
               to="/bag"
+              prefetch="intent"
               className="p-2 text-brand-deepPlum hover:text-brand-plum active:scale-90 transition relative min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-brand-plum rounded-full"
               aria-label="Shopping Bag"
             >
@@ -331,6 +334,7 @@ export function Navbar() {
                     <Link
                       key={link.label}
                       to={link.to}
+                      prefetch="intent"
                       onClick={() => setMobileMenuOpen(false)}
                       className={`flex items-center justify-between px-4 py-3 rounded-xl text-base transition ${
                         isActive
@@ -363,6 +367,7 @@ export function Navbar() {
               <div className="flex items-center justify-between pt-2 text-xs font-medium text-brand-deepPlum/70">
                 <Link
                   to="/track"
+                  prefetch="intent"
                   onClick={() => setMobileMenuOpen(false)}
                   className="hover:text-brand-plum underline font-bold"
                 >

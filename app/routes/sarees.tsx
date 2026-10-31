@@ -1,11 +1,17 @@
 import { useState, useMemo } from "react";
 import { json, type LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { useLoaderData, Link, useSearchParams } from "@remix-run/react";
+import { useLoaderData, Link, useSearchParams, type ClientLoaderFunctionArgs } from "@remix-run/react";
 import { Heart, Check, SlidersHorizontal, X, ArrowUpDown } from "lucide-react";
 import { Footer } from "~/components/layout/Footer";
 import { getAllProducts } from "~/db/d1.server";
 import { useSavedSarees } from "~/hooks/useLocalStorage";
 import { showToast } from "~/components/ui/ToastNotification";
+import { getClientCache, setClientCache } from "~/utils/clientCache";
+import { ProductListingSkeleton } from "~/components/ui/Skeletons";
+
+export const headers = () => ({
+  "Cache-Control": "public, max-age=60, s-maxage=300, stale-while-revalidate=86400",
+});
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
@@ -53,6 +59,26 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
     categorySubtitle,
     breadcrumbName,
   });
+}
+
+export async function clientLoader({ request, serverLoader }: ClientLoaderFunctionArgs) {
+  const url = new URL(request.url);
+  const cacheKey = `sarees_${url.search}`;
+  const cached = getClientCache<any>(cacheKey);
+  if (cached) {
+    serverLoader()
+      .then((fresh) => setClientCache(cacheKey, fresh))
+      .catch(() => {});
+    return cached;
+  }
+  const fresh = await serverLoader();
+  setClientCache(cacheKey, fresh);
+  return fresh;
+}
+clientLoader.hydrate = true;
+
+export function HydrateFallback() {
+  return <ProductListingSkeleton />;
 }
 
 export default function SareesListingPage() {
@@ -299,6 +325,7 @@ export default function SareesListingPage() {
                   <Link
                     key={product.id}
                     to={`/p/${product.slug}`}
+                    prefetch="intent"
                     className="group bg-white rounded-[18px] sm:rounded-[22px] overflow-hidden border border-brand-lilac/30 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
                   >
                     {/* Photo container - 2:3 vertical portrait with object-top */}

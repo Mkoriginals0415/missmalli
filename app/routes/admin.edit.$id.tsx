@@ -6,6 +6,7 @@ import { getProductById, upsertProduct, deleteProduct } from "~/db/d1.server";
 import { processImageFile } from "~/components/ui/ImageUpload";
 import { requireAdmin } from "~/utils/auth.server";
 import { getSeoSettings, updateSeoSettings } from "~/utils/seo.server";
+import { invalidateClientCache } from "~/utils/clientCache";
 
 export async function loader({ request, params, context }: LoaderFunctionArgs) {
   await requireAdmin(request);
@@ -147,6 +148,7 @@ export default function AdminProductEditor() {
     const formData = new FormData();
     formData.append("productJson", JSON.stringify(payload));
     formData.append("seoJson", JSON.stringify(seoPayload));
+    invalidateClientCache();
     fetcher.submit(formData, { method: "post" });
   };
 
@@ -155,6 +157,7 @@ export default function AdminProductEditor() {
       const formData = new FormData();
       formData.append("intent", "delete");
       formData.append("productId", String(initialProduct.id));
+      invalidateClientCache();
       fetcher.submit(formData, { method: "post" });
     }
   };

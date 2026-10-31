@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { json, type LoaderFunctionArgs, type ActionFunctionArgs } from "@remix-run/cloudflare";
 import { useLoaderData, useFetcher, Link } from "@remix-run/react";
+import { invalidateClientCache } from "~/utils/clientCache";
 import { 
   Save, 
   CheckCircle2, 
@@ -183,6 +184,7 @@ export default function AdminHomepageEditor() {
 
     const formData = new FormData();
     formData.append("homepageJson", JSON.stringify(fullPayload));
+    invalidateClientCache();
     fetcher.submit(formData, { method: "post" });
   };
 

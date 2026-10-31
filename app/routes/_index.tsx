@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { json, type LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { useLoaderData, Link } from "@remix-run/react";
+import { useLoaderData, Link, type ClientLoaderFunctionArgs } from "@remix-run/react";
 import { 
   Play, 
   ArrowRight, 
@@ -18,6 +18,11 @@ import { INITIAL_PRODUCTS } from "~/db/mock-data";
 import { getHomepageContent, getAllProducts } from "~/db/d1.server";
 import { useSavedSarees } from "~/hooks/useLocalStorage";
 import { Hero3DCoverFlow } from "~/components/home/Hero3DCoverFlow";
+import { getClientCache, setClientCache } from "~/utils/clientCache";
+
+export const headers = () => ({
+  "Cache-Control": "public, max-age=60, s-maxage=300, stale-while-revalidate=86400",
+});
 
 export async function loader({ context }: LoaderFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
@@ -32,6 +37,21 @@ export async function loader({ context }: LoaderFunctionArgs) {
     content,
   });
 }
+
+export async function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
+  const cacheKey = "home_content";
+  const cached = getClientCache<any>(cacheKey);
+  if (cached) {
+    serverLoader()
+      .then((fresh) => setClientCache(cacheKey, fresh))
+      .catch(() => {});
+    return cached;
+  }
+  const fresh = await serverLoader();
+  setClientCache(cacheKey, fresh);
+  return fresh;
+}
+clientLoader.hydrate = true;
 
 export default function HomePage() {
   const { products, newArrivals, content } = useLoaderData<typeof loader>();
@@ -178,6 +198,7 @@ export default function HomePage() {
                     <div className="flex items-center gap-2 flex-wrap justify-center pt-2">
                       <Link
                         to={hero.buttonLink || "/sarees"}
+                        prefetch="intent"
                         className="px-5 py-2 rounded-full bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md flex items-center gap-1.5"
                       >
                         <span>{hero.buttonText}</span>
@@ -185,23 +206,26 @@ export default function HomePage() {
                       </Link>
                       <Link
                         to="/sarees"
-                          className="px-4 py-1.5 rounded-full bg-white border border-brand-deepPlum/15 text-xs font-semibold text-brand-deepPlum hover:bg-brand-deepPlum hover:text-white transition shadow-2xs"
-                        >
-                          Sarees
-                        </Link>
-                        <Link
-                          to="/sarees?collection=dresses"
-                          className="px-4 py-1.5 rounded-full bg-white border border-brand-deepPlum/15 text-xs font-semibold text-brand-deepPlum hover:bg-brand-deepPlum hover:text-white transition shadow-2xs"
-                        >
-                          Dresses
-                        </Link>
-                        <Link
-                          to="/sarees?filter=sale"
-                          className="px-4 py-1.5 rounded-full bg-white border border-brand-deepPlum/15 text-xs font-semibold text-brand-deepPlum hover:bg-brand-deepPlum hover:text-white transition shadow-2xs"
-                        >
-                          Sale
-                        </Link>
-                      </div>
+                        prefetch="intent"
+                        className="px-4 py-1.5 rounded-full bg-white border border-brand-deepPlum/15 text-xs font-semibold text-brand-deepPlum hover:bg-brand-deepPlum hover:text-white transition shadow-2xs"
+                      >
+                        Sarees
+                      </Link>
+                      <Link
+                        to="/sarees?collection=dresses"
+                        prefetch="intent"
+                        className="px-4 py-1.5 rounded-full bg-white border border-brand-deepPlum/15 text-xs font-semibold text-brand-deepPlum hover:bg-brand-deepPlum hover:text-white transition shadow-2xs"
+                      >
+                        Dresses
+                      </Link>
+                      <Link
+                        to="/sarees?filter=sale"
+                        prefetch="intent"
+                        className="px-4 py-1.5 rounded-full bg-white border border-brand-deepPlum/15 text-xs font-semibold text-brand-deepPlum hover:bg-brand-deepPlum hover:text-white transition shadow-2xs"
+                      >
+                        Sale
+                      </Link>
+                    </div>
                     </div>
                 </section>
               );
@@ -253,6 +277,7 @@ export default function HomePage() {
                       <Link
                         key={cat.id || idx}
                         to={`/sarees?collection=${cat.slug}`}
+                        prefetch="intent"
                         className={`group relative overflow-hidden aspect-[3/4] bg-white border border-brand-lilac/30 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-end p-5 ${
                           categories.layout === "notched" && idx % 2 === 0 ? "notched-tl" : "rounded-[22px]"
                         }`}
@@ -298,6 +323,7 @@ export default function HomePage() {
                     </div>
                     <Link
                       to={newArrivalsConfig.viewAllLink || "/sarees"}
+                      prefetch="intent"
                       className="text-xs font-bold text-brand-plum hover:underline flex items-center gap-1"
                     >
                       <span>{newArrivalsConfig.viewAllText || "View all"}</span>
@@ -310,6 +336,7 @@ export default function HomePage() {
                       <Link
                         key={product.id}
                         to={`/p/${product.slug}`}
+                        prefetch="intent"
                         className="group bg-white rounded-[22px] overflow-hidden border border-brand-lilac/30 shadow-sm hover:shadow-md transition flex flex-col justify-between"
                       >
                         <div className="relative aspect-[2/3] bg-brand-ivory/60 overflow-hidden">

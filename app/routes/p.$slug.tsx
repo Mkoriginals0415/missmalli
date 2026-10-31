@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { json, type LoaderFunctionArgs, type MetaFunction } from "@remix-run/cloudflare";
-import { useLoaderData, Link, useNavigate } from "@remix-run/react";
+import { useLoaderData, Link, useNavigate, type ClientLoaderFunctionArgs } from "@remix-run/react";
 import { 
   Heart, 
   Share2, 
@@ -22,6 +22,12 @@ import { getProductBySlug, getStoreSettings } from "~/db/d1.server";
 import { useSavedSarees, useBag, useMyRequests } from "~/hooks/useLocalStorage";
 import { generateWhatsAppBuyUrl, generateWhatsAppQuestionUrl } from "~/utils/whatsapp";
 import { getSeoSettings, buildProductSchema, buildBreadcrumbSchema } from "~/utils/seo.server";
+import { getClientCache, setClientCache } from "~/utils/clientCache";
+import { ProductDetailSkeleton } from "~/components/ui/Skeletons";
+
+export const headers = () => ({
+  "Cache-Control": "public, max-age=60, s-maxage=300, stale-while-revalidate=86400",
+});
 
 export async function loader({ params, request, context }: LoaderFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
@@ -55,6 +61,25 @@ export async function loader({ params, request, context }: LoaderFunctionArgs) {
     seoOverride: override,
     canonicalUrl: override.canonicalUrl || `${domain}/p/${product.slug}`,
   });
+}
+
+export async function clientLoader({ params, serverLoader }: ClientLoaderFunctionArgs) {
+  const cacheKey = `product_${params.slug}`;
+  const cached = getClientCache<any>(cacheKey);
+  if (cached) {
+    serverLoader()
+      .then((fresh) => setClientCache(cacheKey, fresh))
+      .catch(() => {});
+    return cached;
+  }
+  const fresh = await serverLoader();
+  setClientCache(cacheKey, fresh);
+  return fresh;
+}
+clientLoader.hydrate = true;
+
+export function HydrateFallback() {
+  return <ProductDetailSkeleton />;
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {

@@ -47,7 +47,23 @@ let runtimeRequests: any[] = [
 
 let runtimeSettings = { ...INITIAL_SETTINGS };
 
+let lastCatalogFetchTime = 0;
+let lastHomepageFetchTime = 0;
+let lastSettingsFetchTime = 0;
+const MEM_CACHE_TTL_MS = 30000; // 30s in-memory cache to eliminate repetitive D1 queries
+
+export function resetServerCache() {
+  lastCatalogFetchTime = 0;
+  lastHomepageFetchTime = 0;
+  lastSettingsFetchTime = 0;
+}
+
 export async function getAllProducts(env?: { DB?: D1Database }): Promise<SeedProduct[]> {
+  const now = Date.now();
+  if (now - lastCatalogFetchTime < MEM_CACHE_TTL_MS && runtimeProducts.length > 0) {
+    return runtimeProducts;
+  }
+
   const db = getDb(env);
   if (db) {
     try {
@@ -58,6 +74,7 @@ export async function getAllProducts(env?: { DB?: D1Database }): Promise<SeedPro
         const parsed = JSON.parse(row.value);
         if (Array.isArray(parsed) && parsed.length > 0) {
           runtimeProducts = parsed;
+          lastCatalogFetchTime = now;
         }
       }
     } catch (e) {}
@@ -81,6 +98,7 @@ export async function updateProductStock(productId: number, delta: number, env?:
   if (product && product.variants.length > 0) {
     const current = product.variants[0].stockCount || 0;
     product.variants[0].stockCount = Math.max(0, current + delta);
+    lastCatalogFetchTime = 0;
     const db = getDb(env);
     if (db) {
       try {
@@ -156,6 +174,7 @@ export async function upsertProduct(productData: Partial<SeedProduct>, env?: { D
     } catch (e) {}
   }
 
+  lastCatalogFetchTime = 0;
   return runtimeProducts.find((p) => p.id === id)!;
 }
 
@@ -174,10 +193,16 @@ export async function deleteProduct(id: number, env?: { DB?: D1Database }): Prom
       });
     } catch (e) {}
   }
+  lastCatalogFetchTime = 0;
   return true;
 }
 
 export async function getHomepageContent(env?: { DB?: D1Database }): Promise<HomepageContent> {
+  const now = Date.now();
+  if (now - lastHomepageFetchTime < MEM_CACHE_TTL_MS && runtimeHomepageContent.hero) {
+    return runtimeHomepageContent;
+  }
+
   const db = getDb(env);
   if (db) {
     try {
@@ -187,6 +212,7 @@ export async function getHomepageContent(env?: { DB?: D1Database }): Promise<Hom
       if (row?.value) {
         const parsed = JSON.parse(row.value);
         runtimeHomepageContent = { ...runtimeHomepageContent, ...parsed };
+        lastHomepageFetchTime = now;
       }
     } catch (e) {
       // Fallback to runtime state
@@ -246,6 +272,7 @@ export async function updateHomepageContent(
     }
   }
 
+  lastHomepageFetchTime = 0;
   return runtimeHomepageContent;
 }
 
@@ -408,6 +435,11 @@ export async function updateRequestStatus(
 }
 
 export async function getStoreSettings(env?: { DB?: D1Database }): Promise<typeof INITIAL_SETTINGS> {
+  const now = Date.now();
+  if (now - lastSettingsFetchTime < MEM_CACHE_TTL_MS && runtimeSettings.store_name) {
+    return runtimeSettings;
+  }
+
   const db = getDb(env);
   if (db) {
     try {
@@ -417,6 +449,7 @@ export async function getStoreSettings(env?: { DB?: D1Database }): Promise<typeo
       if (row?.value) {
         const parsed = JSON.parse(row.value);
         runtimeSettings = { ...INITIAL_SETTINGS, ...runtimeSettings, ...parsed };
+        lastSettingsFetchTime = now;
       }
     } catch (e) {
       // Best-effort in D1
@@ -445,5 +478,6 @@ export async function updateStoreSettings(newSettings: Record<string, string>, e
       console.error("Error saving store settings to D1:", e);
     }
   }
+  lastSettingsFetchTime = 0;
   return runtimeSettings;
 }
