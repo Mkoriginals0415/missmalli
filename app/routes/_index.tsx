@@ -253,7 +253,6 @@ export default function HomePage() {
                       <Link
                         key={cat.id || idx}
                         to={`/sarees?collection=${cat.slug}`}
-                        reloadDocument
                         className={`group relative overflow-hidden aspect-[3/4] bg-white border border-brand-lilac/30 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-end p-5 ${
                           categories.layout === "notched" && idx % 2 === 0 ? "notched-tl" : "rounded-[22px]"
                         }`}
@@ -299,7 +298,6 @@ export default function HomePage() {
                     </div>
                     <Link
                       to={newArrivalsConfig.viewAllLink || "/sarees"}
-                      reloadDocument
                       className="text-xs font-bold text-brand-plum hover:underline flex items-center gap-1"
                     >
                       <span>{newArrivalsConfig.viewAllText || "View all"}</span>
@@ -312,7 +310,6 @@ export default function HomePage() {
                       <Link
                         key={product.id}
                         to={`/p/${product.slug}`}
-                        reloadDocument
                         className="group bg-white rounded-[22px] overflow-hidden border border-brand-lilac/30 shadow-sm hover:shadow-md transition flex flex-col justify-between"
                       >
                         <div className="relative aspect-[2/3] bg-brand-ivory/60 overflow-hidden">

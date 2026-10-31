@@ -85,44 +85,75 @@ export function Navbar() {
   const rootData = useRouteLoaderData<{ navLinks?: NavLinkItem[] }>("root");
   const navLinks = (rootData?.navLinks || DEFAULT_NAV_LINKS).filter((l) => l.enabled !== false);
 
-  // Dynamic sliding pill state
+  // Dynamic sliding pill state with persistence across navigations
   const navRef = useRef<HTMLElement>(null);
   const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+  const [hasPositioned, setHasPositioned] = useState(false);
   const [pillStyle, setPillStyle] = useState<{
     left: number;
     width: number;
     top: number;
     height: number;
     opacity: number;
-  }>({ left: 0, width: 0, top: 0, height: 0, opacity: 0 });
+  }>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = sessionStorage.getItem("mm_nav_pill_pos");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed.left === "number") {
+            return { ...parsed, opacity: 1 };
+          }
+        }
+      } catch {}
+    }
+    return { left: 0, width: 0, top: 0, height: 0, opacity: 0 };
+  });
+
+  const updatePill = (enableTransitionImmediately = false) => {
+    const activeIdx = navLinks.findIndex((link) =>
+      isRouteActive(link.to, location.pathname, location.search)
+    );
+
+    if (activeIdx >= 0 && linkRefs.current[activeIdx] && navRef.current) {
+      const targetEl = linkRefs.current[activeIdx]!;
+      const navEl = navRef.current;
+      const targetRect = targetEl.getBoundingClientRect();
+      const navRect = navEl.getBoundingClientRect();
+
+      const newPos = {
+        left: targetRect.left - navRect.left,
+        width: targetRect.width,
+        top: targetRect.top - navRect.top,
+        height: targetRect.height,
+      };
+
+      try {
+        sessionStorage.setItem("mm_nav_pill_pos", JSON.stringify(newPos));
+      } catch {}
+
+      setPillStyle({
+        ...newPos,
+        opacity: 1,
+      });
+
+      if (enableTransitionImmediately) {
+        setHasPositioned(true);
+      } else {
+        requestAnimationFrame(() => {
+          setHasPositioned(true);
+        });
+      }
+    } else {
+      setPillStyle((prev) => ({ ...prev, opacity: 0 }));
+    }
+  };
 
   useEffect(() => {
-    const updatePill = () => {
-      const activeIdx = navLinks.findIndex((link) =>
-        isRouteActive(link.to, location.pathname, location.search)
-      );
-
-      if (activeIdx >= 0 && linkRefs.current[activeIdx] && navRef.current) {
-        const targetEl = linkRefs.current[activeIdx]!;
-        const navEl = navRef.current;
-        const targetRect = targetEl.getBoundingClientRect();
-        const navRect = navEl.getBoundingClientRect();
-
-        setPillStyle({
-          left: targetRect.left - navRect.left,
-          width: targetRect.width,
-          top: targetRect.top - navRect.top,
-          height: targetRect.height,
-          opacity: 1,
-        });
-      } else {
-        setPillStyle((prev) => ({ ...prev, opacity: 0 }));
-      }
-    };
-
-    updatePill();
-    window.addEventListener("resize", updatePill);
-    return () => window.removeEventListener("resize", updatePill);
+    updatePill(hasPositioned);
+    const handleResize = () => updatePill(false);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [location.pathname, location.search, navLinks]);
 
   return (
@@ -142,7 +173,7 @@ export function Navbar() {
 
           {/* Mobile Dead-Centered Logo Lockup */}
           <div className="lg:hidden absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-auto">
-            <Link to="/" reloadDocument className="flex flex-col items-center py-1 group focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
+            <Link to="/" className="flex flex-col items-center py-1 group focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
               <img
                 src="/brand/logo.png"
                 alt="Miss Malli"
@@ -155,7 +186,7 @@ export function Navbar() {
           </div>
 
           {/* Desktop Brand Logo Lockup */}
-          <Link to="/" reloadDocument className="hidden lg:flex items-center gap-3 group py-1 focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
+          <Link to="/" className="hidden lg:flex items-center gap-3 group py-1 focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
             <img
               src="/brand/logo.png"
               alt="Miss Malli"
@@ -179,7 +210,9 @@ export function Navbar() {
           >
             {/* The animated sliding pill */}
             <span
-              className="absolute rounded-full bg-brand-deepPlum shadow-sm transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none"
+              className={`absolute rounded-full bg-brand-deepPlum shadow-sm pointer-events-none ${
+                hasPositioned ? "transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]" : "transition-none"
+              }`}
               style={{
                 left: `${pillStyle.left}px`,
                 width: `${pillStyle.width}px`,
@@ -196,7 +229,25 @@ export function Navbar() {
                   key={link.label}
                   ref={(el) => { linkRefs.current[idx] = el; }}
                   to={link.to}
-                  reloadDocument
+                  onClick={() => {
+                    const targetEl = linkRefs.current[idx];
+                    const navEl = navRef.current;
+                    if (targetEl && navEl) {
+                      const targetRect = targetEl.getBoundingClientRect();
+                      const navRect = navEl.getBoundingClientRect();
+                      const nextPos = {
+                        left: targetRect.left - navRect.left,
+                        width: targetRect.width,
+                        top: targetRect.top - navRect.top,
+                        height: targetRect.height,
+                      };
+                      try {
+                        sessionStorage.setItem("mm_nav_pill_pos", JSON.stringify(nextPos));
+                      } catch {}
+                      setPillStyle({ ...nextPos, opacity: 1 });
+                      setHasPositioned(true);
+                    }
+                  }}
                   className={`relative z-10 px-4 py-2 rounded-full text-[13px] font-semibold transition-colors duration-200 select-none focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-plum ${
                     isActive
                       ? "!text-white font-bold"
@@ -213,7 +264,6 @@ export function Navbar() {
           <div className="flex items-center gap-1 sm:gap-4">
             <Link
               to="/wishlist"
-              reloadDocument
               className="p-2 text-brand-deepPlum hover:text-brand-plum active:scale-90 transition relative min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-brand-plum rounded-full"
               aria-label="Wishlist"
             >
@@ -227,7 +277,6 @@ export function Navbar() {
 
             <Link
               to="/bag"
-              reloadDocument
               className="p-2 text-brand-deepPlum hover:text-brand-plum active:scale-90 transition relative min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-brand-plum rounded-full"
               aria-label="Shopping Bag"
             >
@@ -299,7 +348,6 @@ export function Navbar() {
                     <Link
                       key={link.label}
                       to={link.to}
-                      reloadDocument
                       onClick={() => setMobileMenuOpen(false)}
                       className={`flex items-center justify-between px-4 py-3 rounded-xl text-base transition ${
                         isActive
@@ -332,7 +380,6 @@ export function Navbar() {
               <div className="flex items-center justify-between pt-2 text-xs font-medium text-brand-deepPlum/70">
                 <Link
                   to="/track"
-                  reloadDocument
                   onClick={() => setMobileMenuOpen(false)}
                   className="hover:text-brand-plum underline font-bold"
                 >
@@ -340,7 +387,6 @@ export function Navbar() {
                 </Link>
                 <Link
                   to="/admin"
-                  reloadDocument
                   onClick={() => setMobileMenuOpen(false)}
                   className="hover:text-brand-plum underline"
                 >

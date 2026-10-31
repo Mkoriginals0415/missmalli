@@ -299,7 +299,6 @@ export default function SareesListingPage() {
                   <Link
                     key={product.id}
                     to={`/p/${product.slug}`}
-                    reloadDocument
                     className="group bg-white rounded-[18px] sm:rounded-[22px] overflow-hidden border border-brand-lilac/30 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
                   >
                     {/* Photo container - 2:3 vertical portrait with object-top */}
