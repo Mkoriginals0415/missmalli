@@ -85,72 +85,59 @@ export function Navbar() {
   const rootData = useRouteLoaderData<{ navLinks?: NavLinkItem[] }>("root");
   const navLinks = (rootData?.navLinks || DEFAULT_NAV_LINKS).filter((l) => l.enabled !== false);
 
-  // Dynamic sliding pill state with persistence across navigations
+  // Dynamic sliding pill ref & positioning
   const navRef = useRef<HTMLElement>(null);
-  const [hasPositioned, setHasPositioned] = useState(false);
-  const [pillStyle, setPillStyle] = useState<{
-    left: number;
-    width: number;
-    top: number;
-    height: number;
-    opacity: number;
-  }>(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = sessionStorage.getItem("mm_nav_pill_pos");
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (parsed && typeof parsed.left === "number") {
-            return { ...parsed, opacity: 1 };
-          }
-        }
-      } catch {}
-    }
-    return { left: 0, width: 0, top: 0, height: 0, opacity: 0 };
-  });
+  const pillRef = useRef<HTMLSpanElement>(null);
+  const hasPositionedRef = useRef(false);
 
-  const updatePill = (enableTransitionImmediately = false) => {
-    if (!navRef.current) return;
+  const updatePill = (smooth = true) => {
+    if (!navRef.current || !pillRef.current) return;
     const links = Array.from(navRef.current.querySelectorAll("a"));
     const activeIdx = navLinks.findIndex((link) =>
       isRouteActive(link.to, location.pathname, location.search)
     );
 
+    const pillEl = pillRef.current;
     if (activeIdx >= 0 && links[activeIdx]) {
       const targetEl = links[activeIdx];
       const navRect = navRef.current.getBoundingClientRect();
       const targetRect = targetEl.getBoundingClientRect();
 
-      const newPos = {
-        left: targetRect.left - navRect.left,
-        width: targetRect.width,
-        top: targetRect.top - navRect.top,
-        height: targetRect.height,
-      };
+      const left = targetRect.left - navRect.left;
+      const width = targetRect.width;
+      const top = targetRect.top - navRect.top;
+      const height = targetRect.height;
+
+      if (!hasPositionedRef.current || !smooth) {
+        // Initial mount or resize: ZERO ANIMATION / ZERO JUMP
+        pillEl.style.transition = "none";
+        pillEl.style.left = `${left}px`;
+        pillEl.style.width = `${width}px`;
+        pillEl.style.top = `${top}px`;
+        pillEl.style.height = `${height}px`;
+        pillEl.style.opacity = "1";
+        void pillEl.offsetHeight; // Force reflow
+        pillEl.style.transition = "";
+        hasPositionedRef.current = true;
+      } else {
+        // User navigation / tab change: smooth fluid glide
+        pillEl.style.left = `${left}px`;
+        pillEl.style.width = `${width}px`;
+        pillEl.style.top = `${top}px`;
+        pillEl.style.height = `${height}px`;
+        pillEl.style.opacity = "1";
+      }
 
       try {
-        sessionStorage.setItem("mm_nav_pill_pos", JSON.stringify(newPos));
+        sessionStorage.setItem("mm_nav_pill_pos", JSON.stringify({ left, width, top, height }));
       } catch {}
-
-      setPillStyle({
-        ...newPos,
-        opacity: 1,
-      });
-
-      if (enableTransitionImmediately) {
-        setHasPositioned(true);
-      } else {
-        requestAnimationFrame(() => {
-          setHasPositioned(true);
-        });
-      }
     } else {
-      setPillStyle((prev) => ({ ...prev, opacity: 0 }));
+      pillEl.style.opacity = "0";
     }
   };
 
   useEffect(() => {
-    updatePill(hasPositioned);
+    updatePill(hasPositionedRef.current);
     const handleResize = () => updatePill(false);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -210,16 +197,9 @@ export function Navbar() {
           >
             {/* The animated sliding pill */}
             <span
-              className={`absolute rounded-full bg-brand-deepPlum shadow-sm pointer-events-none ${
-                hasPositioned ? "transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]" : "transition-none"
-              }`}
-              style={{
-                left: `${pillStyle.left}px`,
-                width: `${pillStyle.width}px`,
-                top: `${pillStyle.top}px`,
-                height: `${pillStyle.height}px`,
-                opacity: pillStyle.opacity,
-              }}
+              ref={pillRef}
+              className="absolute rounded-full bg-brand-deepPlum shadow-sm pointer-events-none transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+              style={{ left: 0, width: 0, top: 0, height: 0, opacity: 0 }}
             />
 
             {navLinks.map((link) => {
@@ -230,21 +210,25 @@ export function Navbar() {
                   to={link.to}
                   onClick={(e) => {
                     const navEl = navRef.current;
-                    if (navEl) {
+                    const pillEl = pillRef.current;
+                    if (navEl && pillEl) {
                       const targetEl = e.currentTarget;
                       const navRect = navEl.getBoundingClientRect();
                       const targetRect = targetEl.getBoundingClientRect();
-                      const nextPos = {
-                        left: targetRect.left - navRect.left,
-                        width: targetRect.width,
-                        top: targetRect.top - navRect.top,
-                        height: targetRect.height,
-                      };
+                      const left = targetRect.left - navRect.left;
+                      const width = targetRect.width;
+                      const top = targetRect.top - navRect.top;
+                      const height = targetRect.height;
+
+                      pillEl.style.left = `${left}px`;
+                      pillEl.style.width = `${width}px`;
+                      pillEl.style.top = `${top}px`;
+                      pillEl.style.height = `${height}px`;
+                      pillEl.style.opacity = "1";
+                      hasPositionedRef.current = true;
                       try {
-                        sessionStorage.setItem("mm_nav_pill_pos", JSON.stringify(nextPos));
+                        sessionStorage.setItem("mm_nav_pill_pos", JSON.stringify({ left, width, top, height }));
                       } catch {}
-                      setPillStyle({ ...nextPos, opacity: 1 });
-                      setHasPositioned(true);
                     }
                   }}
                   className={`relative z-10 px-4 py-2 rounded-full text-[13px] font-semibold transition-colors duration-200 select-none focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-plum ${
