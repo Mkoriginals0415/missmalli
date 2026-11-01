@@ -119,8 +119,6 @@ export function BuyNowSheet({
         totalAmount: product.price,
       });
 
-      // Try opening WhatsApp in new tab, and navigate current window to Request Created confirmation screen (Screen 10)
-      window.open(whatsappUrl, "_blank");
       navigate(
         `/request-created?number=${encodeURIComponent(data.requestNumber)}&token=${encodeURIComponent(
           data.secretToken

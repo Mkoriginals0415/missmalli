@@ -40,7 +40,7 @@ export function formatPhoneDisplay(phone?: string | null): string {
 }
 
 /**
- * Ensures an image URL is absolute with scheme so WhatsApp can parse it and render card previews.
+ * Ensures an image URL is absolute with scheme so scrapers/fetchers can retrieve it.
  */
 export function toAbsoluteImageUrl(url?: string): string {
   if (!url) return "";
@@ -51,55 +51,57 @@ export function toAbsoluteImageUrl(url?: string): string {
   return `https://missmalli.in${url.startsWith("/") ? "" : "/"}${url}`;
 }
 
-export function generateWhatsAppBuyUrl(payload: WhatsAppOrderPayload): string {
-  const { sellerPhone, requestNumber, requestUrl, items, totalAmount, customTemplate } = payload;
-  const cleanPhone = normalizeWhatsAppPhone(sellerPhone);
-
-  let message = "";
+/**
+ * Formats clean, elegant WhatsApp order message text with ZERO raw image URLs.
+ */
+export function generateWhatsAppBuyMessage(payload: WhatsAppOrderPayload): string {
+  const { requestNumber, requestUrl, items, totalAmount, customTemplate } = payload;
 
   if (customTemplate && items.length === 1) {
     const item = items[0];
-    const absoluteImg = toAbsoluteImageUrl(item.imageUrl);
-    message = customTemplate
+    return customTemplate
       .replace(/\{saree\}/g, item.name)
       .replace(/\{code\}/g, item.code || "")
       .replace(/\{variant\}/g, item.variantDetails)
       .replace(/\{price\}/g, item.price.toLocaleString("en-IN"))
       .replace(/\{request\}/g, requestNumber)
-      .replace(/\{image\}/g, absoluteImg)
-      .replace(/\{link\}/g, requestUrl);
+      .replace(/\{image\}/g, "") // Never output raw image URL in text
+      .replace(/\{link\}/g, requestUrl)
+      .replace(/\n\s*\n\s*\n/g, "\n\n");
+  }
 
-    if (absoluteImg && !customTemplate.includes("{image}")) {
-      message += `\n📸 Drape Photo: ${absoluteImg}`;
-    }
-  } else if (items.length === 1) {
+  if (items.length === 1) {
     const item = items[0];
     const codeStr = item.code ? `[Product ID: #${item.code}]` : "";
-    const absoluteImg = toAbsoluteImageUrl(item.imageUrl);
-    const photoStr = absoluteImg ? `\n📸 Drape Photo: ${absoluteImg}` : "";
-    message = `Hi Miss Malli, I would like to order this drape.\n\n` +
+    return (
+      `Hi Miss Malli, I would like to order this drape.\n\n` +
       `✨ *${item.name}* ${codeStr}\n` +
       `💰 *₹ ${item.price.toLocaleString("en-IN")}*\n` +
       `🎨 Variant: ${item.variantDetails}\n` +
-      `🔖 Request: ${requestNumber}${photoStr}\n\n` +
-      `View item & live status:\n${requestUrl}`;
-  } else {
-    const itemList = items
-      .map((item, idx) => {
-        const codeStr = item.code ? `(#${item.code})` : "";
-        const absoluteImg = toAbsoluteImageUrl(item.imageUrl);
-        const photoStr = absoluteImg ? `\n   📸 Photo: ${absoluteImg}` : "";
-        return `${idx + 1}. *${item.name}* ${codeStr}\n   ₹ ${item.price.toLocaleString("en-IN")} · ${item.variantDetails}${photoStr}`;
-      })
-      .join("\n\n");
-
-    message = `Hi Miss Malli, I would like to order these pieces.\n\n` +
-      `🔖 *Request ${requestNumber} (${items.length} items)*\n\n` +
-      `${itemList}\n\n` +
-      `*Total Amount: ₹ ${totalAmount.toLocaleString("en-IN")}*\n\n` +
-      `View order & live status:\n${requestUrl}`;
+      `🔖 Request: ${requestNumber}\n\n` +
+      `View item & live status:\n${requestUrl}`
+    );
   }
 
+  const itemList = items
+    .map((item, idx) => {
+      const codeStr = item.code ? `(#${item.code})` : "";
+      return `${idx + 1}. *${item.name}* ${codeStr}\n   ₹ ${item.price.toLocaleString("en-IN")} · ${item.variantDetails}`;
+    })
+    .join("\n\n");
+
+  return (
+    `Hi Miss Malli, I would like to order these pieces.\n\n` +
+    `🔖 *Request ${requestNumber} (${items.length} items)*\n\n` +
+    `${itemList}\n\n` +
+    `*Total Amount: ₹ ${totalAmount.toLocaleString("en-IN")}*\n\n` +
+    `View order & live status:\n${requestUrl}`
+  );
+}
+
+export function generateWhatsAppBuyUrl(payload: WhatsAppOrderPayload): string {
+  const cleanPhone = normalizeWhatsAppPhone(payload.sellerPhone);
+  const message = generateWhatsAppBuyMessage(payload);
   return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
 }
 
@@ -108,4 +110,60 @@ export function generateWhatsAppQuestionUrl(sellerPhone: string, productName: st
   const codeStr = productCode ? `(#${productCode})` : "";
   const message = `Hi Miss Malli, I have an inquiry about *${productName}* ${codeStr}.\nCould you please help me with details and styling advice?`;
   return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+}
+
+/**
+ * Mobile-first hybrid WhatsApp ordering helper:
+ * - On Mobile (supporting navigator.share with files): Attaches actual photo file(s) directly to WhatsApp with message as caption.
+ * - On Desktop / Fallback: Opens WhatsApp Web click-to-chat URL with clean text and OpenGraph meta card preview.
+ */
+export async function sendWhatsAppOrderWithMedia({
+  sellerPhone,
+  messageText,
+  imageUrls,
+  fallbackUrl,
+}: {
+  sellerPhone: string;
+  messageText: string;
+  imageUrls?: string[];
+  fallbackUrl?: string;
+}): Promise<{ shared: boolean }> {
+  const cleanPhone = normalizeWhatsAppPhone(sellerPhone);
+  const waUrl = fallbackUrl || `https://wa.me/${cleanPhone}?text=${encodeURIComponent(messageText)}`;
+  const validUrls = (imageUrls || []).filter(Boolean);
+
+  if (typeof navigator !== "undefined" && navigator.share && navigator.canShare && validUrls.length > 0) {
+    try {
+      const filePromises = validUrls.map(async (url, idx) => {
+        const fullUrl = toAbsoluteImageUrl(url);
+        const res = await fetch(fullUrl);
+        const blob = await res.blob();
+        const ext = blob.type.includes("png") ? "png" : "jpg";
+        return new File([blob], `miss-malli-drape-${idx + 1}.${ext}`, {
+          type: blob.type || "image/jpeg",
+        });
+      });
+
+      const files = await Promise.all(filePromises);
+
+      if (navigator.canShare({ files })) {
+        await navigator.share({
+          files,
+          text: messageText,
+        });
+        return { shared: true };
+      }
+    } catch (err: any) {
+      if (err.name === "AbortError") {
+        return { shared: false };
+      }
+      console.warn("Native file share fallback:", err);
+    }
+  }
+
+  // Desktop or standard fallback
+  if (typeof window !== "undefined") {
+    window.open(waUrl, "_blank");
+  }
+  return { shared: false };
 }

@@ -115,11 +115,13 @@ export default function ShoppingBagPage() {
         totalAmount: finalTotal,
       });
 
-      window.open(whatsappUrl, "_blank");
+      const allImages = items.map((i) => i.imageUrl).filter(Boolean).join(",");
+      const summaryName = items.length === 1 ? items[0].name : `${items.length} drapes in order`;
+
       navigate(
         `/request-created?number=${encodeURIComponent(data.requestNumber)}&token=${encodeURIComponent(
           data.secretToken
-        )}&url=${encodeURIComponent(data.requestUrl)}&image=${encodeURIComponent(items[0]?.imageUrl || "")}&name=${encodeURIComponent(items[0]?.name || "")}&price=${encodeURIComponent(finalTotal)}`
+        )}&url=${encodeURIComponent(data.requestUrl)}&image=${encodeURIComponent(allImages)}&name=${encodeURIComponent(summaryName)}&price=${encodeURIComponent(finalTotal)}`
       );
     } catch (err) {
       console.error(err);

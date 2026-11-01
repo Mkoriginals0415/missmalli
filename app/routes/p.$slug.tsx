@@ -224,7 +224,6 @@ export default function ProductDetailPage() {
         totalAmount,
       });
 
-      window.open(whatsappUrl, "_blank");
       navigate(
         `/request-created?number=${encodeURIComponent(data.requestNumber)}&token=${encodeURIComponent(
           data.secretToken
