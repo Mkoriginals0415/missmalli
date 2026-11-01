@@ -102,7 +102,7 @@ export default function RequestCreatedPage() {
             className="w-full py-4 px-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-lg transition active:scale-[0.99]"
           >
             <MessageCircle className="w-4 h-4" />
-            <span>Open WhatsApp to Confirm</span>
+            <span>Chat with Seller on WhatsApp</span>
           </a>
 
           <button
