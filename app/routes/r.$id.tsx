@@ -106,13 +106,18 @@ export default function RequestTrackerPage() {
   }, [request]);
 
   useEffect(() => {
+    if (saveTrackingState === "saved") {
+      const timer = setTimeout(() => {
+        setSaveTrackingState("idle");
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [saveTrackingState]);
+
+  useEffect(() => {
     if (fetcher.state === "idle" && fetcher.data && (fetcher.data as any).success) {
       if (saveTrackingState === "saving") {
         setSaveTrackingState("saved");
-        const timer = setTimeout(() => {
-          setSaveTrackingState("idle");
-        }, 2500);
-        return () => clearTimeout(timer);
       }
     }
   }, [fetcher.state, fetcher.data, saveTrackingState]);
