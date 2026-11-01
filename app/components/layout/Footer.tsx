@@ -27,7 +27,7 @@ export function Footer() {
               <img
                 src="/brand/logo-rect-light.png"
                 alt="Miss Malli - Made for Her Moments"
-                className="h-7 w-auto object-contain shrink-0 group-hover:opacity-90 transition"
+                className="h-9 sm:h-10 w-auto object-contain shrink-0 group-hover:opacity-90 transition"
               />
             </Link>
             <p className="text-xs text-brand-ivory/70 leading-relaxed max-w-xs font-sans">
