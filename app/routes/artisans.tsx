@@ -61,7 +61,7 @@ export default function ArtisansPage() {
     <div className="min-h-screen bg-transparent flex flex-col font-sans selection:bg-brand-lilac/40">
       <main className="flex-1">
         {/* Editorial Story Hero (2-Column: Big Logo Left, Matter Right) */}
-        <section className="relative py-12 sm:py-20 px-4 sm:px-8 border-b border-brand-lilac/30 overflow-hidden bg-gradient-to-b from-brand-ivory via-brand-ivory to-white">
+        <section className="relative py-12 sm:py-20 px-4 sm:px-8 border-b border-brand-lilac/30 overflow-hidden bg-transparent">
           <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center">
             {/* Left Column: Big Brand Emblem */}
             <div className="md:col-span-5 flex flex-col items-center justify-center text-center">
@@ -176,7 +176,7 @@ export default function ArtisansPage() {
         </section>
 
         {/* Silk Mark & Authenticity Commitment */}
-        <section className="bg-[#FAF5F0] border-y border-brand-lilac/30 text-[#2A1235] py-14 px-4 sm:px-8">
+        <section className="bg-[#FAF5F0]/60 backdrop-blur-2xs border-y border-brand-lilac/30 text-[#2A1235] py-14 px-4 sm:px-8">
           <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8 justify-between">
             <div className="space-y-3 text-center md:text-left">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-brand-gold/15 text-brand-gold border border-brand-gold/30">

@@ -173,7 +173,7 @@ export default function App() {
           />
         )}
       </head>
-      <body className="h-full bg-brand-ivory text-brand-dark overflow-x-hidden antialiased pb-20 lg:pb-0 selection:bg-brand-lilac/30 selection:text-brand-deepPlum relative">
+      <body className="min-h-full bg-brand-ivory text-brand-dark overflow-x-hidden antialiased pb-20 lg:pb-0 selection:bg-brand-lilac/30 selection:text-brand-deepPlum relative">
         {/* Subtle Top Navigation Progress Indicator */}
         <TopProgressBar />
         {/* Subtle Animated Floral Botanical Background Layer */}
