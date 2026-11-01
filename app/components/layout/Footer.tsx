@@ -24,14 +24,11 @@ export function Footer() {
                 alt="Miss Malli"
                 className="h-11 w-11 rounded-full object-cover ring-2 ring-brand-lilac/30 shrink-0"
               />
-              <div className="flex flex-col min-w-0">
-                <span className="font-serif text-xl font-bold tracking-tight text-[#2A1235] group-hover:text-brand-plum transition leading-tight">
-                  Miss Malli
-                </span>
-                <span className="font-serif italic text-[10px] tracking-widest text-[#713D8C] uppercase whitespace-nowrap">
-                  Made for Her Moments
-                </span>
-              </div>
+              <img
+                src="/brand/logo-rect-transparent.png"
+                alt="Miss Malli - Made for Her Moments"
+                className="h-11 sm:h-12 w-auto object-contain shrink-0 group-hover:opacity-90 transition"
+              />
             </Link>
             <p className="text-xs text-[#2A1235]/60 leading-relaxed max-w-xs font-sans">
               Exclusive handpicked weaves, festive collections, and pure silks crafted by master artisans across India.

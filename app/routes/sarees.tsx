@@ -379,7 +379,7 @@ export default function SareesListingPage() {
                             </span>
                           )}
                         </div>
-                        <span className="text-[10.5px] sm:text-[11px] font-bold text-brand-plum group-hover:underline">
+                        <span className="text-[10.5px] sm:text-[11px] font-bold text-[#713D8C] group-hover:underline">
                           View →
                         </span>
                       </div>

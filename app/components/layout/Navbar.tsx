@@ -148,7 +148,7 @@ export function Navbar() {
       <header className="sticky top-0 z-40 bg-brand-ivory/95 backdrop-blur-md border-b border-brand-lilac/30 transition-all shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 h-16 sm:h-20 flex items-center justify-between relative">
           {/* Mobile Hamburger Button */}
-          <div className="flex items-center lg:hidden w-12 shrink-0">
+          <div className="flex items-center lg:hidden shrink-0">
             <button
               onClick={() => setMobileMenuOpen(true)}
               className="p-2 -ml-2 text-brand-deepPlum hover:text-brand-plum rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center transition"
@@ -158,40 +158,34 @@ export function Navbar() {
             </button>
           </div>
 
-          {/* Mobile Dead-Centered Logo Lockup */}
-          <div className="lg:hidden absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-auto">
-            <Link to="/" prefetch="intent" className="flex items-center gap-2.5 group py-1 focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
+          {/* Mobile Centered Logo Lockup (Flex-centered, strictly bounded, cannot overlap) */}
+          <div className="lg:hidden flex-1 flex items-center justify-center min-w-0 px-2">
+            <Link to="/" prefetch="intent" className="flex items-center gap-2 group py-1 max-w-full">
               <img
                 src="/brand/logo.png"
                 alt="Miss Malli"
-                className="h-9 w-9 sm:h-10 sm:w-10 rounded-full object-cover mix-blend-multiply hover:opacity-95 transition shrink-0"
+                className="h-8 w-8 sm:h-9 sm:w-9 rounded-full object-cover mix-blend-multiply hover:opacity-95 transition shrink-0"
               />
-              <div className="flex flex-col min-w-0">
-                <span className="font-serif text-[16px] sm:text-lg font-bold tracking-tight text-brand-deepPlum group-hover:text-brand-plum transition leading-tight">
-                  Miss Malli
-                </span>
-                <span className="font-serif italic text-[8px] sm:text-[9px] tracking-widest text-brand-plum uppercase whitespace-nowrap">
-                  Made for Her Moments
-                </span>
-              </div>
+              <img
+                src="/brand/logo-rect-transparent.png"
+                alt="Miss Malli - Made for Her Moments"
+                className="h-9 sm:h-10 w-auto max-w-[160px] sm:max-w-[210px] object-contain shrink-0 group-hover:opacity-90 transition"
+              />
             </Link>
           </div>
 
           {/* Desktop Brand Logo Lockup */}
-          <Link to="/" prefetch="intent" className="hidden lg:flex items-center gap-3 group py-1 focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg shrink-0">
+          <Link to="/" prefetch="intent" className="hidden lg:flex items-center gap-3.5 group py-1 focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg shrink-0">
             <img
               src="/brand/logo.png"
               alt="Miss Malli"
               className="h-11 w-11 rounded-full object-cover mix-blend-multiply hover:opacity-95 transition shrink-0"
             />
-            <div className="flex flex-col min-w-0">
-              <span className="font-serif text-xl font-bold tracking-tight text-brand-deepPlum group-hover:text-brand-plum transition leading-tight">
-                Miss Malli
-              </span>
-              <span className="font-serif italic text-[10px] tracking-widest text-brand-plum uppercase whitespace-nowrap">
-                Made for Her Moments
-              </span>
-            </div>
+            <img
+              src="/brand/logo-rect-transparent.png"
+              alt="Miss Malli - Made for Her Moments"
+              className="h-12 lg:h-13 w-auto object-contain shrink-0 group-hover:opacity-90 transition"
+            />
           </Link>
 
           {/* Center Desktop Navigation with Animated Sliding Pill */}
@@ -250,7 +244,7 @@ export function Navbar() {
           </nav>
 
           {/* Right Action Icons */}
-          <div className="flex items-center gap-1 sm:gap-4">
+          <div className="flex items-center gap-1 sm:gap-4 shrink-0">
             <Link
               to="/wishlist"
               prefetch="intent"
@@ -259,7 +253,7 @@ export function Navbar() {
             >
               <Heart className="w-5 h-5 stroke-[2.2]" />
               {savedIds.length > 0 && (
-                <span className="absolute top-1.5 right-1.5 bg-brand-secondary text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs animate-heart-burst">
+                <span className="absolute top-1.5 right-1.5 bg-brand-primary text-brand-dark text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs animate-heart-burst">
                   {savedIds.length}
                 </span>
               )}
@@ -273,7 +267,7 @@ export function Navbar() {
             >
               <ShoppingBag className="w-5 h-5 stroke-[2.2]" />
               {bagCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 bg-brand-secondary text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs animate-heart-burst">
+                <span className="absolute top-1.5 right-1.5 bg-brand-primary text-brand-dark text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs animate-heart-burst">
                   {bagCount}
                 </span>
               )}
@@ -313,14 +307,11 @@ export function Navbar() {
                     alt="Miss Malli"
                     className="h-9 w-9 rounded-full object-cover mix-blend-multiply ring-1 ring-brand-deepPlum/15 shadow-2xs shrink-0"
                   />
-                  <div className="flex flex-col min-w-0">
-                    <span className="font-serif font-bold text-base tracking-wide text-brand-deepPlum block leading-tight">
-                      Miss Malli
-                    </span>
-                    <span className="font-serif italic text-[9px] tracking-wider text-brand-plum uppercase block mt-0.5">
-                      Made for Her Moments
-                    </span>
-                  </div>
+                  <img
+                    src="/brand/logo-rect-transparent.png"
+                    alt="Miss Malli - Made for Her Moments"
+                    className="h-9 w-auto max-w-[170px] object-contain shrink-0"
+                  />
                 </div>
                 <button
                   onClick={() => setMobileMenuOpen(false)}
