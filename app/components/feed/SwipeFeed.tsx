@@ -187,7 +187,7 @@ export function SwipeFeed({ sarees, sellerPhone, initialIndex = 0 }: SwipeFeedPr
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-6">
         <p className="text-brand-plum font-serif text-lg">No sarees found in this feed.</p>
-        <Link to="/shop" className="mt-4 px-5 py-2 rounded-full bg-brand-purple text-white text-xs">
+        <Link to="/shop" className="mt-4 px-5 py-2 rounded-full bg-brand-primary text-white text-xs">
           Browse All Sarees
         </Link>
       </div>
@@ -420,7 +420,7 @@ export function SwipeFeed({ sarees, sellerPhone, initialIndex = 0 }: SwipeFeedPr
 
           <button
             onClick={() => setBuyNowOpen(true)}
-            className="flex-1 py-3 px-5 rounded-2xl bg-brand-purple hover:bg-brand-plum text-white font-semibold text-sm transition shadow-lg flex items-center justify-center gap-2"
+            className="flex-1 py-3 px-5 rounded-2xl bg-brand-primary hover:bg-brand-plum text-white font-semibold text-sm transition shadow-lg flex items-center justify-center gap-2"
           >
             Buy now
           </button>
@@ -445,7 +445,7 @@ export function SwipeFeed({ sarees, sellerPhone, initialIndex = 0 }: SwipeFeedPr
             </div>
             <button
               onClick={dismissHint}
-              className="w-full py-2.5 rounded-full bg-brand-purple text-white text-xs font-semibold hover:bg-brand-plum transition shadow-md"
+              className="w-full py-2.5 rounded-full bg-brand-primary text-white text-xs font-semibold hover:bg-brand-plum transition shadow-md"
             >
               Got it
             </button>

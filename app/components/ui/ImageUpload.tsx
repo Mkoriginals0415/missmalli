@@ -154,7 +154,7 @@ export function ImageUpload({
               type="button"
               disabled={isProcessing}
               onClick={() => fileInputRef.current?.click()}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-xs disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-primary text-brand-dark text-xs font-bold hover:bg-brand-plum transition shadow-xs disabled:opacity-50"
             >
               <Upload className="w-3.5 h-3.5 text-brand-lilac" />
               <span>{isProcessing ? "Processing..." : "Choose Image File"}</span>

@@ -729,11 +729,11 @@ export interface StoreThemeColors {
 }
 
 export const DEFAULT_THEME_COLORS: StoreThemeColors = {
-  primaryPlum: "#B59AD9",    // Primary brand color
-  deepPlum: "#713D8C",       // Secondary brand color
-  ivoryCanvas: "#FBF8F2",    // Soft canvas background
-  accentGold: "#B8923A",     // Zari gold accent
-  accentLilac: "#B59AD9",    // Lilac
+  primaryPlum: "#B59AD9",    // Primary brand color (lavender)
+  deepPlum: "#713D8C",       // Secondary (legacy)
+  ivoryCanvas: "#FAF5F0",    // Warm canvas background
+  accentGold: "#C99A44",     // Gold accent (sparingly)
+  accentLilac: "#B59AD9",    // Lilac = primary
   accentBlush: "#E8B4C4",    // Blush pink accent
 };
 

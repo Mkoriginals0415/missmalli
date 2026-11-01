@@ -121,18 +121,18 @@ export default function App() {
               :root {
                 --color-brand-primary: ${themeColors.primaryPlum};
                 --color-brand-primary-rgb: ${hexToRgb(themeColors.primaryPlum, "181 154 217")};
-                --color-brand-secondary: ${themeColors.deepPlum};
-                --color-brand-secondary-rgb: ${hexToRgb(themeColors.deepPlum, "113 61 140")};
-                --color-brand-plum: ${themeColors.deepPlum};
-                --color-brand-plum-rgb: ${hexToRgb(themeColors.deepPlum, "113 61 140")};
+                --color-brand-secondary: ${themeColors.deepPlum || "#713D8C"};
+                --color-brand-secondary-rgb: ${hexToRgb(themeColors.deepPlum || "#713D8C", "113 61 140")};
+                --color-brand-plum: ${themeColors.primaryPlum};
+                --color-brand-plum-rgb: ${hexToRgb(themeColors.primaryPlum, "181 154 217")};
                 --color-brand-deep-plum: #2A1235;
                 --color-brand-deep-plum-rgb: 42 18 53;
-                --color-brand-ivory: ${themeColors.ivoryCanvas};
-                --color-brand-ivory-rgb: ${hexToRgb(themeColors.ivoryCanvas, "251 248 242")};
+                --color-brand-ivory: ${themeColors.ivoryCanvas || "#FAF5F0"};
+                --color-brand-ivory-rgb: ${hexToRgb(themeColors.ivoryCanvas || "#FAF5F0", "250 245 240")};
                 --color-brand-gold: ${themeColors.accentGold};
-                --color-brand-gold-rgb: ${hexToRgb(themeColors.accentGold, "184 146 58")};
-                --color-brand-lilac: ${themeColors.accentLilac};
-                --color-brand-lilac-rgb: ${hexToRgb(themeColors.accentLilac, "181 154 217")};
+                --color-brand-gold-rgb: ${hexToRgb(themeColors.accentGold, "201 154 68")};
+                --color-brand-lilac: ${themeColors.primaryPlum};
+                --color-brand-lilac-rgb: ${hexToRgb(themeColors.primaryPlum, "181 154 217")};
                 --color-brand-blush: ${themeColors.accentBlush};
                 --color-brand-blush-rgb: ${hexToRgb(themeColors.accentBlush, "232 180 196")};
               }

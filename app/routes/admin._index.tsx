@@ -192,7 +192,7 @@ export default function AdminRequestsPage() {
 
                       <Link
                         to={`/r/${req.secretToken}?view=admin`}
-                        className="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-xs min-h-[34px]"
+                        className="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-brand-primary text-brand-dark text-xs font-bold hover:bg-brand-plum transition shadow-xs min-h-[34px]"
                       >
                         <span>Open</span>
                         <ExternalLink className="w-3.5 h-3.5" />
@@ -259,7 +259,7 @@ export default function AdminRequestsPage() {
                       <td className="py-3 px-4 text-right">
                         <Link
                           to={`/r/${req.secretToken}?view=admin`}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-brand-deepPlum text-white text-[11px] font-semibold hover:bg-brand-plum transition"
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-brand-primary text-brand-dark text-[11px] font-semibold hover:bg-brand-plum transition"
                         >
                           <span>Open</span>
                           <ExternalLink className="w-3 h-3" />

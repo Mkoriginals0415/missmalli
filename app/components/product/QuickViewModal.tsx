@@ -211,15 +211,15 @@ export function QuickViewModal({
             <button
               onClick={handleBuyNow}
               disabled={isSubmitting}
-              className="w-full py-3 px-4 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 group"
+              className="w-full py-3 px-4 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-[#a085cc] hover:text-[#2A1235] border border-brand-primary/30 transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 group"
             >
-              <MessageCircle className="w-4 h-4 text-emerald-700 group-hover:text-emerald-300 transition-colors" />
+              <MessageCircle className="w-4 h-4 text-[#1E7E34] group-hover:text-emerald-300 transition-colors" />
               <span>Buy now on WhatsApp</span>
             </button>
 
             <button
               onClick={handleAddToBag}
-              className="w-full py-2.5 px-4 rounded-full bg-brand-secondary text-white text-xs font-semibold hover:bg-brand-secondary/90 transition flex items-center justify-center gap-2 shadow-xs"
+              className="w-full py-2.5 px-4 rounded-full bg-white border-2 border-brand-primary text-brand-dark text-xs font-bold hover:bg-brand-primary/20 transition flex items-center justify-center gap-2 shadow-xs"
             >
               <ShoppingBag className="w-4 h-4" />
               <span>Add to Bag</span>

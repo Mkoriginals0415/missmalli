@@ -73,7 +73,7 @@ export default function RequestCreatedPage() {
                 />
               ))}
               {imageUrlsList.length > 3 && (
-                <div className="w-14 h-18 rounded-xl bg-brand-plum text-white font-bold text-xs flex items-center justify-center border-2 border-white shadow-xs">
+                <div className="w-14 h-18 rounded-xl bg-brand-primary text-brand-dark font-bold text-xs flex items-center justify-center border-2 border-white shadow-xs">
                   +{imageUrlsList.length - 3}
                 </div>
               )}

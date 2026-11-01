@@ -194,7 +194,7 @@ export function BuyNowSheet({
               onClick={() => setBlouseOption("with")}
               className={`flex-1 py-2.5 text-xs font-semibold rounded-xl border transition ${
                 blouseOption === "with"
-                  ? "bg-brand-purple text-white border-brand-purple shadow-sm"
+                  ? "bg-brand-primary text-white border-brand-purple shadow-sm"
                   : "bg-white text-brand-dark/80 border-brand-lavender/40 hover:bg-brand-ivory"
               }`}
             >
@@ -204,7 +204,7 @@ export function BuyNowSheet({
               onClick={() => setBlouseOption("without")}
               className={`flex-1 py-2.5 text-xs font-semibold rounded-xl border transition ${
                 blouseOption === "without"
-                  ? "bg-brand-purple text-white border-brand-purple shadow-sm"
+                  ? "bg-brand-primary text-white border-brand-purple shadow-sm"
                   : "bg-white text-brand-dark/80 border-brand-lavender/40 hover:bg-brand-ivory"
               }`}
             >
@@ -222,7 +222,7 @@ export function BuyNowSheet({
         <button
           onClick={handleContinue}
           disabled={isSubmitting}
-          className="w-full py-3.5 px-4 rounded-full bg-brand-purple text-white font-medium text-sm flex items-center justify-center gap-2 hover:bg-brand-plum transition disabled:opacity-50 shadow-md"
+          className="w-full py-3.5 px-4 rounded-full bg-brand-primary text-white font-medium text-sm flex items-center justify-center gap-2 hover:bg-brand-plum transition disabled:opacity-50 shadow-md"
         >
           {isSubmitting ? (
             <>

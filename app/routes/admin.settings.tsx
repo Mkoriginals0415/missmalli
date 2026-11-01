@@ -209,7 +209,7 @@ export default function AdminSettingsPage() {
             type="button"
             onClick={handleSaveAll}
             disabled={isSaving}
-            className="flex-1 md:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md disabled:opacity-50 min-h-[44px]"
+            className="flex-1 md:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-brand-primary text-brand-dark text-xs font-bold hover:bg-brand-plum transition shadow-md disabled:opacity-50 min-h-[44px]"
           >
             <Save className="w-4 h-4" />
             <span>{isSaving ? "Saving..." : "Publish Live Settings"}</span>
@@ -623,7 +623,7 @@ export default function AdminSettingsPage() {
             <button
               type="button"
               onClick={addLink}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-deepPlum text-white text-xs font-semibold hover:bg-brand-plum transition shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-primary text-brand-dark text-xs font-semibold hover:bg-brand-plum transition shadow-xs"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Add Link</span>

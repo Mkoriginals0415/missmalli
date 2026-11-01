@@ -5,18 +5,22 @@
 @tailwind utilities;
 
 :root {
-  --color-brand-ivory: #FBF8F2;
-  --color-brand-ivory-rgb: 251 248 242;
-  --color-brand-plum: #5B2A6E;
-  --color-brand-plum-rgb: 91 42 110;
+  --color-brand-primary: #B59AD9;
+  --color-brand-primary-rgb: 181 154 217;
+  --color-brand-secondary: #713D8C;
+  --color-brand-secondary-rgb: 113 61 140;
+  --color-brand-plum: #B59AD9;
+  --color-brand-plum-rgb: 181 154 217;
   --color-brand-deep-plum: #2A1235;
   --color-brand-deep-plum-rgb: 42 18 53;
-  --color-brand-lilac: #C9B6E4;
-  --color-brand-lilac-rgb: 201 182 228;
+  --color-brand-ivory: #FAF5F0;
+  --color-brand-ivory-rgb: 250 245 240;
+  --color-brand-lilac: #B59AD9;
+  --color-brand-lilac-rgb: 181 154 217;
   --color-brand-blush: #E8B4C4;
   --color-brand-blush-rgb: 232 180 196;
-  --color-brand-gold: #B8923A;
-  --color-brand-gold-rgb: 184 146 58;
+  --color-brand-gold: #C99A44;
+  --color-brand-gold-rgb: 201 154 68;
 }
 
 @layer base {

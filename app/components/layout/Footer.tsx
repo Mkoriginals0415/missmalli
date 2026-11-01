@@ -12,7 +12,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-brand-deepPlum text-brand-ivory pt-12 pb-24 sm:pb-12 px-5 sm:px-12 border-t border-brand-plum/40">
+    <footer className="bg-[#FAF5F0] text-[#2A1235] pt-12 pb-24 sm:pb-12 px-5 sm:px-12 border-t border-brand-lilac/30">
       <div className="max-w-7xl mx-auto space-y-10">
         {/* Main Footer Grid - 4 Columns */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
@@ -24,13 +24,16 @@ export function Footer() {
                 alt="Miss Malli"
                 className="h-11 w-11 rounded-full object-cover ring-2 ring-brand-lilac/30 shrink-0"
               />
-              <img
-                src="/brand/logo-rect-light.png"
-                alt="Miss Malli - Made for Her Moments"
-                className="h-11 sm:h-12 w-auto object-contain shrink-0 group-hover:opacity-90 transition"
-              />
+              <div className="flex flex-col min-w-0">
+                <span className="font-serif text-xl font-bold tracking-tight text-[#2A1235] group-hover:text-brand-plum transition leading-tight">
+                  Miss Malli
+                </span>
+                <span className="font-serif italic text-[10px] tracking-widest text-[#713D8C] uppercase whitespace-nowrap">
+                  Made for Her Moments
+                </span>
+              </div>
             </Link>
-            <p className="text-xs text-brand-ivory/70 leading-relaxed max-w-xs font-sans">
+            <p className="text-xs text-[#2A1235]/60 leading-relaxed max-w-xs font-sans">
               Exclusive handpicked weaves, festive collections, and pure silks crafted by master artisans across India.
             </p>
             <div className="pt-1">
@@ -47,7 +50,7 @@ export function Footer() {
           </div>
 
           {/* Collapsible on Mobile, Expanded on Desktop: Shop */}
-          <div className="border-b border-white/10 pb-4 lg:border-none lg:pb-0 text-xs">
+          <div className="border-b border-[#2A1235]/10 pb-4 lg:border-none lg:pb-0 text-xs">
             <button
               onClick={() => toggleSection("shop")}
               className="w-full flex items-center justify-between font-serif font-bold text-sm tracking-wider uppercase text-brand-lilac py-2 lg:py-0 lg:cursor-default"
@@ -60,7 +63,7 @@ export function Footer() {
               />
             </button>
             <ul
-              className={`space-y-3 pt-3 text-brand-ivory/80 ${
+              className={`space-y-3 pt-3 text-[#2A1235]/70 ${
                 openSection === "shop" ? "block" : "hidden lg:block"
               }`}
             >
@@ -73,7 +76,7 @@ export function Footer() {
           </div>
 
           {/* Collapsible on Mobile, Expanded on Desktop: Help */}
-          <div className="border-b border-white/10 pb-4 lg:border-none lg:pb-0 text-xs">
+          <div className="border-b border-[#2A1235]/10 pb-4 lg:border-none lg:pb-0 text-xs">
             <button
               onClick={() => toggleSection("help")}
               className="w-full flex items-center justify-between font-serif font-bold text-sm tracking-wider uppercase text-brand-lilac py-2 lg:py-0 lg:cursor-default"
@@ -86,7 +89,7 @@ export function Footer() {
               />
             </button>
             <ul
-              className={`space-y-3 pt-3 text-brand-ivory/80 ${
+              className={`space-y-3 pt-3 text-[#2A1235]/70 ${
                 openSection === "help" ? "block" : "hidden lg:block"
               }`}
             >
@@ -97,7 +100,7 @@ export function Footer() {
           </div>
 
           {/* Collapsible on Mobile, Expanded on Desktop: Company */}
-          <div className="border-b border-white/10 pb-4 lg:border-none lg:pb-0 text-xs">
+          <div className="border-b border-[#2A1235]/10 pb-4 lg:border-none lg:pb-0 text-xs">
             <button
               onClick={() => toggleSection("company")}
               className="w-full flex items-center justify-between font-serif font-bold text-sm tracking-wider uppercase text-brand-lilac py-2 lg:py-0 lg:cursor-default"
@@ -110,7 +113,7 @@ export function Footer() {
               />
             </button>
             <ul
-              className={`space-y-3 pt-3 text-brand-ivory/80 ${
+              className={`space-y-3 pt-3 text-[#2A1235]/70 ${
                 openSection === "company" ? "block" : "hidden lg:block"
               }`}
             >
@@ -120,7 +123,7 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-brand-ivory/60">
+        <div className="pt-6 border-t border-[#2A1235]/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-[#2A1235]/50">
           <p>© {new Date().getFullYear()} Miss Malli. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <Link to="/info?tab=privacy" className="hover:underline py-1">Privacy Policy</Link>

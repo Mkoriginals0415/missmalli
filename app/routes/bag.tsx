@@ -173,7 +173,7 @@ export default function ShoppingBagPage() {
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
                 to="/sarees"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition shadow-md"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-[#a085cc] hover:text-[#2A1235] border border-brand-primary/30 transition shadow-md"
               >
                 <span>Browse Sarees</span>
                 <ArrowRight className="w-4 h-4" />
@@ -238,7 +238,7 @@ export default function ShoppingBagPage() {
                         <button
                           type="button"
                           onClick={() => updateQuantity(idx, (item.quantity || 1) - 1)}
-                          className="w-6 h-6 rounded-full bg-white text-brand-deepPlum hover:bg-brand-plum hover:text-white flex items-center justify-center transition shadow-2xs active:scale-95"
+                          className="w-6 h-6 rounded-full bg-white text-brand-deepPlum hover:bg-brand-primary hover:text-brand-dark flex items-center justify-center transition shadow-2xs active:scale-95"
                           aria-label="Decrease quantity"
                         >
                           <Minus className="w-3 h-3" />
@@ -249,7 +249,7 @@ export default function ShoppingBagPage() {
                         <button
                           type="button"
                           onClick={() => updateQuantity(idx, (item.quantity || 1) + 1)}
-                          className="w-6 h-6 rounded-full bg-white text-brand-deepPlum hover:bg-brand-plum hover:text-white flex items-center justify-center transition shadow-2xs active:scale-95"
+                          className="w-6 h-6 rounded-full bg-white text-brand-deepPlum hover:bg-brand-primary hover:text-brand-dark flex items-center justify-center transition shadow-2xs active:scale-95"
                           aria-label="Increase quantity"
                         >
                           <Plus className="w-3 h-3" />
@@ -288,7 +288,7 @@ export default function ShoppingBagPage() {
                 </div>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-full bg-brand-ivory border border-brand-deepPlum text-brand-deepPlum text-xs font-bold hover:bg-brand-deepPlum hover:text-white transition min-h-[44px]"
+                  className="px-5 py-2.5 rounded-full bg-brand-ivory border border-brand-primary text-brand-primary text-xs font-bold hover:bg-brand-primary hover:text-brand-dark transition min-h-[44px]"
                 >
                   Apply
                 </button>
@@ -342,7 +342,7 @@ export default function ShoppingBagPage() {
                 <button
                   onClick={handleSendWhatsAppOrder}
                   disabled={isSubmitting}
-                  className="w-full py-3.5 px-6 rounded-full bg-brand-primary text-brand-dark font-black text-xs hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 min-h-[48px] group"
+                  className="w-full py-3.5 px-6 rounded-full bg-brand-primary text-brand-dark font-black text-xs hover:bg-[#a085cc] hover:text-[#2A1235] border border-brand-primary/30 transition shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 min-h-[48px] group"
                 >
                   {isSubmitting ? (
                     <>
@@ -383,7 +383,7 @@ export default function ShoppingBagPage() {
           <button
             onClick={handleSendWhatsAppOrder}
             disabled={isSubmitting}
-            className="py-3 px-5 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition shadow-md flex items-center gap-2 min-h-[44px] group"
+            className="py-3 px-5 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-[#a085cc] hover:text-[#2A1235] border border-brand-primary/30 transition shadow-md flex items-center gap-2 min-h-[44px] group"
           >
             {isSubmitting ? (
               <Loader2 className="w-4 h-4 animate-spin" />

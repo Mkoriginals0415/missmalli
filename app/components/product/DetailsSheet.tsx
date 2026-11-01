@@ -89,7 +89,7 @@ export function DetailsSheet({ isOpen, onClose, product, sellerPhone }: DetailsS
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full py-3 px-4 rounded-full border border-brand-purple text-brand-purple hover:bg-brand-purple hover:text-white transition flex items-center justify-center gap-2 text-sm font-medium"
+            className="w-full py-3 px-4 rounded-full border border-brand-purple text-brand-purple hover:bg-brand-primary hover:text-white transition flex items-center justify-center gap-2 text-sm font-medium"
           >
             <MessageCircle className="w-4 h-4" />
             Ask about this saree on WhatsApp

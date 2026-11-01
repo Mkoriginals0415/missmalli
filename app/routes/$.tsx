@@ -21,7 +21,7 @@ export default function NotFoundPage() {
         <p className="text-sm text-brand-deepPlum/70 mb-6">The page you requested could not be found or has moved.</p>
         <Link
           to="/"
-          className="px-6 py-2.5 rounded-full bg-brand-deepPlum text-white text-xs font-semibold hover:bg-brand-plum transition shadow-sm"
+          className="px-6 py-2.5 rounded-full bg-brand-primary text-brand-dark text-xs font-semibold hover:bg-brand-plum transition shadow-sm"
         >
           Return to Store
         </Link>

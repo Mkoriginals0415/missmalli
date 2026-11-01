@@ -77,7 +77,7 @@ export default function StoreInfoPage() {
               onClick={() => handleTabChange(tab.id)}
               className={`px-4 py-2 rounded-full text-xs font-semibold border transition whitespace-nowrap ${
                 activeTab === tab.id
-                  ? "bg-brand-deepPlum text-white border-brand-deepPlum shadow-sm"
+                  ? "bg-brand-primary text-brand-dark border-brand-primary font-bold shadow-sm"
                   : "bg-white text-brand-deepPlum border-brand-lilac/40 hover:bg-brand-ivory"
               }`}
             >
@@ -186,7 +186,7 @@ export default function StoreInfoPage() {
               <div className="pt-2">
                 <Link
                   to="/artisans"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-brand-deepPlum text-white text-xs font-semibold hover:bg-brand-plum transition shadow-xs"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-brand-primary text-brand-dark text-xs font-semibold hover:bg-[#a085cc] transition shadow-xs"
                 >
                   <span>Explore Full Story & Master Weavers</span>
                   <span>→</span>

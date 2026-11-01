@@ -215,7 +215,7 @@ export default function AdminCollectionsPage() {
             type="button"
             onClick={handleSaveAll}
             disabled={isSaving}
-            className="flex-1 md:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md disabled:opacity-50 min-h-[44px]"
+            className="flex-1 md:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-brand-primary text-brand-dark text-xs font-bold hover:bg-brand-plum transition shadow-md disabled:opacity-50 min-h-[44px]"
           >
             <Save className="w-4 h-4" />
             <span>{isSaving ? "Saving..." : "Publish Live Changes"}</span>
@@ -246,7 +246,7 @@ export default function AdminCollectionsPage() {
             <button
               type="button"
               onClick={() => setIsAddingNew(true)}
-              className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-xs"
+              className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-brand-primary text-brand-dark text-xs font-bold hover:bg-brand-plum transition shadow-xs"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>New Collection</span>
@@ -331,7 +331,7 @@ export default function AdminCollectionsPage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum shadow-xs"
+                  className="px-4 py-1.5 rounded-lg bg-brand-primary text-brand-dark text-xs font-bold hover:bg-brand-plum shadow-xs"
                 >
                   Create Collection
                 </button>
@@ -416,7 +416,7 @@ export default function AdminCollectionsPage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum shadow-xs"
+                  className="px-4 py-1.5 rounded-lg bg-brand-primary text-brand-dark text-xs font-bold hover:bg-brand-plum shadow-xs"
                 >
                   Update Collection
                 </button>
@@ -482,7 +482,7 @@ export default function AdminCollectionsPage() {
                         type="button"
                         disabled={idx === 0}
                         onClick={() => moveCollection(idx, "up")}
-                        className="px-2.5 py-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-plum hover:text-white transition disabled:opacity-20 text-xs font-semibold flex items-center gap-1 min-h-[36px]"
+                        className="px-2.5 py-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-[#a085cc] hover:text-[#2A1235] transition disabled:opacity-20 text-xs font-semibold flex items-center gap-1 min-h-[36px]"
                         title="Move Up"
                       >
                         <ArrowUp className="w-3.5 h-3.5" />
@@ -493,7 +493,7 @@ export default function AdminCollectionsPage() {
                         type="button"
                         disabled={idx === categories.items.length - 1}
                         onClick={() => moveCollection(idx, "down")}
-                        className="px-2.5 py-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-plum hover:text-white transition disabled:opacity-20 text-xs font-semibold flex items-center gap-1 min-h-[36px]"
+                        className="px-2.5 py-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-[#a085cc] hover:text-[#2A1235] transition disabled:opacity-20 text-xs font-semibold flex items-center gap-1 min-h-[36px]"
                         title="Move Down"
                       >
                         <ArrowDown className="w-3.5 h-3.5" />
@@ -505,7 +505,7 @@ export default function AdminCollectionsPage() {
                       <button
                         type="button"
                         onClick={() => setEditingItem(col)}
-                        className="px-3 py-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-deepPlum hover:text-white transition text-xs font-semibold flex items-center gap-1 min-h-[36px]"
+                        className="px-3 py-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-[#3d1a50] hover:text-[#FAF5F0] transition text-xs font-semibold flex items-center gap-1 min-h-[36px]"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                         <span>Edit</span>
@@ -663,7 +663,7 @@ export default function AdminCollectionsPage() {
           <button
             type="button"
             onClick={handleSaveAll}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-xs"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-primary text-brand-dark text-xs font-bold hover:bg-brand-plum transition shadow-xs"
           >
             <Save className="w-3.5 h-3.5" />
             <span>Save Order</span>
@@ -683,7 +683,7 @@ export default function AdminCollectionsPage() {
               {/* Top: Name & Visibility */}
               <div className="flex items-center justify-between gap-2.5">
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <span className="w-6 h-6 rounded-lg bg-brand-deepPlum text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                  <span className="w-6 h-6 rounded-lg bg-brand-primary text-brand-dark text-[11px] font-bold flex items-center justify-center shrink-0">
                     {idx + 1}
                   </span>
                   <div className="min-w-0">
@@ -714,7 +714,7 @@ export default function AdminCollectionsPage() {
                   type="button"
                   disabled={idx === 0}
                   onClick={() => moveSection(idx, "up")}
-                  className="px-3 py-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-plum hover:text-white transition disabled:opacity-20 text-xs font-semibold flex items-center gap-1 min-h-[34px]"
+                  className="px-3 py-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-[#a085cc] hover:text-[#2A1235] transition disabled:opacity-20 text-xs font-semibold flex items-center gap-1 min-h-[34px]"
                   title="Move Up"
                 >
                   <ArrowUp className="w-3.5 h-3.5" />
@@ -724,7 +724,7 @@ export default function AdminCollectionsPage() {
                   type="button"
                   disabled={idx === sections.length - 1}
                   onClick={() => moveSection(idx, "down")}
-                  className="px-3 py-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-brand-plum hover:text-white transition disabled:opacity-20 text-xs font-semibold flex items-center gap-1 min-h-[34px]"
+                  className="px-3 py-1.5 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum hover:bg-[#a085cc] hover:text-[#2A1235] transition disabled:opacity-20 text-xs font-semibold flex items-center gap-1 min-h-[34px]"
                   title="Move Down"
                 >
                   <ArrowDown className="w-3.5 h-3.5" />

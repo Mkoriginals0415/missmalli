@@ -443,7 +443,7 @@ export default function ProductDetailPage() {
                   onClick={() => setBlouseOption("with")}
                   className={`flex-1 py-3 px-3 text-xs font-semibold rounded-xl border transition min-h-[44px] flex items-center justify-center ${
                     blouseOption === "with"
-                      ? "bg-brand-deepPlum text-white border-brand-deepPlum shadow-xs"
+                      ? "bg-brand-primary text-brand-dark border-brand-primary font-bold shadow-xs"
                       : "bg-white text-brand-deepPlum border-brand-lilac/40 hover:bg-brand-ivory"
                   }`}
                 >
@@ -453,7 +453,7 @@ export default function ProductDetailPage() {
                   onClick={() => setBlouseOption("without")}
                   className={`flex-1 py-3 px-3 text-xs font-semibold rounded-xl border transition min-h-[44px] flex items-center justify-center ${
                     blouseOption === "without"
-                      ? "bg-brand-deepPlum text-white border-brand-deepPlum shadow-xs"
+                      ? "bg-brand-primary text-brand-dark border-brand-primary font-bold shadow-xs"
                       : "bg-white text-brand-deepPlum border-brand-lilac/40 hover:bg-brand-ivory"
                   }`}
                 >
@@ -484,7 +484,7 @@ export default function ProductDetailPage() {
 
               <button
                 onClick={handleAddToBag}
-                className="flex-1 py-3 px-6 rounded-full bg-brand-secondary text-white font-semibold text-xs hover:bg-brand-secondary/90 transition shadow-md flex items-center justify-center gap-2 min-h-[44px]"
+                className="flex-1 py-3 px-6 rounded-full bg-white border-2 border-brand-primary text-brand-dark font-bold text-xs hover:bg-brand-primary/20 transition shadow-sm flex items-center justify-center gap-2 min-h-[44px]"
               >
                 <ShoppingBag className="w-4 h-4" />
                 <span>Add to Bag</span>
@@ -506,9 +506,9 @@ export default function ProductDetailPage() {
               <button
                 onClick={handleBuyNow}
                 disabled={isSubmitting}
-                className="w-full py-3.5 px-6 rounded-full bg-brand-primary text-brand-dark font-black text-xs hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition shadow-md flex items-center justify-center gap-2.5 disabled:opacity-50 min-h-[48px] group"
+                className="w-full py-3.5 px-6 rounded-full bg-brand-primary text-brand-dark font-black text-xs hover:bg-[#a085cc] hover:text-[#2A1235] border border-brand-primary/30 transition shadow-md flex items-center justify-center gap-2.5 disabled:opacity-50 min-h-[48px] group"
               >
-                <MessageCircle className="w-4 h-4 text-emerald-700 group-hover:text-emerald-300 transition-colors" />
+                <MessageCircle className="w-4 h-4 text-[#1E7E34] group-hover:text-emerald-300 transition-colors" />
                 <span>Buy Now on WhatsApp (#{product.code})</span>
               </button>
               <p className="text-[11px] text-center text-brand-deepPlum/60 mt-1.5 font-medium">
@@ -529,7 +529,7 @@ export default function ProductDetailPage() {
                 />
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-full bg-white border border-brand-deepPlum text-brand-deepPlum text-xs font-semibold hover:bg-brand-deepPlum hover:text-white transition"
+                  className="px-5 py-2.5 rounded-full bg-white border border-brand-deepPlum text-brand-deepPlum text-xs font-semibold hover:bg-[#3d1a50] hover:text-[#FAF5F0] transition"
                 >
                   Check
                 </button>
@@ -626,7 +626,7 @@ export default function ProductDetailPage() {
               >
                 <div className="relative aspect-square rounded-[14px] overflow-hidden bg-brand-lilac/10">
                   <img src={acc.image} alt={acc.name} className="w-full h-full object-cover" />
-                  <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-brand-deepPlum text-white text-[9px] font-bold">
+                  <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-brand-primary text-brand-dark text-[9px] font-bold">
                     #{acc.code}
                   </span>
                 </div>
@@ -650,7 +650,7 @@ export default function ProductDetailPage() {
                         });
                         showToast(`Added ${acc.name} to bag`, { text: "View Bag", url: "/bag" });
                       }}
-                      className="px-2.5 py-1 rounded-full bg-brand-plum/10 text-brand-plum text-[10.5px] font-bold hover:bg-brand-plum hover:text-white transition"
+                      className="px-2.5 py-1 rounded-full bg-brand-plum/10 text-brand-plum text-[10.5px] font-bold hover:bg-[#a085cc] hover:text-[#2A1235] transition"
                     >
                       + Add
                     </button>
@@ -713,9 +713,9 @@ export default function ProductDetailPage() {
           <button
             onClick={handleBuyNow}
             disabled={isSubmitting}
-            className="py-2.5 px-4 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition shadow-md flex items-center gap-1.5 whitespace-nowrap min-h-[42px] group"
+            className="py-2.5 px-4 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-[#a085cc] hover:text-[#2A1235] border border-brand-primary/30 transition shadow-md flex items-center gap-1.5 whitespace-nowrap min-h-[42px] group"
           >
-            <MessageCircle className="w-3.5 h-3.5 text-emerald-700 group-hover:text-emerald-300 transition-colors" />
+            <MessageCircle className="w-3.5 h-3.5 text-[#1E7E34] group-hover:text-emerald-300 transition-colors" />
             <span>Order on WhatsApp</span>
           </button>
         </div>
@@ -724,7 +724,7 @@ export default function ProductDetailPage() {
       {/* Floating Interactive Toast */}
       {toastMessage && (
         <div className="fixed bottom-20 lg:bottom-6 right-6 z-50 animate-in slide-in-from-bottom-4 duration-300">
-          <div className="px-4 py-3 rounded-2xl bg-brand-deepPlum text-white text-xs font-bold shadow-xl flex items-center gap-3 border border-brand-lilac/30">
+          <div className="px-4 py-3 rounded-2xl bg-brand-primary text-brand-dark text-xs font-bold shadow-xl flex items-center gap-3 border border-brand-lilac/30">
             <Check className="w-4 h-4 text-emerald-400 stroke-[3]" />
             <span>{toastMessage}</span>
             {toastLink && (

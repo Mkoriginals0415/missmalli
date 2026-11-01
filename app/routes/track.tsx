@@ -58,7 +58,7 @@ export default function TrackOrderPage() {
               </div>
               <button
                 type="submit"
-                className="px-7 py-3.5 rounded-full bg-brand-primary text-brand-dark font-black text-sm hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition shadow-md flex items-center gap-2 shrink-0"
+                className="px-7 py-3.5 rounded-full bg-brand-primary text-brand-dark font-black text-sm hover:bg-[#a085cc] hover:text-[#2A1235] border border-brand-primary/30 transition shadow-md flex items-center gap-2 shrink-0"
               >
                 <span>Track</span>
                 <ArrowRight className="w-4 h-4" />

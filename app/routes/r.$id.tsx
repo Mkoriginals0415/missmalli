@@ -199,7 +199,7 @@ export default function RequestTrackerPage() {
           {isAdminView && (
             <Link
               to="/admin"
-              className="text-xs font-semibold px-3 py-1.5 rounded-full bg-brand-deepPlum text-white hover:bg-brand-plum transition flex items-center gap-1.5 shadow-xs"
+              className="text-xs font-semibold px-3 py-1.5 rounded-full bg-brand-primary text-brand-dark hover:bg-[#a085cc] transition flex items-center gap-1.5 shadow-xs"
             >
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Admin Portal</span>
@@ -236,13 +236,13 @@ export default function RequestTrackerPage() {
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => copyQuickReply("Hi! Yes, it's available. Please share your delivery address and I'll send payment details.", "Available")}
-                  className="px-3 py-1.5 rounded-xl bg-white border border-brand-lilac/40 text-xs font-medium text-brand-deepPlum hover:bg-brand-plum hover:text-white transition"
+                  className="px-3 py-1.5 rounded-xl bg-white border border-brand-lilac/40 text-xs font-medium text-brand-deepPlum hover:bg-[#a085cc] hover:text-[#2A1235] transition"
                 >
                   {quickReplyCopied === "Available" ? "✓ Copied" : "Available"}
                 </button>
                 <button
                   onClick={() => copyQuickReply(`Payment details for Request ${request.requestNumber}:\nTotal: ₹ ${request.totalAmount.toLocaleString("en-IN")}\nUPI: orders@missmalli (GPay/PhonePe)`, "Payment details")}
-                  className="px-3 py-1.5 rounded-xl bg-white border border-brand-lilac/40 text-xs font-medium text-brand-deepPlum hover:bg-brand-plum hover:text-white transition"
+                  className="px-3 py-1.5 rounded-xl bg-white border border-brand-lilac/40 text-xs font-medium text-brand-deepPlum hover:bg-[#a085cc] hover:text-[#2A1235] transition"
                 >
                   {quickReplyCopied === "Payment details" ? "✓ Copied" : "Payment details"}
                 </button>
@@ -261,7 +261,7 @@ export default function RequestTrackerPage() {
                     onClick={() => handleAdminUpdate(s)}
                     className={`py-2 text-xs font-semibold rounded-xl capitalize border transition ${
                       status === s
-                        ? "bg-brand-deepPlum text-white border-brand-deepPlum shadow-sm"
+                        ? "bg-brand-primary text-brand-dark border-brand-primary font-bold shadow-sm"
                         : "bg-white text-brand-deepPlum border-brand-lilac/40 hover:bg-brand-ivory"
                     }`}
                   >
@@ -292,8 +292,8 @@ export default function RequestTrackerPage() {
                     saveTrackingState === "saved"
                       ? "bg-emerald-600 text-white shadow-xs"
                       : saveTrackingState === "saving"
-                      ? "bg-brand-deepPlum/70 text-white cursor-wait"
-                      : "bg-brand-deepPlum hover:bg-brand-plum text-white shadow-xs"
+                      ? "bg-brand-primary/70 text-brand-dark cursor-wait"
+                      : "bg-brand-primary hover:bg-[#a085cc] text-brand-dark font-bold shadow-xs"
                   }`}
                 >
                   {saveTrackingState === "saved" ? (
@@ -332,7 +332,7 @@ export default function RequestTrackerPage() {
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition ${
                         isCompleted
-                          ? "bg-brand-plum text-white shadow-md"
+                          ? "bg-brand-primary text-brand-dark font-bold shadow-md"
                           : "bg-brand-ivory text-brand-deepPlum/40 border border-brand-lilac/40"
                       }`}
                     >

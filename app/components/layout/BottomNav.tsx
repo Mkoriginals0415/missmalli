@@ -31,8 +31,7 @@ export function BottomNav({ hidden = false }: BottomNavProps) {
 
   return (
     <nav
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-brand-deepPlum/10 shadow-[0_-4px_25px_rgba(42,18,53,0.08)] transition-all"
-      style={{ backgroundColor: "rgb(var(--color-brand-ivory-rgb, 251 248 242))" }}
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-brand-lilac/30 shadow-[0_-4px_25px_rgba(42,18,53,0.08)] transition-all bg-[#FAF5F0]"
     >
       <div className="flex items-center justify-around h-16 pb-[env(safe-area-inset-bottom)] px-3 max-w-lg mx-auto">
         {navItems.map((item) => {
@@ -45,20 +44,20 @@ export function BottomNav({ hidden = false }: BottomNavProps) {
               to={item.to}
               prefetch="intent"
               className={`flex flex-col items-center justify-center flex-1 py-1 transition-all active:scale-90 relative touch-manipulation focus-visible:outline-hidden ${
-                isActive ? "text-brand-plum font-semibold" : "text-brand-deepPlum/65 hover:text-brand-plum"
+                isActive ? "text-[#713D8C] font-bold" : "text-brand-deepPlum/65 hover:text-[#713D8C]"
               }`}
             >
               <div className="relative">
-                <Icon className={`w-5 h-5 ${isActive ? "stroke-[2.3]" : "stroke-[1.8]"}`} />
+                <Icon className={`w-5 h-5 ${isActive ? "stroke-[2.5]" : "stroke-[1.8]"}`} />
                 {item.count !== undefined && item.count > 0 ? (
-                  <span className="absolute -top-1.5 -right-2.5 bg-brand-plum text-white text-[9px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center font-bold ring-2 ring-brand-ivory shadow-xs">
+                  <span className="absolute -top-1.5 -right-2.5 bg-brand-primary text-brand-dark text-[9px] min-w-4 h-4 px-1 rounded-full flex items-center justify-center font-bold ring-2 ring-[#FAF5F0] shadow-xs">
                     {item.count > 9 ? "9+" : item.count}
                   </span>
                 ) : null}
               </div>
               <span className="text-[10px] mt-1 tracking-tight">{item.label}</span>
               {isActive ? (
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-plum mt-0.5" />
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-0.5" />
               ) : (
                 <span className="w-1.5 h-1.5 mt-0.5" />
               )}

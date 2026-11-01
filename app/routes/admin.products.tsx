@@ -85,7 +85,7 @@ export default function AdminProductsPage() {
 
         <Link
           to="/admin/edit/new"
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-deepPlum text-white text-xs font-semibold hover:bg-brand-plum transition shadow-sm self-start sm:self-auto"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-primary text-brand-dark text-xs font-semibold hover:bg-brand-plum transition shadow-sm self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
           <span>Add product</span>
@@ -168,7 +168,7 @@ export default function AdminProductsPage() {
                         <span className="text-[10px] uppercase font-bold text-brand-dark/60 mr-1">Stock:</span>
                         <button
                           onClick={() => handleStockChange(product.id, -1)}
-                          className="w-8 h-8 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum flex items-center justify-center hover:bg-brand-plum hover:text-white transition shadow-2xs active:scale-95"
+                          className="w-8 h-8 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum flex items-center justify-center hover:bg-[#a085cc] hover:text-[#2A1235] transition shadow-2xs active:scale-95"
                           aria-label="Decrease stock"
                         >
                           <Minus className="w-3.5 h-3.5" />
@@ -178,7 +178,7 @@ export default function AdminProductsPage() {
                         </span>
                         <button
                           onClick={() => handleStockChange(product.id, 1)}
-                          className="w-8 h-8 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum flex items-center justify-center hover:bg-brand-plum hover:text-white transition shadow-2xs active:scale-95"
+                          className="w-8 h-8 rounded-lg bg-white border border-brand-deepPlum/20 text-brand-deepPlum flex items-center justify-center hover:bg-[#a085cc] hover:text-[#2A1235] transition shadow-2xs active:scale-95"
                           aria-label="Increase stock"
                         >
                           <Plus className="w-3.5 h-3.5" />
@@ -197,7 +197,7 @@ export default function AdminProductsPage() {
                         </Link>
                         <Link
                           to={`/admin/edit/${product.id}`}
-                          className="px-3.5 py-2 rounded-xl bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-xs flex items-center gap-1.5 min-h-[38px]"
+                          className="px-3.5 py-2 rounded-xl bg-brand-primary text-brand-dark text-xs font-bold hover:bg-brand-plum transition shadow-xs flex items-center gap-1.5 min-h-[38px]"
                         >
                           <Edit className="w-3.5 h-3.5" />
                           <span>Edit</span>

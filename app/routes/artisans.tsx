@@ -164,7 +164,7 @@ export default function ArtisansPage() {
                 <div className="p-6 pt-0">
                   <Link
                     to="/sarees"
-                    className="w-full py-2.5 rounded-pill bg-brand-ivory hover:bg-brand-plum hover:text-white border border-brand-lilac/40 text-brand-deepPlum text-xs font-bold flex items-center justify-center gap-1.5 transition"
+                    className="w-full py-2.5 rounded-pill bg-brand-ivory hover:bg-[#a085cc] hover:text-[#2A1235] border border-brand-lilac/40 text-brand-deepPlum text-xs font-bold flex items-center justify-center gap-1.5 transition"
                   >
                     View Handcrafted Drapes
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -176,24 +176,24 @@ export default function ArtisansPage() {
         </section>
 
         {/* Silk Mark & Authenticity Commitment */}
-        <section className="bg-brand-deepPlum text-white py-14 px-4 sm:px-8">
+        <section className="bg-[#FAF5F0] border-y border-brand-lilac/30 text-[#2A1235] py-14 px-4 sm:px-8">
           <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8 justify-between">
             <div className="space-y-3 text-center md:text-left">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-brand-gold/20 text-brand-gold">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-brand-gold/15 text-brand-gold border border-brand-gold/30">
                 <ShieldCheck className="w-4 h-4" />
                 Pure Silk Mark Guarantee
               </span>
-              <h2 className="text-2xl sm:text-3xl font-serif font-bold">
+              <h2 className="text-2xl sm:text-3xl font-serif font-bold text-brand-deepPlum">
                 Zero synthetic compromise. Ever.
               </h2>
-              <p className="text-xs sm:text-sm text-white/75 max-w-xl leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#2A1235]/70 max-w-xl leading-relaxed">
                 Every pure silk drape in our collection carries genuine certification tags from master weaving societies, 
                 tested for warp & weft purity, pure natural zari, and heirloom durability.
               </p>
             </div>
             <Link
               to="/sarees"
-              className="shrink-0 px-8 py-4 rounded-pill bg-brand-gold text-brand-deepPlum font-bold text-xs uppercase tracking-wider hover:bg-white transition shadow-lg shadow-black/20"
+              className="shrink-0 px-8 py-4 rounded-pill bg-brand-primary text-brand-dark font-black text-xs uppercase tracking-wider hover:bg-[#a085cc] transition shadow-md"
             >
               Explore Heritage Collection ↗
             </Link>

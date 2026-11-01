@@ -203,7 +203,7 @@ export default function AdminProductEditor() {
             type="button"
             onClick={handleSave}
             disabled={isSaving}
-            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md min-h-[44px] disabled:opacity-50"
+            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-brand-primary text-brand-dark text-xs font-bold hover:bg-brand-plum transition shadow-md min-h-[44px] disabled:opacity-50"
           >
             {isSaving ? (
               <>
@@ -233,7 +233,7 @@ export default function AdminProductEditor() {
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-deepPlum text-white text-xs font-bold cursor-pointer hover:bg-brand-plum transition shadow-xs">
+                <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-primary text-brand-dark text-xs font-bold cursor-pointer hover:bg-brand-plum transition shadow-xs">
                   <Upload className="w-3.5 h-3.5 text-brand-lilac" />
                   <span>Upload Photo</span>
                   <input
@@ -263,7 +263,7 @@ export default function AdminProductEditor() {
                 <div key={idx} className="relative w-24 h-32 rounded-2xl overflow-hidden border border-brand-lilac/40 group shrink-0">
                   <img src={img} alt={`Product photo ${idx + 1}`} className="w-full h-full object-cover" />
                   {idx === 0 && (
-                    <span className="absolute top-1 left-1 bg-brand-deepPlum text-white text-[9px] px-1.5 py-0.5 rounded font-bold">
+                    <span className="absolute top-1 left-1 bg-brand-primary text-brand-dark text-[9px] px-1.5 py-0.5 rounded font-bold">
                       Cover
                     </span>
                   )}

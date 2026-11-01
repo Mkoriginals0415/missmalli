@@ -552,7 +552,7 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
           {/* Direct Drape Explore Link (Takes directly to Sarees catalog page) */}
           <Link
             to="/sarees"
-            className="ml-2 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-brand-primary text-brand-dark hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition-all shadow-xs"
+            className="ml-2 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-brand-primary text-brand-dark hover:bg-[#a085cc] hover:text-[#2A1235] border border-brand-primary/30 transition-all shadow-xs"
           >
             Explore Drape ↗
           </Link>

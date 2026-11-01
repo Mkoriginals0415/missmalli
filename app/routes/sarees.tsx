@@ -180,7 +180,7 @@ export default function SareesListingPage() {
                 onClick={() => setSelectedFabric(f)}
                 className={`px-4 py-2 rounded-full text-xs font-bold shrink-0 transition min-h-[38px] ${
                   selectedFabric === f
-                    ? "bg-brand-deepPlum text-white shadow-xs"
+                    ? "bg-brand-primary text-brand-dark shadow-xs"
                     : "bg-white text-brand-deepPlum border border-brand-deepPlum/15 hover:bg-brand-lilac/10"
                 }`}
               >
@@ -314,7 +314,7 @@ export default function SareesListingPage() {
                 <p className="text-xs text-brand-deepPlum/70">Try resetting price or selecting all fabrics.</p>
                 <button
                   onClick={resetAllFilters}
-                  className="mt-2 px-5 py-2 rounded-full bg-brand-deepPlum text-white text-xs font-bold"
+                  className="mt-2 px-5 py-2 rounded-full bg-brand-primary text-brand-dark text-xs font-bold"
                 >
                   Reset Filters
                 </button>
@@ -340,7 +340,7 @@ export default function SareesListingPage() {
                       {/* Badge */}
                       <div className="absolute top-2.5 left-2.5 flex flex-col gap-1">
                         {product.badge && (
-                          <span className="px-2 py-0.5 rounded-full bg-brand-deepPlum text-white text-[9.5px] sm:text-[10px] font-bold shadow-xs">
+                          <span className="px-2 py-0.5 rounded-full bg-brand-primary text-brand-dark text-[9.5px] sm:text-[10px] font-bold shadow-xs">
                             {product.badge}
                           </span>
                         )}
@@ -393,7 +393,7 @@ export default function SareesListingPage() {
             <div className="text-center pt-2 pb-6">
               <button
                 onClick={() => showToast("All master handloom editions are currently loaded", "info")}
-                className="px-8 py-3 rounded-full border border-brand-deepPlum text-brand-deepPlum text-xs font-bold hover:bg-brand-deepPlum hover:text-white transition shadow-xs min-h-[44px]"
+                className="px-8 py-3 rounded-full border border-brand-primary text-brand-primary text-xs font-bold hover:bg-brand-primary hover:text-brand-dark transition shadow-xs min-h-[44px]"
               >
                 Load more designs
               </button>
@@ -409,7 +409,7 @@ export default function SareesListingPage() {
         <div className="fixed inset-0 z-50 lg:hidden">
           {/* Backdrop Blur */}
           <div
-            className="fixed inset-0 bg-brand-deepPlum/60 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-[#2A1235]/60 backdrop-blur-xs transition-opacity"
             onClick={() => setMobileFilterOpen(false)}
           />
 
@@ -510,7 +510,7 @@ export default function SareesListingPage() {
               </button>
               <button
                 onClick={() => setMobileFilterOpen(false)}
-                className="flex-1 py-3 px-4 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition shadow-md min-h-[44px]"
+                className="flex-1 py-3 px-4 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-[#a085cc] hover:text-[#2A1235] border border-brand-primary/30 transition shadow-md min-h-[44px]"
               >
                 Show {filtered.length} Sarees
               </button>

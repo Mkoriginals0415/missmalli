@@ -59,7 +59,7 @@ export default function WishlistPage() {
           {savedSarees.length > 0 && (
             <button
               onClick={handleMoveAllToBag}
-              className="px-6 py-2.5 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition shadow-sm self-start sm:self-auto"
+              className="px-6 py-2.5 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-[#a085cc] hover:text-[#2A1235] border border-brand-primary/30 transition shadow-sm self-start sm:self-auto"
             >
               Move all to bag
             </button>
@@ -78,7 +78,7 @@ export default function WishlistPage() {
             <div className="pt-2">
               <Link
                 to="/sarees"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition shadow-md"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-[#a085cc] hover:text-[#2A1235] border border-brand-primary/30 transition shadow-md"
               >
                 <span>Discover Handlooms</span>
                 <ArrowRight className="w-4 h-4" />
@@ -139,7 +139,7 @@ export default function WishlistPage() {
                         toggleSave(saree.id);
                         showToast(`Moved "${saree.name}" to bag!`);
                       }}
-                      className="w-full xs:w-auto px-3 py-1.5 rounded-full bg-brand-plum/10 text-brand-plum text-[10.5px] font-bold hover:bg-brand-plum hover:text-white transition text-center min-h-[36px] flex items-center justify-center"
+                      className="w-full xs:w-auto px-3 py-1.5 rounded-full bg-brand-plum/10 text-brand-plum text-[10.5px] font-bold hover:bg-[#a085cc] hover:text-[#2A1235] transition text-center min-h-[36px] flex items-center justify-center"
                     >
                       + Bag
                     </button>
@@ -154,12 +154,12 @@ export default function WishlistPage() {
       {/* Floating Interactive Toast */}
       {toastMessage && (
         <div className="fixed bottom-20 lg:bottom-6 right-6 z-50 animate-in slide-in-from-bottom-4 duration-300">
-          <div className="px-4 py-3 rounded-2xl bg-brand-deepPlum text-white text-xs font-bold shadow-xl flex items-center gap-2 border border-brand-lilac/30">
+          <div className="px-4 py-3 rounded-2xl bg-[#2A1235] text-[#FAF5F0] text-xs font-bold shadow-xl flex items-center gap-2 border border-brand-lilac/30">
             <Check className="w-4 h-4 text-emerald-400 stroke-[3]" />
             <span>{toastMessage}</span>
             <Link
               to="/bag"
-              className="ml-2 px-2.5 py-1 rounded-lg bg-white/20 text-white hover:bg-white/30 transition text-[11px] underline"
+              className="ml-2 px-2.5 py-1 rounded-lg bg-white/20 text-[#FAF5F0] hover:bg-white/30 transition text-[11px] underline"
             >
               View Bag →
             </Link>

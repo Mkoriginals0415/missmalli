@@ -111,7 +111,7 @@ export default function AdminSeoPage() {
             href="/sitemap.xml"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-brand-deepPlum/15 text-xs font-semibold text-brand-deepPlum hover:bg-brand-deepPlum hover:text-white transition shadow-2xs"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-brand-deepPlum/15 text-xs font-semibold text-brand-deepPlum hover:bg-[#3d1a50] hover:text-[#FAF5F0] transition shadow-2xs"
           >
             <span>View XML Sitemap</span>
             <ExternalLink className="w-3.5 h-3.5" />
@@ -121,7 +121,7 @@ export default function AdminSeoPage() {
             href="/robots.txt"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-brand-deepPlum/15 text-xs font-semibold text-brand-deepPlum hover:bg-brand-deepPlum hover:text-white transition shadow-2xs"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-brand-deepPlum/15 text-xs font-semibold text-brand-deepPlum hover:bg-[#3d1a50] hover:text-[#FAF5F0] transition shadow-2xs"
           >
             <span>View Robots.txt</span>
             <ExternalLink className="w-3.5 h-3.5" />
@@ -590,7 +590,7 @@ export default function AdminSeoPage() {
               <button
                 type="submit"
                 disabled={isSaving}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum active:scale-95 transition shadow-md disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-brand-primary text-brand-dark text-xs font-bold hover:bg-brand-plum active:scale-95 transition shadow-md disabled:opacity-50"
               >
                 {isSaving ? (
                   <span>Saving to Cloudflare D1...</span>

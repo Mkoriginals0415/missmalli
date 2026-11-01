@@ -145,7 +145,7 @@ export default function HomePage() {
                       <Link
                         to={hero.buttonLink || "/sarees"}
                         prefetch="intent"
-                        className="px-5 py-2 rounded-full bg-brand-primary text-brand-dark text-xs font-bold hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition shadow-sm flex items-center gap-1.5"
+                        className="px-5 py-2 rounded-full bg-brand-primary text-brand-dark text-xs font-bold hover:bg-[#a085cc] hover:text-[#2A1235] border border-brand-primary/30 transition shadow-sm flex items-center gap-1.5"
                       >
                         <span>{hero.buttonText}</span>
                         <span>↗</span>
@@ -348,14 +348,14 @@ export default function HomePage() {
             case "promotion":
               return (
                 <section key="promotion" className="max-w-7xl mx-auto px-4 sm:px-8">
-                  <div className="rounded-[28px] overflow-hidden bg-brand-plum text-white p-6 sm:p-12 relative flex flex-col sm:flex-row items-center justify-between gap-8 shadow-xl">
+                  <div className="rounded-[28px] overflow-hidden bg-brand-plum text-[#2A1235] p-6 sm:p-12 relative flex flex-col sm:flex-row items-center justify-between gap-8 shadow-xl">
                     <div className="space-y-3 max-w-lg z-10">
                       <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-bold tracking-widest uppercase text-brand-gold bg-black/20 px-3 py-1 rounded-full">
+                        <span className="text-[11px] font-bold tracking-widest uppercase text-brand-gold bg-[#2A1235]/15 px-3 py-1 rounded-full">
                           {promotion.discountTag}
                         </span>
                         {promotion.couponCode && (
-                          <span className="text-[11px] font-bold font-mono tracking-wider bg-white/15 px-2.5 py-0.5 rounded-full border border-white/20">
+                          <span className="text-[11px] font-bold font-mono tracking-wider bg-[#2A1235]/10 text-[#2A1235] px-2.5 py-0.5 rounded-full border border-[#2A1235]/20">
                             CODE: {promotion.couponCode}
                           </span>
                         )}
@@ -363,13 +363,13 @@ export default function HomePage() {
                       <h2 className="text-3xl sm:text-5xl font-bold leading-tight">
                         {promotion.title}
                       </h2>
-                      <p className="text-xs sm:text-sm text-brand-lilac leading-relaxed">
+                      <p className="text-xs sm:text-sm text-[#2A1235]/70 leading-relaxed">
                         {promotion.subtitle}
                       </p>
                       <div className="pt-2">
                         <Link
                           to={promotion.buttonLink || "/sarees?filter=sale"}
-                          className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-ivory text-brand-deepPlum font-bold text-xs hover:bg-white transition shadow-md"
+                          className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#2A1235] text-[#FAF5F0] font-bold text-xs hover:bg-[#3d1a50] transition shadow-md"
                         >
                           <span>{promotion.buttonText || "Shop the Sale"}</span>
                           <span>↗</span>
@@ -405,7 +405,7 @@ export default function HomePage() {
                       <div className="pt-2 flex items-center gap-3">
                         <Link
                           to="/artisans"
-                          className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-primary text-brand-dark text-xs font-bold hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition shadow-sm group"
+                          className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-primary text-brand-dark text-xs font-bold hover:bg-[#a085cc] hover:text-[#2A1235] border border-brand-primary/30 transition shadow-sm group"
                         >
                           <Play className="w-3.5 h-3.5 fill-brand-dark group-hover:fill-white transition-colors" />
                           <span>Watch the story</span>
