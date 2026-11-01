@@ -24,6 +24,10 @@
 }
 
 @layer base {
+  html, body {
+    overscroll-behavior-x: none;
+  }
+
   body {
     @apply bg-brand-ivory text-brand-ink font-sans antialiased selection:bg-brand-lilac selection:text-brand-deepPlum;
     -webkit-tap-highlight-color: transparent;
@@ -181,6 +185,9 @@
   transform-style: preserve-3d;
   -webkit-perspective: 1400px;
   -webkit-perspective-origin: 50% 50%;
+  overscroll-behavior-x: none;
+  overscroll-behavior: none;
+  touch-action: pan-y;
 }
 
 /* 3D Card */
@@ -196,6 +203,8 @@
   cursor: grab;
   user-select: none;
   -webkit-user-select: none;
+  touch-action: pan-y;
+  overscroll-behavior: none;
   transition: box-shadow 0.3s ease;
 }
 .flow-card:active {

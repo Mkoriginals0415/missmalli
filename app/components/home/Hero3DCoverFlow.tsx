@@ -38,6 +38,7 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
     isDragging: false,
     dragStartX: 0,
     dragStartScrollX: 0,
+    dragTotalDistance: 0,
     lastPointerX: 0,
     lastPointerTime: 0,
     isSnapping: false,
@@ -317,6 +318,7 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
       p.isSnapping = false;
       p.dragStartX = e.clientX;
       p.dragStartScrollX = p.scrollX;
+      p.dragTotalDistance = 0;
       p.lastPointerX = e.clientX;
       p.lastPointerTime = performance.now();
       p.velocity = 0;
@@ -334,6 +336,7 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
       const deltaX = currentX - p.lastPointerX;
       const dt = Math.max(1, now - p.lastPointerTime) / 1000;
 
+      p.dragTotalDistance += Math.abs(deltaX);
       p.scrollX -= deltaX * CONFIG.dragSensitivity;
       p.velocity = -deltaX / dt;
 
@@ -388,11 +391,46 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
       }
     };
 
+    // Intercept touchmove to prevent browser horizontal history navigation (back/forward)
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let isHorizontalSwipe = false;
+    let directionLocked = false;
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      isHorizontalSwipe = false;
+      directionLocked = false;
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      const currentX = e.touches[0].clientX;
+      const currentY = e.touches[0].clientY;
+      const dx = Math.abs(currentX - touchStartX);
+      const dy = Math.abs(currentY - touchStartY);
+
+      if (!directionLocked && (dx > 5 || dy > 5)) {
+        directionLocked = true;
+        isHorizontalSwipe = dx > dy;
+      }
+
+      // If swiping horizontally across the carousel, prevent default browser
+      // history navigation (back/forward swipe gesture)
+      if (isHorizontalSwipe && e.cancelable) {
+        e.preventDefault();
+      }
+    };
+
     stageEl.addEventListener("pointerdown", onPointerDown);
     stageEl.addEventListener("pointermove", onPointerMove);
     stageEl.addEventListener("pointerup", onPointerUp);
     stageEl.addEventListener("pointercancel", onPointerUp);
     stageEl.addEventListener("wheel", onWheel, { passive: false });
+    stageEl.addEventListener("touchstart", onTouchStart, { passive: true });
+    stageEl.addEventListener("touchmove", onTouchMove, { passive: false });
 
     return () => {
       window.removeEventListener("resize", updateDimensions);
@@ -402,12 +440,14 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
       stageEl.removeEventListener("pointerup", onPointerUp);
       stageEl.removeEventListener("pointercancel", onPointerUp);
       stageEl.removeEventListener("wheel", onWheel);
+      stageEl.removeEventListener("touchstart", onTouchStart);
+      stageEl.removeEventListener("touchmove", onTouchMove);
     };
   }, [totalItems, activeCenterIndex]);
 
   // Click on card handler: center if outer; explore link if centered
   const handleCardClick = (index: number, link: string) => {
-    if (Math.abs(physicsRef.current.velocity) > 25) return;
+    if (physicsRef.current.dragTotalDistance > 10 || Math.abs(physicsRef.current.velocity) > 25) return;
     const isMobile = window.innerWidth < 768;
     const cardWidth = isMobile ? 228 : 310;
     const cardGap = isMobile ? 24 : 36;
