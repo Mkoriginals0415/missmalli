@@ -501,12 +501,7 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
           ))}
         </div>
 
-        {/* Floating Rotation Guide Pill */}
-        <div className="absolute inset-x-0 bottom-2 pointer-events-none flex justify-center items-center z-30">
-          <div className="px-3.5 py-1 rounded-full bg-brand-ivory/90 backdrop-blur-xs border border-brand-lilac/35 text-[10px] tracking-wider uppercase text-brand-deepPlum/70 flex items-center gap-2 shadow-2xs">
-            <span>← Swipe or Drag to Rotate Saree Gallery →</span>
-          </div>
-        </div>
+
       </div>
 
       {/* Bottom Controls & Active Item Metadata Bar */}
