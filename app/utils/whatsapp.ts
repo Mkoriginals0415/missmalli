@@ -60,7 +60,7 @@ export function generateWhatsAppBuyMessage(payload: WhatsAppOrderPayload): strin
 
   if (customTemplate && items.length === 1) {
     const item = items[0];
-    return customTemplate
+    let msg = customTemplate
       .replace(/\{saree\}/g, item.name)
       .replace(/\{code\}/g, item.code || "")
       .replace(/\{variant\}/g, item.variantDetails)
@@ -68,7 +68,14 @@ export function generateWhatsAppBuyMessage(payload: WhatsAppOrderPayload): strin
       .replace(/\{request\}/g, requestNumber)
       .replace(/\{image\}/g, "") // Never output raw image URL in text
       .replace(/\{link\}/g, requestUrl)
-      .replace(/\n\s*\n\s*\n/g, "\n\n");
+      .replace(/\n\s*\n\s*\n/g, "\n\n")
+      .trim();
+
+    // Ensure requestUrl is always present so WhatsApp renders the meta OG image preview card
+    if (!msg.includes(requestUrl)) {
+      msg += `\n\nView item & live status:\n${requestUrl}`;
+    }
+    return msg;
   }
 
   if (items.length === 1) {
