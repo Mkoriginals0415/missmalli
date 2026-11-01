@@ -52,7 +52,23 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
     }
   } catch (e) {}
 
-  return json({ settings, themeColors, navLinks, policies });
+  let socialLinks = {
+    instagram: "https://www.instagram.com/missmalli",
+    facebook: "https://www.facebook.com/missmalli",
+    youtube: "https://www.youtube.com/@missmalli",
+    pinterest: "https://www.pinterest.com/missmalli",
+  };
+  try {
+    if (settings.social_links) {
+      socialLinks = { ...socialLinks, ...JSON.parse(settings.social_links) };
+    }
+  } catch (e) {}
+
+  const contactAddress = settings.contact_address || "Visakhapatnam, Andhra Pradesh, India";
+  const contactEmail = settings.contact_email || "orders@missmalli.com";
+  const contactPhone = settings.contact_phone || "+91 98765 43210";
+
+  return json({ settings, themeColors, navLinks, policies, socialLinks, contactAddress, contactEmail, contactPhone });
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
@@ -80,6 +96,22 @@ export async function action({ request, context }: ActionFunctionArgs) {
     updates.store_policies = String(formData.get("store_policies") || JSON.stringify(DEFAULT_STORE_POLICIES));
   }
 
+  if (formData.has("social_links")) {
+    updates.social_links = String(formData.get("social_links") || "{}");
+  }
+
+  if (formData.has("contact_address")) {
+    updates.contact_address = String(formData.get("contact_address") || "Visakhapatnam, Andhra Pradesh, India");
+  }
+
+  if (formData.has("contact_email")) {
+    updates.contact_email = String(formData.get("contact_email") || "orders@missmalli.com");
+  }
+
+  if (formData.has("contact_phone")) {
+    updates.contact_phone = String(formData.get("contact_phone") || "+91 98765 43210");
+  }
+
   const updated = await updateStoreSettings(updates, env);
   return json({ success: true, settings: updated });
 }
@@ -99,6 +131,14 @@ export default function AdminSettingsPage() {
   const [reserveHours, setReserveHours] = useState(settings.reserve_hours || "24");
   const [autoExpire, setAutoExpire] = useState(settings.auto_expire_unanswered === "true");
   const [notifyEmail, setNotifyEmail] = useState(settings.notify_email || "orders@missmalli.com");
+  const [socials, setSocials] = useState(data?.socialLinks || {
+    instagram: "https://www.instagram.com/missmalli",
+    facebook: "https://www.facebook.com/missmalli",
+    youtube: "https://www.youtube.com/@missmalli",
+    pinterest: "https://www.pinterest.com/missmalli",
+  });
+  const [contactAddress, setContactAddress] = useState(data?.contactAddress || "Visakhapatnam, Andhra Pradesh, India");
+  const [contactPhone, setContactPhone] = useState(data?.contactPhone || "+91 98765 43210");
 
   // Brand Theme Colors State
   const [colors, setColors] = useState<StoreThemeColors>(initialThemeColors);
@@ -171,6 +211,10 @@ export default function AdminSettingsPage() {
     formData.append("theme_colors", JSON.stringify(colors));
     formData.append("nav_links", JSON.stringify(navLinks));
     formData.append("store_policies", JSON.stringify(policies));
+    formData.append("social_links", JSON.stringify(socials));
+    formData.append("contact_address", contactAddress);
+    formData.append("contact_email", notifyEmail);
+    formData.append("contact_phone", contactPhone);
 
     fetcher.submit(formData, { method: "post" });
   };
@@ -853,6 +897,136 @@ export default function AdminSettingsPage() {
                 onChange={(e) => setPolicies({ ...policies, ourStoryMission: e.target.value })}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-brand-deepPlum/20 text-xs font-sans text-brand-deepPlum leading-relaxed focus:ring-1 focus:ring-brand-plum bg-white"
                 placeholder="Enter mission or dedication quote..."
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ========================================================
+          5. SOCIAL MEDIA CHANNELS & BOUTIQUE CONTACT (VISAKHAPATNAM)
+         ======================================================== */}
+      <div className="bg-white rounded-[22px] p-6 border border-brand-deepPlum/15 shadow-sm space-y-6">
+        <div className="flex items-center gap-2.5 border-b border-brand-deepPlum/10 pb-4">
+          <div className="w-9 h-9 rounded-xl bg-brand-plum/10 text-brand-plum flex items-center justify-center">
+            <Sparkles className="w-5 h-5" />
+          </div>
+          <div>
+            <h2 className="text-base font-bold text-brand-deepPlum">
+              Social Media Channels & Boutique Details
+            </h2>
+            <p className="text-xs text-brand-deepPlum/70 font-medium">
+              Configure official social media URLs with authentic logos and your boutique contact info shown in the footer.
+            </p>
+          </div>
+        </div>
+
+        {/* Social Media Profiles */}
+        <div className="space-y-4">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-brand-deepPlum">
+            Official Social Media Links
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs font-bold text-brand-deepPlum block mb-1 flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#E4405F]" />
+                <span>Instagram URL</span>
+              </label>
+              <input
+                type="url"
+                value={socials.instagram}
+                onChange={(e) => setSocials({ ...socials, instagram: e.target.value })}
+                placeholder="https://www.instagram.com/missmalli"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-brand-deepPlum/20 text-xs font-medium text-brand-deepPlum bg-white focus:ring-1 focus:ring-brand-plum"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-brand-deepPlum block mb-1 flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#1877F2]" />
+                <span>Facebook URL</span>
+              </label>
+              <input
+                type="url"
+                value={socials.facebook}
+                onChange={(e) => setSocials({ ...socials, facebook: e.target.value })}
+                placeholder="https://www.facebook.com/missmalli"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-brand-deepPlum/20 text-xs font-medium text-brand-deepPlum bg-white focus:ring-1 focus:ring-brand-plum"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-brand-deepPlum block mb-1 flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#FF0000]" />
+                <span>YouTube URL</span>
+              </label>
+              <input
+                type="url"
+                value={socials.youtube}
+                onChange={(e) => setSocials({ ...socials, youtube: e.target.value })}
+                placeholder="https://www.youtube.com/@missmalli"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-brand-deepPlum/20 text-xs font-medium text-brand-deepPlum bg-white focus:ring-1 focus:ring-brand-plum"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-brand-deepPlum block mb-1 flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#BD081C]" />
+                <span>Pinterest URL</span>
+              </label>
+              <input
+                type="url"
+                value={socials.pinterest}
+                onChange={(e) => setSocials({ ...socials, pinterest: e.target.value })}
+                placeholder="https://www.pinterest.com/missmalli"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-brand-deepPlum/20 text-xs font-medium text-brand-deepPlum bg-white focus:ring-1 focus:ring-brand-plum"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Boutique Contact Details & Address (Visakhapatnam) */}
+        <div className="space-y-4 pt-4 border-t border-brand-deepPlum/10">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-brand-deepPlum">
+            Boutique Contact & Address (Right-side Footer)
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="sm:col-span-1">
+              <label className="text-xs font-bold text-brand-deepPlum block mb-1">
+                Boutique Address
+              </label>
+              <input
+                type="text"
+                value={contactAddress}
+                onChange={(e) => setContactAddress(e.target.value)}
+                placeholder="Visakhapatnam, Andhra Pradesh, India"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-brand-deepPlum/20 text-xs font-medium text-brand-deepPlum bg-white focus:ring-1 focus:ring-brand-plum"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-brand-deepPlum block mb-1">
+                Support / Order Phone
+              </label>
+              <input
+                type="text"
+                value={contactPhone}
+                onChange={(e) => setContactPhone(e.target.value)}
+                placeholder="+91 98765 43210"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-brand-deepPlum/20 text-xs font-medium text-brand-deepPlum bg-white focus:ring-1 focus:ring-brand-plum"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-brand-deepPlum block mb-1">
+                Customer Email
+              </label>
+              <input
+                type="email"
+                value={notifyEmail}
+                onChange={(e) => setNotifyEmail(e.target.value)}
+                placeholder="orders@missmalli.com"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-brand-deepPlum/20 text-xs font-medium text-brand-deepPlum bg-white focus:ring-1 focus:ring-brand-plum"
               />
             </div>
           </div>

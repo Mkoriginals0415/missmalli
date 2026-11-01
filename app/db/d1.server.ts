@@ -197,6 +197,34 @@ export async function deleteProduct(id: number, env?: { DB?: D1Database }): Prom
   return true;
 }
 
+export async function updateProductStatus(
+  productId: number,
+  status: "live" | "draft",
+  env?: { DB?: D1Database }
+): Promise<SeedProduct | undefined> {
+  await getAllProducts(env);
+  const target = runtimeProducts.find((p) => p.id === productId);
+  if (!target) return undefined;
+  return upsertProduct({ ...target, status }, env);
+}
+
+export async function publishCatalog(env?: { DB?: D1Database }): Promise<void> {
+  await getAllProducts(env);
+  const db = getDb(env);
+  if (db) {
+    try {
+      await db.insert(schema.storeSettings).values({
+        key: "products_catalog_json",
+        value: JSON.stringify(runtimeProducts),
+      }).onConflictDoUpdate({
+        target: schema.storeSettings.key,
+        set: { value: JSON.stringify(runtimeProducts) },
+      });
+    } catch (e) {}
+  }
+  lastCatalogFetchTime = 0;
+}
+
 export async function getHomepageContent(env?: { DB?: D1Database }): Promise<HomepageContent> {
   const now = Date.now();
   if (now - lastHomepageFetchTime < MEM_CACHE_TTL_MS && runtimeHomepageContent.hero) {

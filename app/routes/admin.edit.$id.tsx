@@ -121,7 +121,8 @@ export default function AdminProductEditor() {
 
   const isSaving = fetcher.state === "submitting" || fetcher.state === "loading";
 
-  const handleSave = () => {
+  const handleSave = (overrideStatus?: "live" | "draft") => {
+    const finalStatus = overrideStatus || status;
     const cleanSlug = (slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-")).trim();
     const payload = {
       id: initialProduct.id,
@@ -133,7 +134,7 @@ export default function AdminProductEditor() {
       originalPrice: originalPrice ? Number(originalPrice) : null,
       collectionSlug: collection,
       collectionName: collection === "dresses" ? "Dresses" : collection === "materials" ? "Dress Materials" : collection === "exclusive" ? "Exclusive" : "Sarees",
-      status,
+      status: finalStatus,
       images,
       variants,
     };
@@ -193,7 +194,7 @@ export default function AdminProductEditor() {
               type="button"
               onClick={handleDelete}
               disabled={isSaving}
-              className="px-4 py-2.5 rounded-xl border border-red-300 text-red-600 hover:bg-red-50 text-xs font-bold transition flex items-center gap-1.5 min-h-[44px]"
+              className="px-3.5 py-2.5 rounded-xl border border-red-300 text-red-600 hover:bg-red-50 text-xs font-bold transition flex items-center gap-1.5 min-h-[44px]"
             >
               <Trash2 className="w-4 h-4" />
               <span>Delete</span>
@@ -201,9 +202,17 @@ export default function AdminProductEditor() {
           )}
           <button
             type="button"
-            onClick={handleSave}
+            onClick={() => handleSave("draft")}
             disabled={isSaving}
-            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-brand-primary text-brand-dark text-xs font-bold hover:bg-brand-plum transition shadow-md min-h-[44px] disabled:opacity-50"
+            className="px-4 py-2.5 rounded-xl bg-white border border-brand-lilac/50 text-brand-deepPlum hover:bg-brand-ivory text-xs font-bold transition flex items-center gap-1.5 min-h-[44px] disabled:opacity-50"
+          >
+            <span>Save Draft</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSave("live")}
+            disabled={isSaving}
+            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-brand-primary text-brand-dark text-xs font-bold hover:bg-[#a085cc] transition shadow-md min-h-[44px] disabled:opacity-50"
           >
             {isSaving ? (
               <>

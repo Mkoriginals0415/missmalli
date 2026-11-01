@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { json, type LoaderFunctionArgs, type ActionFunctionArgs } from "@remix-run/cloudflare";
 import { useLoaderData, useFetcher, Link } from "@remix-run/react";
-import { Plus, Search, Minus, Edit, ExternalLink } from "lucide-react";
-import { getAllProducts, updateProductStock, deleteProduct } from "~/db/d1.server";
+import { Plus, Search, Minus, Edit, ExternalLink, Save, CheckCircle2, Loader2 } from "lucide-react";
+import { getAllProducts, updateProductStock, deleteProduct, updateProductStatus, publishCatalog } from "~/db/d1.server";
 import { requireAdmin } from "~/utils/auth.server";
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
@@ -25,6 +25,18 @@ export async function action({ request, context }: ActionFunctionArgs) {
     return json({ success: true, updated });
   }
 
+  if (intent === "status") {
+    const productId = Number(formData.get("productId"));
+    const status = String(formData.get("status")) as "live" | "draft";
+    const updated = await updateProductStatus(productId, status, env);
+    return json({ success: true, updated });
+  }
+
+  if (intent === "publish_all") {
+    await publishCatalog(env);
+    return json({ success: true, published: true });
+  }
+
   if (intent === "delete") {
     const productId = Number(formData.get("productId"));
     await deleteProduct(productId, env);
@@ -40,6 +52,7 @@ export default function AdminProductsPage() {
   const [productList, setProductList] = useState(products);
   const [search, setSearch] = useState("");
   const [collectionFilter, setCollectionFilter] = useState("all");
+  const [savedNotice, setSavedNotice] = useState(false);
   const fetcher = useFetcher();
 
   useEffect(() => {
@@ -47,6 +60,23 @@ export default function AdminProductsPage() {
       setProductList(data.products);
     }
   }, [data?.products]);
+
+  const handlePublishAll = () => {
+    fetcher.submit({ intent: "publish_all" }, { method: "post" });
+    setSavedNotice(true);
+    setTimeout(() => setSavedNotice(false), 3000);
+  };
+
+  const handleToggleStatus = (productId: number, currentStatus: string) => {
+    const nextStatus = currentStatus === "live" ? "draft" : "live";
+    setProductList((prev) =>
+      prev.map((p) => (p.id === productId ? { ...p, status: nextStatus as any } : p))
+    );
+    fetcher.submit(
+      { intent: "status", productId: String(productId), status: nextStatus },
+      { method: "post" }
+    );
+  };
 
   const handleStockChange = (productId: number, delta: number) => {
     setProductList((prev) =>
@@ -83,13 +113,39 @@ export default function AdminProductsPage() {
           </p>
         </div>
 
-        <Link
-          to="/admin/edit/new"
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-primary text-brand-dark text-xs font-semibold hover:bg-brand-plum transition shadow-sm self-start sm:self-auto"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add product</span>
-        </Link>
+        <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            onClick={handlePublishAll}
+            disabled={fetcher.state !== "idle"}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-primary text-brand-dark text-xs font-bold hover:bg-[#a085cc] transition shadow-xs self-start sm:self-auto disabled:opacity-50"
+          >
+            {fetcher.state !== "idle" ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <span>Publishing...</span>
+              </>
+            ) : savedNotice ? (
+              <>
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-800" />
+                <span>Saved & Published!</span>
+              </>
+            ) : (
+              <>
+                <Save className="w-3.5 h-3.5" />
+                <span>Save and publish</span>
+              </>
+            )}
+          </button>
+
+          <Link
+            to="/admin/edit/new"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white border border-brand-lilac/50 text-brand-deepPlum text-xs font-semibold hover:bg-brand-ivory transition shadow-2xs self-start sm:self-auto"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add product</span>
+          </Link>
+        </div>
       </div>
 
       {/* Filter and Search Bar */}
@@ -144,11 +200,16 @@ export default function AdminProductsPage() {
                           <h3 className="font-bold text-xs text-brand-deepPlum truncate">
                             {product.name}
                           </h3>
-                          <span className={`px-2 py-0.5 rounded-full text-[9.5px] font-bold shrink-0 ${
-                            product.status === "live" ? "bg-emerald-100 text-emerald-800" : "bg-gray-100 text-gray-700"
-                          }`}>
+                          <button
+                            type="button"
+                            onClick={() => handleToggleStatus(product.id, product.status)}
+                            className={`px-2 py-0.5 rounded-full text-[9.5px] font-bold shrink-0 transition hover:scale-105 active:scale-95 cursor-pointer ${
+                              product.status === "live" ? "bg-emerald-100 text-emerald-800 hover:bg-emerald-200" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                            }`}
+                            title="Click to toggle Live/Draft"
+                          >
                             {product.status === "live" ? "Live" : "Draft"}
-                          </span>
+                          </button>
                         </div>
 
                         <p className="text-[11px] text-brand-dark/60 font-medium truncate">
@@ -269,11 +330,16 @@ export default function AdminProductsPage() {
                           </div>
                         </td>
                         <td className="py-3 px-4">
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
-                            product.status === "live" ? "bg-emerald-100 text-emerald-800" : "bg-gray-100 text-gray-700"
-                          }`}>
+                          <button
+                            type="button"
+                            onClick={() => handleToggleStatus(product.id, product.status)}
+                            className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold transition hover:scale-105 active:scale-95 cursor-pointer ${
+                              product.status === "live" ? "bg-emerald-100 text-emerald-800 hover:bg-emerald-200" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                            }`}
+                            title="Click to toggle Live/Draft"
+                          >
                             {product.status === "live" ? "Live" : "Draft"}
-                          </span>
+                          </button>
                         </td>
                         <td className="py-3 px-4 text-right">
                           <div className="flex items-center justify-end gap-2">

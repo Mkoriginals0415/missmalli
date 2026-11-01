@@ -1,6 +1,7 @@
 import { useSearchParams, Link, useLoaderData } from "@remix-run/react";
 import { json, type LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { Check, MessageCircle, Copy, ArrowRight } from "lucide-react";
+import { WhatsAppIcon } from "~/components/ui/WhatsAppIcon";
 import { useState } from "react";
 import { Footer } from "~/components/layout/Footer";
 import { getStoreSettings } from "~/db/d1.server";
@@ -99,10 +100,10 @@ export default function RequestCreatedPage() {
             href={whatsappDirectUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full py-4 px-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-lg transition active:scale-[0.99]"
+            className="w-full py-4 px-6 rounded-full bg-brand-ivory border-2 border-emerald-500/40 hover:bg-emerald-50 text-emerald-800 font-bold text-xs flex items-center justify-center gap-2.5 shadow-md transition active:scale-[0.99]"
           >
-            <MessageCircle className="w-4 h-4" />
-            <span>Chat with Seller on WhatsApp</span>
+            <WhatsAppIcon className="w-5 h-5 text-[#25D366] shrink-0" fill="#25D366" />
+            <span className="text-[#15803d] font-bold">Chat with Seller on WhatsApp</span>
           </a>
 
           <button

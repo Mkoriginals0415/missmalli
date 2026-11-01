@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useRouteLoaderData } from "@remix-run/react";
 import { Heart, ShoppingBag, Menu, X, MessageCircle } from "lucide-react";
+import { WhatsAppIcon } from "~/components/ui/WhatsAppIcon";
 import { useBag, useSavedSarees } from "~/hooks/useLocalStorage";
 import { useSellerPhone } from "~/hooks/useSellerPhone";
 import { DEFAULT_NAV_LINKS, NavLinkItem } from "~/db/mock-data";
@@ -278,10 +279,10 @@ export function Navbar() {
               href={getChatUrl("Hi Miss Malli, I'd like assistance with an order")}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden lg:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-primary text-brand-dark text-[13px] font-bold border border-brand-primary/30 hover:bg-[#a085cc] hover:text-[#2A1235] active:scale-95 transition shadow-sm focus-visible:ring-2 focus-visible:ring-brand-plum group"
+              className="hidden lg:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-primary text-emerald-800 text-[13px] font-bold border border-brand-primary/30 hover:bg-[#a085cc] active:scale-95 transition shadow-sm focus-visible:ring-2 focus-visible:ring-brand-plum group"
             >
-              <MessageCircle className="w-4 h-4 text-[#1E7E34] group-hover:text-emerald-300 transition-colors" />
-              <span>WhatsApp Order</span>
+              <WhatsAppIcon className="w-4 h-4 text-[#25D366] shrink-0" fill="#25D366" />
+              <span className="text-[#15803d] font-bold">WhatsApp Order</span>
             </a>
           </div>
         </div>
@@ -354,10 +355,10 @@ export function Navbar() {
                 href={getChatUrl("Hi Miss Malli, I have an enquiry")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2.5 py-3 rounded-full bg-emerald-600 text-white font-semibold text-sm shadow-sm"
+                className="w-full flex items-center justify-center gap-2.5 py-3 rounded-full bg-brand-ivory border border-emerald-500/30 text-emerald-700 font-bold text-sm shadow-sm hover:bg-emerald-50 transition"
               >
-                <MessageCircle className="w-4 h-4" />
-                <span>Chat with WhatsApp Stylist</span>
+                <WhatsAppIcon className="w-4 h-4 text-[#25D366] shrink-0" fill="#25D366" />
+                <span className="text-[#15803d]">Chat with WhatsApp Stylist</span>
               </a>
 
               <div className="flex items-center justify-between pt-2 text-xs font-medium text-brand-deepPlum/70">

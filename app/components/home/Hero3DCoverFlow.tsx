@@ -479,9 +479,9 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
         onPointerLeave={() => { isInteractingRef.current = false; }}
         className="carousel-perspective-stage relative w-full h-[360px] sm:h-[430px] lg:h-[460px] flex items-center justify-center overflow-visible select-none cursor-grab active:cursor-grabbing touch-pan-y"
       >
-        {/* Soft Vignette Fades on edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-28 bg-gradient-to-r from-brand-ivory via-brand-ivory/80 to-transparent z-40 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-28 bg-gradient-to-l from-brand-ivory via-brand-ivory/80 to-transparent z-40 pointer-events-none" />
+        {/* Very Subtle Edge Fade */}
+        <div className="absolute left-0 top-0 bottom-0 w-4 sm:w-10 bg-gradient-to-r from-brand-ivory/30 to-transparent z-40 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-4 sm:w-10 bg-gradient-to-l from-brand-ivory/30 to-transparent z-40 pointer-events-none" />
 
         {/* Carousel 3D Track */}
         <div ref={trackRef} className="relative w-full h-full" style={{ transformStyle: "preserve-3d" }}>

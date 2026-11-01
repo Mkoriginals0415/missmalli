@@ -793,4 +793,13 @@ export const INITIAL_SETTINGS = {
   theme_colors: JSON.stringify(DEFAULT_THEME_COLORS),
   nav_links: JSON.stringify(DEFAULT_NAV_LINKS),
   store_policies: JSON.stringify(DEFAULT_STORE_POLICIES),
+  social_links: JSON.stringify({
+    instagram: "https://www.instagram.com/missmalli",
+    facebook: "https://www.facebook.com/missmalli",
+    youtube: "https://www.youtube.com/@missmalli",
+    pinterest: "https://www.pinterest.com/missmalli",
+  }),
+  contact_address: "Visakhapatnam, Andhra Pradesh, India",
+  contact_email: "orders@missmalli.com",
+  contact_phone: "+91 98765 43210",
 };

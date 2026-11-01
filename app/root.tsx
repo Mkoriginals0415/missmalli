@@ -49,6 +49,22 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   }
 
   const sellerPhone = settings.seller_whatsapp_number || "919876543210";
+  const contactAddress = settings.contact_address || "Visakhapatnam, Andhra Pradesh, India";
+  const contactEmail = settings.contact_email || settings.notify_email || "orders@missmalli.com";
+  const contactPhone = settings.contact_phone || sellerPhone;
+
+  let socialLinks = {
+    instagram: "https://www.instagram.com/missmalli",
+    facebook: "https://www.facebook.com/missmalli",
+    youtube: "https://www.youtube.com/@missmalli",
+    pinterest: "https://www.pinterest.com/missmalli",
+  };
+  try {
+    if (settings.social_links) {
+      socialLinks = { ...socialLinks, ...JSON.parse(settings.social_links) };
+    }
+  } catch (e) {}
+
   const url = new URL(request.url);
   const domain = (seoSettings.canonicalDomain || "https://missmalli.in").replace(/\/+$/, "");
   const canonicalUrl = `${domain}${url.pathname === "/" ? "" : url.pathname}`;
@@ -56,6 +72,10 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   return json({
     themeColors,
     sellerPhone,
+    contactAddress,
+    contactEmail,
+    contactPhone,
+    socialLinks,
     navLinks,
     seoSettings,
     canonicalUrl,

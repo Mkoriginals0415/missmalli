@@ -16,6 +16,7 @@ import {
   Star,
   Check
 } from "lucide-react";
+import { WhatsAppIcon } from "~/components/ui/WhatsAppIcon";
 import { Footer } from "~/components/layout/Footer";
 import { ACCESSORIES, SeedProduct } from "~/db/mock-data";
 import { getProductBySlug, getStoreSettings } from "~/db/d1.server";
@@ -506,10 +507,10 @@ export default function ProductDetailPage() {
               <button
                 onClick={handleBuyNow}
                 disabled={isSubmitting}
-                className="w-full py-3.5 px-6 rounded-full bg-brand-primary text-brand-dark font-black text-xs hover:bg-[#a085cc] hover:text-[#2A1235] border border-brand-primary/30 transition shadow-md flex items-center justify-center gap-2.5 disabled:opacity-50 min-h-[48px] group"
+                className="w-full py-3.5 px-6 rounded-full bg-brand-primary text-emerald-900 font-black text-xs hover:bg-[#a085cc] border border-brand-primary/30 transition shadow-md flex items-center justify-center gap-2.5 disabled:opacity-50 min-h-[48px] group"
               >
-                <MessageCircle className="w-4 h-4 text-[#1E7E34] group-hover:text-emerald-300 transition-colors" />
-                <span>Buy Now on WhatsApp (#{product.code})</span>
+                <WhatsAppIcon className="w-4 h-4 text-[#25D366] shrink-0" fill="#25D366" />
+                <span className="text-[#15803d] font-bold">Buy Now on WhatsApp (#{product.code})</span>
               </button>
               <p className="text-[11px] text-center text-brand-deepPlum/60 mt-1.5 font-medium">
                 Generates a private request link and opens seller WhatsApp.
@@ -713,10 +714,10 @@ export default function ProductDetailPage() {
           <button
             onClick={handleBuyNow}
             disabled={isSubmitting}
-            className="py-2.5 px-4 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-[#a085cc] hover:text-[#2A1235] border border-brand-primary/30 transition shadow-md flex items-center gap-1.5 whitespace-nowrap min-h-[42px] group"
+            className="py-2.5 px-4 rounded-full bg-brand-primary text-emerald-950 text-xs font-black hover:bg-[#a085cc] border border-brand-primary/30 transition shadow-md flex items-center gap-1.5 whitespace-nowrap min-h-[42px] group"
           >
-            <MessageCircle className="w-3.5 h-3.5 text-[#1E7E34] group-hover:text-emerald-300 transition-colors" />
-            <span>Order on WhatsApp</span>
+            <WhatsAppIcon className="w-3.5 h-3.5 text-[#25D366] shrink-0" fill="#25D366" />
+            <span className="text-[#15803d] font-bold">Order on WhatsApp</span>
           </button>
         </div>
       </div>
