@@ -158,17 +158,22 @@ export function Navbar() {
             </button>
           </div>
 
-          {/* Mobile Dead-Centered Logo Lockup */}
-          <div className="lg:hidden absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-auto">
-            <Link to="/" prefetch="intent" className="flex flex-col items-center py-1 group focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
+          {/* Mobile Dead-Centered Logo Lockup (Matches desktop: Image + Title + Subtitle) */}
+          <div className="lg:hidden absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-auto max-w-[calc(100%-140px)]">
+            <Link to="/" prefetch="intent" className="flex items-center gap-2 group py-1 focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
               <img
                 src="/brand/logo.png"
                 alt="Miss Malli"
-                className="h-8 w-8 rounded-full object-cover mix-blend-multiply hover:opacity-95 transition"
+                className="h-8 w-8 sm:h-9 sm:w-9 rounded-full object-cover mix-blend-multiply hover:opacity-95 transition shrink-0"
               />
-              <span className="font-serif italic text-[8.5px] tracking-wider text-brand-plum/90 uppercase mt-0.5 whitespace-nowrap">
-                Made for Her Moments
-              </span>
+              <div className="flex flex-col min-w-0">
+                <span className="font-serif text-[15px] sm:text-base font-bold tracking-tight text-brand-deepPlum group-hover:text-brand-plum transition leading-none truncate">
+                  Miss Malli
+                </span>
+                <span className="font-serif italic text-[7.5px] sm:text-[8px] tracking-widest text-brand-plum/80 uppercase mt-0.5 whitespace-nowrap">
+                  Made for Her Moments
+                </span>
+              </div>
             </Link>
           </div>
 
