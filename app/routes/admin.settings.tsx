@@ -18,10 +18,11 @@ import {
   Plus,
   Trash2,
   Eye,
-  EyeOff
+  EyeOff,
+  FileText
 } from "lucide-react";
 import { getStoreSettings, updateStoreSettings } from "~/db/d1.server";
-import { DEFAULT_THEME_COLORS, StoreThemeColors, DEFAULT_NAV_LINKS, NavLinkItem } from "~/db/mock-data";
+import { DEFAULT_THEME_COLORS, StoreThemeColors, DEFAULT_NAV_LINKS, NavLinkItem, DEFAULT_STORE_POLICIES, StorePolicies } from "~/db/mock-data";
 import { normalizeWhatsAppPhone, formatPhoneDisplay } from "~/utils/whatsapp";
 import { requireAdmin } from "~/utils/auth.server";
 
@@ -44,7 +45,14 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
     }
   } catch (e) {}
 
-  return json({ settings, themeColors, navLinks });
+  let policies: StorePolicies = DEFAULT_STORE_POLICIES;
+  try {
+    if (settings.store_policies) {
+      policies = { ...DEFAULT_STORE_POLICIES, ...JSON.parse(settings.store_policies) };
+    }
+  } catch (e) {}
+
+  return json({ settings, themeColors, navLinks, policies });
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
@@ -66,6 +74,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
   if (formData.has("nav_links")) {
     updates.nav_links = String(formData.get("nav_links") || JSON.stringify(DEFAULT_NAV_LINKS));
+  }
+
+  if (formData.has("store_policies")) {
+    updates.store_policies = String(formData.get("store_policies") || JSON.stringify(DEFAULT_STORE_POLICIES));
   }
 
   const updated = await updateStoreSettings(updates, env);
@@ -93,6 +105,10 @@ export default function AdminSettingsPage() {
 
   // Navigation Links State
   const [navLinks, setNavLinks] = useState<NavLinkItem[]>(initialNavLinks);
+
+  // Store Policies & Legal Pages State
+  const initialPolicies = (data as any)?.policies || DEFAULT_STORE_POLICIES;
+  const [policies, setPolicies] = useState<StorePolicies>(initialPolicies);
 
   useEffect(() => {
     if (fetcher.data?.settings?.seller_whatsapp_number) {
@@ -154,6 +170,7 @@ export default function AdminSettingsPage() {
     formData.append("notify_email", notifyEmail);
     formData.append("theme_colors", JSON.stringify(colors));
     formData.append("nav_links", JSON.stringify(navLinks));
+    formData.append("store_policies", JSON.stringify(policies));
 
     fetcher.submit(formData, { method: "post" });
   };
@@ -695,6 +712,150 @@ export default function AdminSettingsPage() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* ========================================================
+          4. STORE POLICIES & LEGAL PAGES (PRIVACY, TERMS, RETURNS, OUR STORY)
+         ======================================================== */}
+      <div className="bg-white rounded-[22px] p-6 border border-brand-deepPlum/15 shadow-sm space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-brand-deepPlum/10 pb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-brand-plum/10 text-brand-plum flex items-center justify-center">
+              <FileText className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-brand-deepPlum">
+                Store Policies & Legal Pages Editor
+              </h2>
+              <p className="text-xs text-brand-deepPlum/70 font-medium">
+                Edit Privacy Policy, Terms of Service, Returns & Exchanges, and Our Story matter. Updates are live across customer pages.
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setPolicies(DEFAULT_STORE_POLICIES)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-brand-deepPlum/20 text-brand-deepPlum text-xs font-semibold hover:bg-brand-ivory transition self-start sm:self-auto"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Reset to Standard Policies</span>
+          </button>
+        </div>
+
+        <div className="space-y-6">
+          {/* Privacy Policy */}
+          <div className="p-4 rounded-2xl bg-brand-ivory/50 border border-brand-deepPlum/15 space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-brand-deepPlum">
+                1. Privacy Policy & Confidentiality
+              </label>
+              <span className="text-[10px] text-brand-deepPlum/60 font-mono">Appears on /info?tab=privacy & footer</span>
+            </div>
+            <textarea
+              rows={6}
+              value={policies.privacyPolicy}
+              onChange={(e) => setPolicies({ ...policies, privacyPolicy: e.target.value })}
+              className="w-full px-3.5 py-2.5 rounded-xl border border-brand-deepPlum/20 text-xs font-sans text-brand-deepPlum leading-relaxed focus:ring-1 focus:ring-brand-plum bg-white"
+              placeholder="Enter privacy policy text..."
+            />
+          </div>
+
+          {/* Terms of Service */}
+          <div className="p-4 rounded-2xl bg-brand-ivory/50 border border-brand-deepPlum/15 space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-brand-deepPlum">
+                2. Terms of Service & Craftsmanship Agreement
+              </label>
+              <span className="text-[10px] text-brand-deepPlum/60 font-mono">Appears on /info?tab=terms & footer</span>
+            </div>
+            <textarea
+              rows={6}
+              value={policies.termsOfService}
+              onChange={(e) => setPolicies({ ...policies, termsOfService: e.target.value })}
+              className="w-full px-3.5 py-2.5 rounded-xl border border-brand-deepPlum/20 text-xs font-sans text-brand-deepPlum leading-relaxed focus:ring-1 focus:ring-brand-plum bg-white"
+              placeholder="Enter terms of service text..."
+            />
+          </div>
+
+          {/* Returns & Exchanges */}
+          <div className="p-4 rounded-2xl bg-brand-ivory/50 border border-brand-deepPlum/15 space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-brand-deepPlum">
+                3. Returns & Exchange Policy
+              </label>
+              <span className="text-[10px] text-brand-deepPlum/60 font-mono">Appears on /info?tab=returns</span>
+            </div>
+            <textarea
+              rows={5}
+              value={policies.returnsExchange}
+              onChange={(e) => setPolicies({ ...policies, returnsExchange: e.target.value })}
+              className="w-full px-3.5 py-2.5 rounded-xl border border-brand-deepPlum/20 text-xs font-sans text-brand-deepPlum leading-relaxed focus:ring-1 focus:ring-brand-plum bg-white"
+              placeholder="Enter returns & exchange policy..."
+            />
+          </div>
+
+          {/* Our Story Editorial Copy */}
+          <div className="p-4 rounded-2xl bg-brand-ivory/50 border border-brand-deepPlum/15 space-y-4">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-brand-deepPlum">
+                4. "Our Story" Headline, Matter & Brand Mission
+              </label>
+              <span className="text-[10px] text-brand-deepPlum/60 font-mono">Appears on /artisans & /info?tab=about</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-brand-deepPlum/70 block mb-1">
+                  Main Headline
+                </label>
+                <input
+                  type="text"
+                  value={policies.ourStoryHeadline}
+                  onChange={(e) => setPolicies({ ...policies, ourStoryHeadline: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-brand-deepPlum/20 text-xs font-semibold bg-white"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-brand-deepPlum/70 block mb-1">
+                  Badge / Subtitle
+                </label>
+                <input
+                  type="text"
+                  value={policies.ourStorySubtitle}
+                  onChange={(e) => setPolicies({ ...policies, ourStorySubtitle: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl border border-brand-deepPlum/20 text-xs font-semibold bg-white"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-brand-deepPlum/70 block mb-1">
+                Story Narrative Body Copy (Right side matter)
+              </label>
+              <textarea
+                rows={4}
+                value={policies.ourStoryBody}
+                onChange={(e) => setPolicies({ ...policies, ourStoryBody: e.target.value })}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-brand-deepPlum/20 text-xs font-sans text-brand-deepPlum leading-relaxed focus:ring-1 focus:ring-brand-plum bg-white"
+                placeholder="Enter story copy..."
+              />
+            </div>
+
+            <div>
+              <label className="text-[10px] font-bold uppercase tracking-wider text-brand-deepPlum/70 block mb-1">
+                Brand Reverence & Mission Quote
+              </label>
+              <textarea
+                rows={3}
+                value={policies.ourStoryMission}
+                onChange={(e) => setPolicies({ ...policies, ourStoryMission: e.target.value })}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-brand-deepPlum/20 text-xs font-sans text-brand-deepPlum leading-relaxed focus:ring-1 focus:ring-brand-plum bg-white"
+                placeholder="Enter mission or dedication quote..."
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -107,82 +107,28 @@ export default function HomePage() {
                1. HERO SECTION (3D Cover-Flow Gallery with Tilt & Brand Colors)
                ========================================================= */
             case "hero": {
-              const heroCards = [
-                {
-                  id: "card-1",
-                  image: hero.desktopImages[0] || "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1200&q=85",
-                  title: "Pure Kanjivaram Silk",
-                  subtitle: "Heirloom Gold Zari Drape",
-                  tag: "Royal Heritage",
-                  link: "/sarees?collection=kanjivaram",
-                },
-                {
-                  id: "card-2",
-                  image: hero.desktopImages[1] || "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1200&q=85",
-                  title: "Lilac Handloom Silk",
-                  subtitle: "Soft Georgette Fall",
-                  tag: "Pure Weave",
-                  link: "/sarees?collection=handloom",
-                },
-                {
-                  id: "card-3",
-                  image: hero.desktopImages[2] || "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1200&q=85",
-                  title: "Antique Zari Brocade",
-                  subtitle: "Festive Crimson & Zari",
-                  tag: "Bridal Trousseau",
-                  link: "/sarees?collection=banarasi",
-                },
-                {
-                  id: "card-4",
-                  image: hero.desktopImages[3] || "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=1200&q=85",
-                  title: "Lustrous Satin Crepe",
-                  subtitle: "Contemporary Emerald Glow",
-                  tag: "Modern Festive",
-                  link: "/sarees?collection=crepe",
-                },
-                {
-                  id: "card-5",
-                  image: hero.desktopImages[4] || "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1200&q=85",
-                  title: "Master Weaver Looms",
-                  subtitle: "Handcrafted Heritage Art",
-                  tag: "Artisan Loom",
-                  link: "/artisans",
-                },
-                {
-                  id: "card-6",
-                  image: hero.desktopImages[5] || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=85",
-                  title: "Blossom Organza Weave",
-                  subtitle: "Pastel Drapes & Resham",
-                  tag: "Lightweight Luxury",
-                  link: "/sarees?collection=organza",
-                },
-                {
-                  id: "card-7",
-                  image: hero.desktopImages[0] || "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1200&q=85",
-                  title: "Temple Border Silk",
-                  subtitle: "Pure Mulberry Weave",
-                  tag: "Temple Zari",
-                  link: "/sarees",
-                },
-                {
-                  id: "card-8",
-                  image: hero.desktopImages[1] || "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=1200&q=85",
-                  title: "Chanderi Gold Motif",
-                  subtitle: "Featherlight Grace",
-                  tag: "Classic Weave",
-                  link: "/sarees",
-                },
-              ];
+              // Build hero cards from configured cards, or dynamically from live catalog products
+              const heroCards = (hero.heroCards && hero.heroCards.length > 0)
+                ? hero.heroCards
+                : products.slice(0, 8).map((p, idx) => ({
+                    id: `card-${p.id || idx}`,
+                    productId: p.id,
+                    image: p.images?.[0] || hero.desktopImages[idx % (hero.desktopImages?.length || 1)],
+                    title: p.name,
+                    subtitle: p.fabric || (p.price ? `₹${p.price.toLocaleString("en-IN")}` : "Pure Handloom"),
+                    tag: p.badge || p.occasion || "Pure Silk",
+                    link: `/p/${p.slug}`,
+                  }));
 
               return (
-                <section key="hero" className="relative max-w-7xl mx-auto px-4 sm:px-8 pt-4 sm:pt-6 pb-2">
-                  {/* Central Headline */}
-                  <div className="text-center max-w-3xl mx-auto space-y-2 mb-4 sm:mb-6">
-                    <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-bold tracking-tight text-brand-deepPlum leading-[1.12]">
+                <section key="hero" className="relative max-w-7xl mx-auto px-4 sm:px-8 pt-2 sm:pt-4 pb-2">
+                  {/* Central Headline - Compact font to save vertical space */}
+                  <div className="text-center max-w-2xl mx-auto space-y-1.5 mb-2 sm:mb-3">
+                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold tracking-tight text-brand-deepPlum leading-tight">
                       {hero.headline}
                     </h1>
                     {hero.subheadline && (
-                      <p className="text-xs sm:text-sm text-brand-deepPlum/70 font-medium max-w-xl mx-auto">
+                      <p className="text-xs sm:text-sm text-brand-deepPlum/75 font-medium max-w-lg mx-auto">
                         {hero.subheadline}
                       </p>
                     )}
@@ -191,7 +137,7 @@ export default function HomePage() {
                   {/* ----------------------------------------------------------
                       3D COVER-FLOW GALLERY SHOWCASE (Desktop & Mobile)
                      ---------------------------------------------------------- */}
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     <Hero3DCoverFlow items={heroCards} />
 
                     {/* Action Pill Buttons */}

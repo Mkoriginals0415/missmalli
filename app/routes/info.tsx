@@ -1,10 +1,26 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "@remix-run/react";
-import { ChevronDown, ChevronUp, MessageCircle, ShieldCheck } from "lucide-react";
+import { json, type LoaderFunctionArgs } from "@remix-run/cloudflare";
+import { useLoaderData, useSearchParams, Link } from "@remix-run/react";
+import { ChevronDown, ChevronUp, MessageCircle, ShieldCheck, Sparkles } from "lucide-react";
 import { Footer } from "~/components/layout/Footer";
 import { useSellerPhone } from "~/hooks/useSellerPhone";
+import { getStoreSettings } from "~/db/d1.server";
+import { DEFAULT_STORE_POLICIES, StorePolicies } from "~/db/mock-data";
+
+export async function loader({ context }: LoaderFunctionArgs) {
+  const env = (context as any)?.cloudflare?.env;
+  const settings = await getStoreSettings(env);
+  let policies: StorePolicies = DEFAULT_STORE_POLICIES;
+  try {
+    if (settings.store_policies) {
+      policies = { ...DEFAULT_STORE_POLICIES, ...JSON.parse(settings.store_policies) };
+    }
+  } catch (e) {}
+  return json({ policies });
+}
 
 export default function StoreInfoPage() {
+  const { policies } = useLoaderData<typeof loader>();
   const { getChatUrl } = useSellerPhone();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentTab = searchParams.get("tab") || "shipping";
@@ -34,12 +50,11 @@ export default function StoreInfoPage() {
   };
 
   const tabs = [
-    { id: "shipping", label: "Shipping" },
-    { id: "returns", label: "Returns" },
+    { id: "shipping", label: "Shipping & Delivery" },
+    { id: "returns", label: "Returns & Exchanges" },
     { id: "privacy", label: "Privacy Policy" },
     { id: "terms", label: "Terms of Service" },
-    { id: "contact", label: "Contact & Studio" },
-    { id: "about", label: "About" },
+    { id: "about", label: "Our Story" },
   ];
 
   return (
@@ -125,69 +140,58 @@ export default function StoreInfoPage() {
           )}
 
           {activeTab === "returns" && (
-            <div className="space-y-3">
-              <h3 className="font-bold text-sm text-brand-deepPlum">Exchange & Quality Guarantee</h3>
-              <p className="text-xs text-brand-deepPlum/70 leading-relaxed">
-                We accept exchanges within 7 days of package delivery provided the saree is unstitched, unused, in its original fold, and with all tags intact. Handloom irregularities in weaving or zari are signatures of genuine hand-woven textiles and not considered defects.
-              </p>
-              <p className="text-xs text-brand-deepPlum/70 leading-relaxed">
-                Customized items (such as sarees with blouse stitched or fall/pico done upon bespoke request) are eligible for exchange only in case of transit damage.
-              </p>
+            <div className="space-y-4">
+              <h3 className="font-bold text-sm text-brand-deepPlum">Returns & Exchanges Policy</h3>
+              <div className="text-xs text-brand-deepPlum/80 leading-relaxed space-y-3 whitespace-pre-line font-sans">
+                {policies.returnsExchange}
+              </div>
             </div>
           )}
 
           {activeTab === "privacy" && (
-            <div className="space-y-3 text-xs text-brand-deepPlum/80 leading-relaxed">
+            <div className="space-y-4">
               <div className="flex items-center gap-2 text-brand-deepPlum font-bold text-sm">
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
                 <h3>Privacy Policy & Customer Confidentiality</h3>
               </div>
-              <p>
-                At Miss Malli, your privacy is deeply respected. We operate on a direct artisan-to-connoisseur model that does not sell, trade, or monetize customer information.
-              </p>
-              <div className="space-y-2 pt-1 text-brand-deepPlum/75">
-                <p><strong>1. Information Collection:</strong> We only collect information necessary to process your bespoke order—namely your name, WhatsApp number, and delivery shipping address.</p>
-                <p><strong>2. Order Privacy:</strong> In accordance with our discreet service, orders are never displayed publicly and can only be accessed using your unique confidential Request ID.</p>
-                <p><strong>3. Payment Security:</strong> We do not store credit card or banking credentials. Payments are made through verified direct UPI apps or standard encrypted banking channels.</p>
+              <div className="text-xs text-brand-deepPlum/80 leading-relaxed space-y-3 whitespace-pre-line font-sans">
+                {policies.privacyPolicy}
               </div>
             </div>
           )}
 
           {activeTab === "terms" && (
-            <div className="space-y-3 text-xs text-brand-deepPlum/80 leading-relaxed">
+            <div className="space-y-4">
               <h3 className="font-bold text-sm text-brand-deepPlum">Terms of Service</h3>
-              <p>
-                By placing an order request with Miss Malli, you acknowledge and agree to our handloom craftsmanship terms:
-              </p>
-              <div className="space-y-2 pt-1 text-brand-deepPlum/75">
-                <p><strong>1. Artisan Authenticity:</strong> All sarees are woven by traditional master craftsmen. Slight slubs, color variations, and selvedge contours reflect genuine handloom weaving.</p>
-                <p><strong>2. Order Reservation:</strong> Due to limited edition handloom quantities, saree reservations are confirmed upon receipt of advance payment.</p>
-                <p><strong>3. Courier Transit:</strong> All packages are insured and dispatched through premium courier partners with tracking provided directly to your WhatsApp.</p>
+              <div className="text-xs text-brand-deepPlum/80 leading-relaxed space-y-3 whitespace-pre-line font-sans">
+                {policies.termsOfService}
               </div>
             </div>
           )}
 
-          {activeTab === "contact" && (
-            <div className="space-y-3 text-xs text-brand-deepPlum/80 leading-relaxed">
-              <h3 className="font-bold text-sm text-brand-deepPlum">Studio & WhatsApp Concierge</h3>
-              <p>📍 Miss Malli Studio, Bengaluru, Karnataka, 560038</p>
-              <p>✉️ Email: care@missmalli.in</p>
-              <p>⏰ Hours: Monday to Saturday, 10:00 AM – 8:00 PM IST</p>
-              <p className="text-brand-deepPlum/60 pt-1">
-                For prompt order queries, customizations, or fabric guidance, our master stylists are available via WhatsApp chat.
-              </p>
-            </div>
-          )}
-
           {activeTab === "about" && (
-            <div className="space-y-3 text-xs text-brand-deepPlum/80 leading-relaxed">
-              <h3 className="font-bold text-sm text-brand-deepPlum">Handwoven with Heritage</h3>
-              <p>
-                Miss Malli was founded with a singular purpose: connecting conscious saree connoisseurs directly with the master weavers of Varanasi, Kanchipuram, Yeola, and Chanderi.
-              </p>
-              <p>
-                Every piece in our catalog is personally curated, certified for handloom authenticity, and stored with heirloom-level care. We bypass bloated corporate storefronts so you enjoy personal, direct WhatsApp interaction and authentic artisan pricing.
-              </p>
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-brand-plum font-bold text-sm">
+                <Sparkles className="w-4 h-4 text-brand-plum" />
+                <h3>{policies.ourStoryHeadline || "Threads of Tradition, Woven for You"}</h3>
+              </div>
+              <div className="text-xs text-brand-deepPlum/80 leading-relaxed space-y-3 whitespace-pre-line font-sans">
+                {policies.ourStoryBody}
+              </div>
+              {policies.ourStoryMission && (
+                <div className="p-4 rounded-xl bg-brand-ivory/60 border border-brand-lilac/30 text-xs italic text-brand-deepPlum/70">
+                  "{policies.ourStoryMission}"
+                </div>
+              )}
+              <div className="pt-2">
+                <Link
+                  to="/artisans"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-brand-deepPlum text-white text-xs font-semibold hover:bg-brand-plum transition shadow-xs"
+                >
+                  <span>Explore Full Story & Master Weavers</span>
+                  <span>→</span>
+                </Link>
+              </div>
             </div>
           )}
         </div>

@@ -24,14 +24,11 @@ export function Footer() {
                 alt="Miss Malli"
                 className="h-11 w-11 rounded-full object-cover ring-2 ring-brand-lilac/30 shrink-0"
               />
-              <div className="flex flex-col">
-                <span className="font-serif italic text-2xl text-brand-ivory tracking-tight leading-none">
-                  miss malli
-                </span>
-                <span className="font-serif italic text-[10px] tracking-widest text-brand-lilac/80 uppercase mt-1">
-                  Made for Her Moments
-                </span>
-              </div>
+              <img
+                src="/brand/logo-rect-light.png"
+                alt="Miss Malli - Made for Her Moments"
+                className="h-7 w-auto object-contain shrink-0 group-hover:opacity-90 transition"
+              />
             </Link>
             <p className="text-xs text-brand-ivory/70 leading-relaxed max-w-xs font-sans">
               Exclusive handpicked weaves, festive collections, and pure silks crafted by master artisans across India.
@@ -96,7 +93,6 @@ export function Footer() {
               <li><Link to="/track" className="hover:text-brand-lilac transition block py-1">Track Order & Request</Link></li>
               <li><Link to="/info?tab=shipping" className="hover:text-brand-lilac transition block py-1">Shipping & Delivery</Link></li>
               <li><Link to="/info?tab=returns" className="hover:text-brand-lilac transition block py-1">Returns & Exchanges</Link></li>
-              <li><Link to="/info?tab=contact" className="hover:text-brand-lilac transition block py-1">Studio & FAQs</Link></li>
             </ul>
           </div>
 
@@ -118,10 +114,7 @@ export function Footer() {
                 openSection === "company" ? "block" : "hidden lg:block"
               }`}
             >
-              <li><Link to="/artisans" className="hover:text-brand-lilac transition block py-1">Our Heritage & Artisans</Link></li>
-              <li><Link to="/info?tab=about" className="hover:text-brand-lilac transition block py-1">Our Story</Link></li>
-              <li><Link to="/info?tab=contact" className="hover:text-brand-lilac transition block py-1">Contact Concierge</Link></li>
-              <li><Link to="/admin" className="hover:text-brand-lilac transition block py-1">Seller Portal</Link></li>
+              <li><Link to="/artisans" className="hover:text-brand-lilac transition block py-1">Our Story</Link></li>
             </ul>
           </div>
         </div>
@@ -132,7 +125,6 @@ export function Footer() {
           <div className="flex items-center gap-6">
             <Link to="/info?tab=privacy" className="hover:underline py-1">Privacy Policy</Link>
             <Link to="/info?tab=terms" className="hover:underline py-1">Terms of Service</Link>
-            <Link to="/admin" className="hover:underline py-1">Seller Login</Link>
           </div>
         </div>
       </div>

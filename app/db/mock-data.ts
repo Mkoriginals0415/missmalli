@@ -444,6 +444,16 @@ export interface TrustBadgeItem {
   description: string;
 }
 
+export interface HeroCardItem {
+  id: string;
+  productId?: number;
+  title: string;
+  subtitle: string;
+  tag: string;
+  image: string;
+  link: string;
+}
+
 export interface HomepageContent {
   // Section ordering & visibility
   sections: HomepageSection[];
@@ -460,6 +470,7 @@ export interface HomepageContent {
     reviewQuote: string;
     reviewAuthor: string;
     reviewLocation: string;
+    heroCards?: HeroCardItem[];
   };
 
   // Categories Section
@@ -718,12 +729,42 @@ export interface StoreThemeColors {
 }
 
 export const DEFAULT_THEME_COLORS: StoreThemeColors = {
-  primaryPlum: "#5B2A6E",
+  primaryPlum: "#713D8C",
   deepPlum: "#2A1235",
   ivoryCanvas: "#FBF8F2",
   accentGold: "#B8923A",
-  accentLilac: "#C9B6E4",
+  accentLilac: "#B59AD9",
   accentBlush: "#E8B4C4",
+};
+
+export interface StorePolicies {
+  privacyPolicy: string;
+  termsOfService: string;
+  returnsExchange: string;
+  ourStoryHeadline: string;
+  ourStorySubtitle: string;
+  ourStoryBody: string;
+  ourStoryMission: string;
+}
+
+export const DEFAULT_STORE_POLICIES: StorePolicies = {
+  privacyPolicy: `At Miss Malli, your privacy is deeply respected. We operate on a direct artisan-to-connoisseur model that does not sell, trade, or monetize customer information.
+
+1. Information Collection: We only collect information necessary to process your bespoke order—namely your name, WhatsApp number, and delivery shipping address.
+2. Order Privacy: In accordance with our discreet service, orders are never displayed publicly and can only be accessed using your unique confidential Request ID.
+3. Payment Security: We do not store credit card or banking credentials. Payments are made through verified direct UPI apps or standard encrypted banking channels.`,
+  termsOfService: `By placing an order request with Miss Malli, you acknowledge and agree to our handloom craftsmanship terms:
+
+1. Artisan Authenticity: All sarees are woven by traditional master craftsmen. Slight slubs, color variations, and selvedge contours reflect genuine handloom weaving.
+2. Order Reservation: Due to limited edition handloom quantities, saree reservations are confirmed upon receipt of advance payment.
+3. Courier Transit: All packages are insured and dispatched through premium courier partners with tracking provided directly to your WhatsApp.`,
+  returnsExchange: `We accept exchanges within 7 days of package delivery provided the saree is unstitched, unused, in its original fold, and with all tags intact. Handloom irregularities in weaving or zari are signatures of genuine hand-woven textiles and not considered defects.
+
+Customized items (such as sarees with blouse stitched or fall/pico done upon bespoke request) are eligible for exchange only in case of transit damage.`,
+  ourStoryHeadline: "Threads of Tradition, Woven for You",
+  ourStorySubtitle: "Our Story · 100% Handloom Heritage",
+  ourStoryBody: "Miss Malli was born from an unwavering reverence for the handloom weaver. We bypass intermediaries to connect India's finest master loom artisans directly with women who celebrate the timeless elegance of authentic drape.",
+  ourStoryMission: "Every weave in our collection carries centuries of generational mastery—from the intricate zari brocades of Varanasi to the temple borders of Kanchipuram and geometric precision of Pochampally. Handpicked with devotion, presented with transparency.",
 };
 
 export interface NavLinkItem {
@@ -751,4 +792,5 @@ export const INITIAL_SETTINGS = {
   notify_email: "orders@missmalli.com",
   theme_colors: JSON.stringify(DEFAULT_THEME_COLORS),
   nav_links: JSON.stringify(DEFAULT_NAV_LINKS),
+  store_policies: JSON.stringify(DEFAULT_STORE_POLICIES),
 };

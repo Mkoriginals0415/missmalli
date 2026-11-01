@@ -1,8 +1,25 @@
-import { Link } from "@remix-run/react";
+import { json, type LoaderFunctionArgs } from "@remix-run/cloudflare";
+import { useLoaderData, Link } from "@remix-run/react";
 import { ArrowRight, Sparkles, Award, Heart, CheckCircle2, ShieldCheck, Play } from "lucide-react";
 import { Footer } from "~/components/layout/Footer";
+import { getStoreSettings } from "~/db/d1.server";
+import { DEFAULT_STORE_POLICIES, StorePolicies } from "~/db/mock-data";
+
+export async function loader({ context }: LoaderFunctionArgs) {
+  const env = (context as any)?.cloudflare?.env;
+  const settings = await getStoreSettings(env);
+  let policies: StorePolicies = DEFAULT_STORE_POLICIES;
+  try {
+    if (settings.store_policies) {
+      policies = { ...DEFAULT_STORE_POLICIES, ...JSON.parse(settings.store_policies) };
+    }
+  } catch (e) {}
+  return json({ policies });
+}
 
 export default function ArtisansPage() {
+  const { policies } = useLoaderData<typeof loader>();
+
   const stats = [
     { value: "200+", label: "Weaver families", desc: "Supported directly with fair sustainable wages" },
     { value: "12", label: "Weaving clusters", desc: "Across Kanchipuram, Varanasi & Pochampally" },
@@ -43,26 +60,48 @@ export default function ArtisansPage() {
   return (
     <div className="min-h-screen bg-transparent flex flex-col font-sans selection:bg-brand-lilac/40">
       <main className="flex-1">
-        {/* Editorial Story Hero */}
-        <section className="relative py-16 sm:py-24 px-4 sm:px-8 border-b border-brand-lilac/30 overflow-hidden bg-gradient-to-b from-brand-ivory via-brand-ivory to-white">
-          <div className="max-w-4xl mx-auto text-center space-y-4">
-            <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-brand-plum/10 text-brand-plum">
-              <Sparkles className="w-3.5 h-3.5" />
-              Our Story · 100% Handloom Heritage
-            </span>
-            <h1 className="text-4xl sm:text-6xl font-serif font-bold text-brand-deepPlum tracking-tight leading-tight">
-              Threads of Tradition, <br />
-              <span className="italic font-normal text-brand-plum">Woven for You</span>
-            </h1>
-            <p className="text-base sm:text-lg text-brand-deepPlum/75 max-w-2xl mx-auto leading-relaxed pt-2">
-              Miss Malli was born from an unwavering reverence for the handloom weaver. 
-              We bypass intermediaries to connect India's finest master loom artisans directly 
-              with women who celebrate the timeless elegance of authentic drape.
-            </p>
+        {/* Editorial Story Hero (2-Column: Big Logo Left, Matter Right) */}
+        <section className="relative py-12 sm:py-20 px-4 sm:px-8 border-b border-brand-lilac/30 overflow-hidden bg-gradient-to-b from-brand-ivory via-brand-ivory to-white">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center">
+            {/* Left Column: Big Brand Emblem */}
+            <div className="md:col-span-5 flex flex-col items-center justify-center text-center">
+              <div className="relative group p-4 sm:p-6 rounded-full bg-gradient-to-tr from-brand-plum/10 via-brand-lilac/20 to-brand-gold/15 border border-brand-lilac/30 shadow-xl">
+                <img
+                  src="/brand/logo.png"
+                  alt="Miss Malli - Heritage Handloom"
+                  className="w-48 h-48 sm:w-60 sm:h-60 lg:w-72 lg:h-72 rounded-full object-cover ring-4 ring-brand-plum/20 ring-offset-4 ring-offset-brand-ivory shadow-lg group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <div className="mt-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-plum/5 border border-brand-plum/10 text-[11px] font-semibold text-brand-deepPlum/80">
+                <ShieldCheck className="w-3.5 h-3.5 text-brand-plum" />
+                <span>Certified Handloom & Silk Mark Authentic</span>
+              </div>
+            </div>
+
+            {/* Right Column: Story Copy & Matter */}
+            <div className="md:col-span-7 space-y-4 text-left">
+              <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase bg-brand-plum/10 text-brand-plum">
+                <Sparkles className="w-3.5 h-3.5" />
+                {policies.ourStorySubtitle || "Our Story · 100% Handloom Heritage"}
+              </span>
+              <h1 className="text-3xl sm:text-5xl font-serif font-bold text-brand-deepPlum tracking-tight leading-tight">
+                {policies.ourStoryHeadline || "Threads of Tradition, Woven for You"}
+              </h1>
+              <p className="text-base sm:text-lg text-brand-deepPlum/85 leading-relaxed font-sans pt-1">
+                {policies.ourStoryBody}
+              </p>
+              {policies.ourStoryMission && (
+                <div className="p-4 sm:p-5 rounded-2xl bg-white/90 border border-brand-lilac/30 shadow-xs">
+                  <p className="text-xs sm:text-sm text-brand-deepPlum/75 italic leading-relaxed">
+                    "{policies.ourStoryMission}"
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Key Stat Badges */}
-          <div className="max-w-5xl mx-auto mt-14 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+          <div className="max-w-5xl mx-auto mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             {stats.map((s) => (
               <div
                 key={s.label}

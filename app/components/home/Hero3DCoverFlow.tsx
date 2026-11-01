@@ -483,17 +483,17 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
                 style={{ opacity: 1 }}
               >
                 <div className="flex items-center justify-between mb-1 gap-2">
-                  <span className="text-[9px] uppercase tracking-widest font-bold px-2 py-0.5 rounded-full bg-brand-deepPlum text-brand-gold shadow-xs">
+                  <span className="text-[9px] uppercase tracking-widest font-bold px-2 py-0.5 rounded-full bg-brand-deepPlum text-white shadow-xs">
                     {item.tag}
                   </span>
-                  <span className="text-[10px] text-brand-plum font-serif italic">
+                  <span className="text-[10px] text-brand-plum font-serif italic font-semibold">
                     Pure Silk Weave
                   </span>
                 </div>
                 <h4 className="font-serif text-base sm:text-lg font-bold leading-tight text-brand-deepPlum">
                   {item.title}
                 </h4>
-                <p className="text-[11px] text-brand-deepPlum/70 font-sans truncate">
+                <p className="text-[11px] text-brand-deepPlum/85 font-sans truncate font-medium">
                   {item.subtitle}
                 </p>
               </div>
@@ -549,15 +549,13 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
             <ChevronRight className="w-5 h-5" />
           </button>
 
-          {/* Direct Drape Explore Link */}
-          {currentItem && (
-            <Link
-              to={currentItem.link}
-              className="ml-2 px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider bg-brand-deepPlum text-white hover:bg-brand-plum transition-all shadow-xs"
-            >
-              Explore Drape ↗
-            </Link>
-          )}
+          {/* Direct Drape Explore Link (Takes directly to Sarees catalog page) */}
+          <Link
+            to="/sarees"
+            className="ml-2 px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider bg-brand-deepPlum text-white hover:bg-brand-plum transition-all shadow-xs"
+          >
+            Explore Drape ↗
+          </Link>
         </div>
       </div>
     </div>

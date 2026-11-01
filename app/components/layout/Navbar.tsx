@@ -158,40 +158,34 @@ export function Navbar() {
             </button>
           </div>
 
-          {/* Mobile Dead-Centered Logo Lockup (Matches desktop: Image + Title + Subtitle) */}
+          {/* Mobile Dead-Centered Logo Lockup (Circular Avatar + Rectangular Brand Title) */}
           <div className="lg:hidden absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-auto max-w-[calc(100%-140px)]">
-            <Link to="/" prefetch="intent" className="flex items-center gap-2 group py-1 focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
+            <Link to="/" prefetch="intent" className="flex items-center gap-1.5 sm:gap-2 group py-1 focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
               <img
                 src="/brand/logo.png"
                 alt="Miss Malli"
-                className="h-8 w-8 sm:h-9 sm:w-9 rounded-full object-cover mix-blend-multiply hover:opacity-95 transition shrink-0"
+                className="h-7 w-7 sm:h-8 sm:w-8 rounded-full object-cover mix-blend-multiply hover:opacity-95 transition shrink-0"
               />
-              <div className="flex flex-col min-w-0">
-                <span className="font-serif text-[15px] sm:text-base font-bold tracking-tight text-brand-deepPlum group-hover:text-brand-plum transition leading-none truncate">
-                  Miss Malli
-                </span>
-                <span className="font-serif italic text-[7.5px] sm:text-[8px] tracking-widest text-brand-plum/80 uppercase mt-0.5 whitespace-nowrap">
-                  Made for Her Moments
-                </span>
-              </div>
+              <img
+                src="/brand/logo-rect-transparent.png"
+                alt="Miss Malli - Made for Her Moments"
+                className="h-5 sm:h-6 w-auto max-w-[130px] sm:max-w-[155px] object-contain shrink-0 group-hover:opacity-90 transition"
+              />
             </Link>
           </div>
 
           {/* Desktop Brand Logo Lockup */}
-          <Link to="/" prefetch="intent" className="hidden lg:flex items-center gap-3 group py-1 focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
+          <Link to="/" prefetch="intent" className="hidden lg:flex items-center gap-2.5 group py-1 focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
             <img
               src="/brand/logo.png"
               alt="Miss Malli"
-              className="h-11 w-11 rounded-full object-cover mix-blend-multiply hover:opacity-95 transition"
+              className="h-10 w-10 rounded-full object-cover mix-blend-multiply hover:opacity-95 transition shrink-0"
             />
-            <div className="flex flex-col">
-              <span className="font-serif text-lg font-bold tracking-tight text-brand-deepPlum group-hover:text-brand-plum transition leading-none">
-                Miss Malli
-              </span>
-              <span className="font-serif italic text-[10px] tracking-widest text-brand-plum/80 uppercase mt-0.5">
-                Made for Her Moments
-              </span>
-            </div>
+            <img
+              src="/brand/logo-rect-transparent.png"
+              alt="Miss Malli - Made for Her Moments"
+              className="h-7 w-auto object-contain shrink-0 group-hover:opacity-90 transition"
+            />
           </Link>
 
           {/* Center Desktop Navigation with Animated Sliding Pill */}

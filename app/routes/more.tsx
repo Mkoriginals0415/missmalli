@@ -27,8 +27,7 @@ export default function MorePage() {
   const menuItems = [
     { label: "Track My Orders & Requests", to: "/track", icon: Package },
     { label: "Shipping and Returns", to: "/info?tab=shipping", icon: Truck },
-    { label: "Contact and Support", to: "/info?tab=contact", icon: HelpCircle },
-    { label: "About Miss Malli", to: "/info?tab=about", icon: Info },
+    { label: "Our Story", to: "/artisans", icon: Info },
     { label: "Privacy Policy", to: "/info?tab=privacy", icon: Shield },
   ];
 

@@ -120,7 +120,7 @@ export default function App() {
             __html: `
               :root {
                 --color-brand-plum: ${themeColors.primaryPlum};
-                --color-brand-plum-rgb: ${hexToRgb(themeColors.primaryPlum, "91 42 110")};
+                --color-brand-plum-rgb: ${hexToRgb(themeColors.primaryPlum, "113 61 140")};
                 --color-brand-deep-plum: ${themeColors.deepPlum};
                 --color-brand-deep-plum-rgb: ${hexToRgb(themeColors.deepPlum, "42 18 53")};
                 --color-brand-ivory: ${themeColors.ivoryCanvas};
@@ -128,7 +128,7 @@ export default function App() {
                 --color-brand-gold: ${themeColors.accentGold};
                 --color-brand-gold-rgb: ${hexToRgb(themeColors.accentGold, "184 146 58")};
                 --color-brand-lilac: ${themeColors.accentLilac};
-                --color-brand-lilac-rgb: ${hexToRgb(themeColors.accentLilac, "201 182 228")};
+                --color-brand-lilac-rgb: ${hexToRgb(themeColors.accentLilac, "181 154 217")};
                 --color-brand-blush: ${themeColors.accentBlush};
                 --color-brand-blush-rgb: ${hexToRgb(themeColors.accentBlush, "232 180 196")};
               }

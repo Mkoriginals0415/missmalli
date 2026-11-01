@@ -19,16 +19,19 @@ import {
   Upload,
   Palette
 } from "lucide-react";
-import { getHomepageContent, updateHomepageContent } from "~/db/d1.server";
-import { HomepageContent, CollectionItem, TestimonialItem, HomepageSection } from "~/db/mock-data";
+import { getHomepageContent, updateHomepageContent, getAllProducts } from "~/db/d1.server";
+import { HomepageContent, CollectionItem, TestimonialItem, HomepageSection, HeroCardItem, SeedProduct } from "~/db/mock-data";
 import { ImageUpload, processImageFile } from "~/components/ui/ImageUpload";
 import { requireAdmin } from "~/utils/auth.server";
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
   await requireAdmin(request);
   const env = (context as any)?.cloudflare?.env;
-  const content = await getHomepageContent(env);
-  return json({ content });
+  const [content, products] = await Promise.all([
+    getHomepageContent(env),
+    getAllProducts(env),
+  ]);
+  return json({ content, products });
 }
 
 export async function action({ request, context }: ActionFunctionArgs) {
@@ -53,6 +56,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
 export default function AdminHomepageEditor() {
   const data = useLoaderData<typeof loader>();
   const content = (data?.content || {}) as HomepageContent;
+  const products = (data?.products || []) as SeedProduct[];
   const fetcher = useFetcher<typeof action>();
 
   const [activeTab, setActiveTab] = useState<
@@ -70,7 +74,22 @@ export default function AdminHomepageEditor() {
     { id: "testimonials", name: "Customer Testimonials & Stories", enabled: true },
   ]);
 
-  const [hero, setHero] = useState(content.hero);
+  const [hero, setHero] = useState<HomepageContent["hero"]>(() => {
+    const h = content.hero;
+    if (!h.heroCards || h.heroCards.length === 0) {
+      const defaultCards: HeroCardItem[] = products.slice(0, 6).map((p, idx) => ({
+        id: `card-${p.id || idx}`,
+        productId: p.id,
+        title: p.name,
+        subtitle: p.fabric || (p.price ? `₹${p.price.toLocaleString("en-IN")}` : "Pure Silk"),
+        tag: p.badge || p.occasion || "Pure Silk",
+        image: p.images?.[0] || h.desktopImages?.[idx % (h.desktopImages?.length || 1)] || "/images/products/imitation-pattu-rich-pallu.jpeg",
+        link: `/p/${p.slug}`,
+      }));
+      return { ...h, heroCards: defaultCards };
+    }
+    return h;
+  });
   const [categories, setCategories] = useState(content.categories);
   const [newArrivals, setNewArrivals] = useState(content.newArrivals);
   const [promotion, setPromotion] = useState(content.promotion);
@@ -438,6 +457,177 @@ export default function AdminHomepageEditor() {
                 onChange={(e) => setHero({ ...hero, badgeText: e.target.value })}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-brand-deepPlum/20 text-xs font-semibold text-brand-deepPlum focus:ring-1 focus:ring-brand-plum"
               />
+            </div>
+          </div>
+
+          {/* Hero 3D Cover Flow Products & Showcase Cards Editor */}
+          <div className="space-y-4 pt-4 border-t border-brand-deepPlum/10">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-brand-deepPlum">
+                  Hero 3D Cover Flow Products & Showcase Cards ({(hero.heroCards || []).length} Cards)
+                </h4>
+                <p className="text-[11px] text-brand-deepPlum/60 font-medium">
+                  Select products from your catalog to feature in the central 3D cover flow. You can also customize the card title, fabric subtitle, tag, image, and link.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const currentCards = hero.heroCards || [];
+                  const newCard: HeroCardItem = {
+                    id: `card-${Date.now()}`,
+                    title: "New Featured Saree",
+                    subtitle: "Pure Handloom Silk",
+                    tag: "Featured Drape",
+                    image: "/images/products/imitation-pattu-rich-pallu.jpeg",
+                    link: "/sarees",
+                  };
+                  setHero({ ...hero, heroCards: [...currentCards, newCard] });
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-xs self-start sm:self-auto"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add Hero Card</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {(hero.heroCards || []).map((card, i) => (
+                <div key={card.id || i} className="p-4 rounded-2xl bg-brand-ivory/50 border border-brand-deepPlum/15 space-y-3 relative">
+                  <div className="flex items-center justify-between border-b border-brand-deepPlum/10 pb-2">
+                    <span className="text-xs font-bold text-brand-deepPlum">Card #{i + 1}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const updated = (hero.heroCards || []).filter((_, idx) => idx !== i);
+                        setHero({ ...hero, heroCards: updated });
+                      }}
+                      className="p-1 rounded-lg text-red-600 hover:bg-red-50 transition"
+                      title="Remove Card"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+
+                  {/* Product Catalog Picker */}
+                  <div>
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-brand-deepPlum/70 block mb-1">
+                      Choose from Catalog (Auto-fill)
+                    </label>
+                    <select
+                      value={card.productId || ""}
+                      onChange={(e) => {
+                        const prodId = Number(e.target.value);
+                        const prod = products.find((p) => p.id === prodId);
+                        if (prod) {
+                          const updated = [...(hero.heroCards || [])];
+                          updated[i] = {
+                            ...updated[i],
+                            productId: prod.id,
+                            title: prod.name,
+                            subtitle: prod.fabric || `₹${prod.price.toLocaleString("en-IN")}`,
+                            tag: prod.badge || prod.occasion || "Pure Silk",
+                            image: prod.images?.[0] || updated[i].image,
+                            link: `/p/${prod.slug}`,
+                          };
+                          setHero({ ...hero, heroCards: updated });
+                        }
+                      }}
+                      className="w-full px-3 py-2 rounded-xl border border-brand-deepPlum/20 text-xs font-semibold bg-white text-brand-deepPlum focus:ring-1 focus:ring-brand-plum"
+                    >
+                      <option value="">-- Custom or Select Product --</option>
+                      {products.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.code} · {p.name} (₹{p.price})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Card Title */}
+                  <div>
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-brand-deepPlum/70 block mb-1">
+                      Card Title
+                    </label>
+                    <input
+                      type="text"
+                      value={card.title}
+                      onChange={(e) => {
+                        const updated = [...(hero.heroCards || [])];
+                        updated[i] = { ...updated[i], title: e.target.value };
+                        setHero({ ...hero, heroCards: updated });
+                      }}
+                      className="w-full px-3 py-1.5 rounded-xl border border-brand-deepPlum/20 text-xs font-semibold"
+                    />
+                  </div>
+
+                  {/* Card Subtitle */}
+                  <div>
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-brand-deepPlum/70 block mb-1">
+                      Subtitle / Fabric
+                    </label>
+                    <input
+                      type="text"
+                      value={card.subtitle}
+                      onChange={(e) => {
+                        const updated = [...(hero.heroCards || [])];
+                        updated[i] = { ...updated[i], subtitle: e.target.value };
+                        setHero({ ...hero, heroCards: updated });
+                      }}
+                      className="w-full px-3 py-1.5 rounded-xl border border-brand-deepPlum/20 text-xs font-semibold"
+                    />
+                  </div>
+
+                  {/* Card Tag & Link */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-brand-deepPlum/70 block mb-1">
+                        Tag Badge
+                      </label>
+                      <input
+                        type="text"
+                        value={card.tag}
+                        onChange={(e) => {
+                          const updated = [...(hero.heroCards || [])];
+                          updated[i] = { ...updated[i], tag: e.target.value };
+                          setHero({ ...hero, heroCards: updated });
+                        }}
+                        className="w-full px-3 py-1.5 rounded-xl border border-brand-deepPlum/20 text-xs font-semibold"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-brand-deepPlum/70 block mb-1">
+                        Target Link
+                      </label>
+                      <input
+                        type="text"
+                        value={card.link}
+                        onChange={(e) => {
+                          const updated = [...(hero.heroCards || [])];
+                          updated[i] = { ...updated[i], link: e.target.value };
+                          setHero({ ...hero, heroCards: updated });
+                        }}
+                        className="w-full px-3 py-1.5 rounded-xl border border-brand-deepPlum/20 text-xs font-semibold"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Image Upload */}
+                  <div>
+                    <ImageUpload
+                      value={card.image}
+                      onChange={(newImg) => {
+                        const updated = [...(hero.heroCards || [])];
+                        updated[i] = { ...updated[i], image: newImg };
+                        setHero({ ...hero, heroCards: updated });
+                      }}
+                      label="Card Drape Image"
+                      aspectRatio="portrait"
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
