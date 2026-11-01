@@ -206,6 +206,7 @@ export default function ProductDetailPage() {
         createdAt: new Date().toISOString(),
       });
 
+      const currentPhoto = product.images?.[selectedImageIndex] || product.images?.[0] || product.primary_image || "";
       const whatsappUrl = generateWhatsAppBuyUrl({
         sellerPhone,
         requestNumber: data.requestNumber,
@@ -217,6 +218,7 @@ export default function ProductDetailPage() {
             name: product.name,
             variantDetails,
             price: totalAmount,
+            imageUrl: currentPhoto,
           },
         ],
         totalAmount,
@@ -226,7 +228,7 @@ export default function ProductDetailPage() {
       navigate(
         `/request-created?number=${encodeURIComponent(data.requestNumber)}&token=${encodeURIComponent(
           data.secretToken
-        )}&url=${encodeURIComponent(data.requestUrl)}`
+        )}&url=${encodeURIComponent(data.requestUrl)}&image=${encodeURIComponent(currentPhoto)}&name=${encodeURIComponent(product.name)}&price=${encodeURIComponent(totalAmount)}`
       );
     } catch (err) {
       console.error(err);

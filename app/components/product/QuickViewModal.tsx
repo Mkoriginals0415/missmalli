@@ -78,6 +78,7 @@ export function QuickViewModal({
         createdAt: new Date().toISOString(),
       });
 
+      const drapePhoto = product.images?.[0] || product.coverImage || "";
       const whatsappUrl = generateWhatsAppBuyUrl({
         sellerPhone: activeSellerPhone,
         requestNumber: data.requestNumber,
@@ -88,6 +89,7 @@ export function QuickViewModal({
             name: product.name,
             variantDetails,
             price: product.price,
+            imageUrl: drapePhoto,
           },
         ],
         totalAmount: product.price,
@@ -97,7 +99,7 @@ export function QuickViewModal({
       navigate(
         `/request-created?number=${encodeURIComponent(data.requestNumber)}&token=${encodeURIComponent(
           data.secretToken
-        )}&url=${encodeURIComponent(data.requestUrl)}`
+        )}&url=${encodeURIComponent(data.requestUrl)}&image=${encodeURIComponent(drapePhoto)}&name=${encodeURIComponent(product.name)}&price=${encodeURIComponent(product.price)}`
       );
     } catch (err) {
       console.error(err);

@@ -1,10 +1,10 @@
 import { useSearchParams, Link, useLoaderData } from "@remix-run/react";
 import { json, type LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { Check, MessageCircle, Copy, ArrowRight, ShoppingBag } from "lucide-react";
+import { Check, MessageCircle, Copy, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { Footer } from "~/components/layout/Footer";
 import { getStoreSettings } from "~/db/d1.server";
-import { normalizeWhatsAppPhone } from "~/utils/whatsapp";
+import { normalizeWhatsAppPhone, toAbsoluteImageUrl } from "~/utils/whatsapp";
 
 export async function loader({ context }: LoaderFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
@@ -21,10 +21,18 @@ export default function RequestCreatedPage() {
   const requestNumber = searchParams.get("number") || "Order";
   const secretToken = searchParams.get("token") || "";
   const requestUrl = searchParams.get("url") || (secretToken ? `/r/${secretToken}` : "/track");
+  const imageUrl = searchParams.get("image") || "";
+  const productName = searchParams.get("name") || "";
+  const price = searchParams.get("price") || "";
 
   const [copied, setCopied] = useState(false);
 
-  const messageText = `Hi Miss Malli, I would like to order. Request ${requestNumber}\nDetails & live status: ${requestUrl}`;
+  const absoluteImageUrl = imageUrl ? toAbsoluteImageUrl(imageUrl) : "";
+  const photoStr = absoluteImageUrl ? `\n📸 Drape Photo: ${absoluteImageUrl}` : "";
+  const itemStr = productName ? ` for *${productName}*` : "";
+  const priceStr = price ? ` (₹${Number(price).toLocaleString("en-IN")})` : "";
+
+  const messageText = `Hi Miss Malli, I would like to confirm my order${itemStr}${priceStr}.\n🔖 Request: ${requestNumber}${photoStr}\n\nView order & live status:\n${requestUrl}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(messageText);
@@ -51,7 +59,30 @@ export default function RequestCreatedPage() {
           Tap below to send your order details directly to the seller on WhatsApp. Delivery address and final payment are agreed in your chat.
         </p>
 
-        <div className="w-full mt-8 space-y-3">
+        {imageUrl && (
+          <div className="flex items-center gap-3.5 p-3 rounded-2xl bg-white/80 border border-brand-lilac/30 shadow-xs max-w-sm w-full my-4 text-left">
+            <img
+              src={imageUrl}
+              alt={productName || "Ordered Drape"}
+              className="w-14 h-18 rounded-xl object-cover shrink-0 border border-brand-lilac/20"
+            />
+            <div className="min-w-0 flex-1">
+              {productName && (
+                <h4 className="font-bold text-xs text-brand-deepPlum truncate">{productName}</h4>
+              )}
+              <p className="text-[11px] text-brand-plum font-semibold mt-0.5">
+                Request #{requestNumber}
+              </p>
+              {price && (
+                <p className="text-xs font-bold text-brand-deepPlum mt-0.5">
+                  ₹ {Number(price).toLocaleString("en-IN")}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
+        <div className="w-full mt-4 space-y-3">
           <a
             href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(messageText)}`}
             target="_blank"

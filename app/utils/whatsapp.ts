@@ -7,6 +7,7 @@ export interface WhatsAppOrderPayload {
     name: string;
     variantDetails: string;
     price: number;
+    imageUrl?: string;
   }>;
   totalAmount: number;
   customTemplate?: string;
@@ -38,6 +39,18 @@ export function formatPhoneDisplay(phone?: string | null): string {
   return `+${clean}`;
 }
 
+/**
+ * Ensures an image URL is absolute with scheme so WhatsApp can parse it and render card previews.
+ */
+export function toAbsoluteImageUrl(url?: string): string {
+  if (!url) return "";
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  if (typeof window !== "undefined" && window.location?.origin) {
+    return `${window.location.origin}${url.startsWith("/") ? "" : "/"}${url}`;
+  }
+  return `https://missmalli.in${url.startsWith("/") ? "" : "/"}${url}`;
+}
+
 export function generateWhatsAppBuyUrl(payload: WhatsAppOrderPayload): string {
   const { sellerPhone, requestNumber, requestUrl, items, totalAmount, customTemplate } = payload;
   const cleanPhone = normalizeWhatsAppPhone(sellerPhone);
@@ -46,27 +59,37 @@ export function generateWhatsAppBuyUrl(payload: WhatsAppOrderPayload): string {
 
   if (customTemplate && items.length === 1) {
     const item = items[0];
+    const absoluteImg = toAbsoluteImageUrl(item.imageUrl);
     message = customTemplate
       .replace(/\{saree\}/g, item.name)
       .replace(/\{code\}/g, item.code || "")
       .replace(/\{variant\}/g, item.variantDetails)
       .replace(/\{price\}/g, item.price.toLocaleString("en-IN"))
       .replace(/\{request\}/g, requestNumber)
+      .replace(/\{image\}/g, absoluteImg)
       .replace(/\{link\}/g, requestUrl);
+
+    if (absoluteImg && !customTemplate.includes("{image}")) {
+      message += `\n📸 Drape Photo: ${absoluteImg}`;
+    }
   } else if (items.length === 1) {
     const item = items[0];
     const codeStr = item.code ? `[Product ID: #${item.code}]` : "";
+    const absoluteImg = toAbsoluteImageUrl(item.imageUrl);
+    const photoStr = absoluteImg ? `\n📸 Drape Photo: ${absoluteImg}` : "";
     message = `Hi Miss Malli, I would like to order this drape.\n\n` +
       `✨ *${item.name}* ${codeStr}\n` +
       `💰 *₹ ${item.price.toLocaleString("en-IN")}*\n` +
       `🎨 Variant: ${item.variantDetails}\n` +
-      `🔖 Request: ${requestNumber}\n\n` +
+      `🔖 Request: ${requestNumber}${photoStr}\n\n` +
       `View item & live status:\n${requestUrl}`;
   } else {
     const itemList = items
       .map((item, idx) => {
         const codeStr = item.code ? `(#${item.code})` : "";
-        return `${idx + 1}. *${item.name}* ${codeStr}\n   ₹ ${item.price.toLocaleString("en-IN")} · ${item.variantDetails}`;
+        const absoluteImg = toAbsoluteImageUrl(item.imageUrl);
+        const photoStr = absoluteImg ? `\n   📸 Photo: ${absoluteImg}` : "";
+        return `${idx + 1}. *${item.name}* ${codeStr}\n   ₹ ${item.price.toLocaleString("en-IN")} · ${item.variantDetails}${photoStr}`;
       })
       .join("\n\n");
 

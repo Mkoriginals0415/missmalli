@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { json, type LoaderFunctionArgs, type ActionFunctionArgs, type MetaFunction } from "@remix-run/cloudflare";
 import { useLoaderData, useFetcher, Link } from "@remix-run/react";
-import { MessageCircle, Truck, Check, ArrowLeft, ExternalLink, ShieldCheck } from "lucide-react";
+import { Truck, Check, ArrowLeft, ExternalLink, ShieldCheck } from "lucide-react";
 import { Footer } from "~/components/layout/Footer";
 import { getRequestByTokenOrNumber, getStoreSettings, updateRequestStatus } from "~/db/d1.server";
 import { normalizeWhatsAppPhone } from "~/utils/whatsapp";
@@ -67,21 +67,28 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   const firstItem = request.items?.[0];
   const title = `Order ${request.requestNumber}: ${firstItem ? firstItem.productName : "Saree Order"}`;
   const description = `₹ ${request.totalAmount.toLocaleString("en-IN")} · ${firstItem?.variantDetails || "Direct WhatsApp Order"}`;
-  const image = firstItem?.imageUrl || "/brand/logo.png";
+  const rawImage = firstItem?.imageUrl || "/brand/logo.png";
+  const absoluteImage = rawImage.startsWith("http")
+    ? rawImage
+    : `https://missmalli.in${rawImage.startsWith("/") ? "" : "/"}${rawImage}`;
 
   return [
     { title: `${title} | Miss Malli` },
     { name: "description", content: description },
     { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" },
-    { name: "robots", content: "noindex, nofollow" },
+    { property: "og:site_name", content: "Miss Malli" },
+    { property: "og:type", content: "website" },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
-    { property: "og:image", content: image },
+    { property: "og:image", content: absoluteImage },
+    { property: "og:image:secure_url", content: absoluteImage },
+    { property: "twitter:card", content: "summary_large_image" },
+    { property: "twitter:image", content: absoluteImage },
   ];
 };
 
 export default function RequestTrackerPage() {
-  const { request, isAdminView, sellerPhone } = useLoaderData<typeof loader>();
+  const { request, isAdminView } = useLoaderData<typeof loader>();
   const fetcher = useFetcher();
 
   const [status, setStatus] = useState(request.status);
@@ -89,6 +96,7 @@ export default function RequestTrackerPage() {
   const [trackingNote, setTrackingNote] = useState(request.trackingNote || "");
   const [isPaymentReceived, setIsPaymentReceived] = useState(request.isPaymentReceived === 1);
   const [quickReplyCopied, setQuickReplyCopied] = useState<string | null>(null);
+  const [saveTrackingState, setSaveTrackingState] = useState<"idle" | "saving" | "saved">("idle");
 
   useEffect(() => {
     setStatus(request.status);
@@ -96,6 +104,18 @@ export default function RequestTrackerPage() {
     setInternalNote(request.internalNote || "");
     setIsPaymentReceived(request.isPaymentReceived === 1);
   }, [request]);
+
+  useEffect(() => {
+    if (fetcher.state === "idle" && fetcher.data && (fetcher.data as any).success) {
+      if (saveTrackingState === "saving") {
+        setSaveTrackingState("saved");
+        const timer = setTimeout(() => {
+          setSaveTrackingState("idle");
+        }, 2500);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [fetcher.state, fetcher.data, saveTrackingState]);
 
   const steps = [
     { key: "sent", label: "Sent" },
@@ -126,6 +146,16 @@ export default function RequestTrackerPage() {
     fetcher.submit(fd, { method: "post" });
   };
 
+  const handleSaveTrackingNote = () => {
+    setSaveTrackingState("saving");
+    const fd = new FormData();
+    fd.append("status", status);
+    fd.append("internalNote", internalNote);
+    fd.append("trackingNote", trackingNote);
+    fd.append("isPaymentReceived", isPaymentReceived ? "1" : "0");
+    fetcher.submit(fd, { method: "post" });
+  };
+
   const copyQuickReply = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     setQuickReplyCopied(label);
@@ -138,10 +168,6 @@ export default function RequestTrackerPage() {
         `Hi, this is Miss Malli regarding your order request ${request.requestNumber}.`
       )}`
     : null;
-
-  const contactSellerUrl = `https://wa.me/${normalizeWhatsAppPhone(sellerPhone)}?text=${encodeURIComponent(
-    `Hi Miss Malli, checking status on Request ${request.requestNumber}`
-  )}`;
 
   return (
     <div className="min-h-screen bg-transparent flex flex-col font-sans">
@@ -254,10 +280,27 @@ export default function RequestTrackerPage() {
                   className="flex-1 px-3 py-2 bg-white rounded-xl border border-brand-lilac/40 text-xs text-brand-deepPlum"
                 />
                 <button
-                  onClick={() => handleAdminUpdate(status)}
-                  className="px-4 py-2 bg-brand-deepPlum text-white rounded-xl text-xs font-medium"
+                  type="button"
+                  onClick={handleSaveTrackingNote}
+                  disabled={saveTrackingState === "saving"}
+                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 min-w-[80px] ${
+                    saveTrackingState === "saved"
+                      ? "bg-emerald-600 text-white shadow-xs"
+                      : saveTrackingState === "saving"
+                      ? "bg-brand-deepPlum/70 text-white cursor-wait"
+                      : "bg-brand-deepPlum hover:bg-brand-plum text-white shadow-xs"
+                  }`}
                 >
-                  Save
+                  {saveTrackingState === "saved" ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                      <span>Saved</span>
+                    </>
+                  ) : saveTrackingState === "saving" ? (
+                    <span>Saving...</span>
+                  ) : (
+                    <span>Save</span>
+                  )}
                 </button>
               </div>
             </div>
@@ -349,28 +392,20 @@ export default function RequestTrackerPage() {
           )}
 
           {/* Actions */}
-          <div className="space-y-3 pt-2">
-            <a
-              href={contactSellerUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-3.5 px-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-md transition"
-            >
-              <MessageCircle className="w-4 h-4" />
-              <span>Message Seller on WhatsApp</span>
-            </a>
-
-            <button
-              onClick={() => {
-                if (confirm("Are you sure you want to cancel this request?")) {
-                  handleAdminUpdate("closed");
-                }
-              }}
-              className="w-full py-2 text-xs text-brand-deepPlum/50 hover:text-red-500 transition"
-            >
-              Cancel request
-            </button>
-          </div>
+          {status !== "closed" && (
+            <div className="pt-2 text-center">
+              <button
+                onClick={() => {
+                  if (confirm("Are you sure you want to cancel this request?")) {
+                    handleAdminUpdate("closed");
+                  }
+                }}
+                className="py-2 text-xs text-brand-deepPlum/50 hover:text-red-500 transition"
+              >
+                Cancel request
+              </button>
+            </div>
+          )}
         </div>
       </main>
 

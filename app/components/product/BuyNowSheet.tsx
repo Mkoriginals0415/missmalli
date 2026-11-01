@@ -113,6 +113,7 @@ export function BuyNowSheet({
             name: product.name,
             variantDetails,
             price: product.price,
+            imageUrl: product.coverImage,
           },
         ],
         totalAmount: product.price,
@@ -120,7 +121,11 @@ export function BuyNowSheet({
 
       // Try opening WhatsApp in new tab, and navigate current window to Request Created confirmation screen (Screen 10)
       window.open(whatsappUrl, "_blank");
-      navigate(`/request-created?number=${encodeURIComponent(data.requestNumber)}&token=${encodeURIComponent(data.secretToken)}&url=${encodeURIComponent(data.requestUrl)}`);
+      navigate(
+        `/request-created?number=${encodeURIComponent(data.requestNumber)}&token=${encodeURIComponent(
+          data.secretToken
+        )}&url=${encodeURIComponent(data.requestUrl)}&image=${encodeURIComponent(product.coverImage || "")}&name=${encodeURIComponent(product.name)}&price=${encodeURIComponent(product.price)}`
+      );
     } catch (err) {
       console.error(err);
       alert("Something went wrong creating your order request. Please try again.");

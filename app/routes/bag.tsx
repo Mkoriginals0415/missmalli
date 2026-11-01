@@ -110,6 +110,7 @@ export default function ShoppingBagPage() {
           name: `${(i.quantity || 1) > 1 ? `${i.quantity}x ` : ""}${i.name}`,
           variantDetails: `${i.colorName} · ${i.blouseOption === "with" ? "With blouse" : "Without"}`,
           price: i.price * (i.quantity || 1),
+          imageUrl: i.imageUrl,
         })),
         totalAmount: finalTotal,
       });
@@ -118,7 +119,7 @@ export default function ShoppingBagPage() {
       navigate(
         `/request-created?number=${encodeURIComponent(data.requestNumber)}&token=${encodeURIComponent(
           data.secretToken
-        )}&url=${encodeURIComponent(data.requestUrl)}`
+        )}&url=${encodeURIComponent(data.requestUrl)}&image=${encodeURIComponent(items[0]?.imageUrl || "")}&name=${encodeURIComponent(items[0]?.name || "")}&price=${encodeURIComponent(finalTotal)}`
       );
     } catch (err) {
       console.error(err);
