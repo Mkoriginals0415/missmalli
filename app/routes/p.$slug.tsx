@@ -206,7 +206,7 @@ export default function ProductDetailPage() {
         createdAt: new Date().toISOString(),
       });
 
-      const currentPhoto = product.images?.[selectedImageIndex] || product.images?.[0] || product.primary_image || "";
+      const currentPhoto = product.images?.[activePhoto] || product.images?.[0] || product.primary_image || "";
       const whatsappUrl = generateWhatsAppBuyUrl({
         sellerPhone,
         requestNumber: data.requestNumber,
@@ -223,6 +223,9 @@ export default function ProductDetailPage() {
         ],
         totalAmount,
       });
+
+      // Direct WhatsApp launch
+      window.open(whatsappUrl, "_blank");
 
       navigate(
         `/request-created?number=${encodeURIComponent(data.requestNumber)}&token=${encodeURIComponent(

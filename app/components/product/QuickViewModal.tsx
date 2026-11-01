@@ -95,6 +95,9 @@ export function QuickViewModal({
         totalAmount: product.price,
       });
 
+      // Direct WhatsApp launch
+      window.open(whatsappUrl, "_blank");
+
       navigate(
         `/request-created?number=${encodeURIComponent(data.requestNumber)}&token=${encodeURIComponent(
           data.secretToken

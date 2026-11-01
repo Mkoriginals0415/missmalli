@@ -52,7 +52,8 @@ export function toAbsoluteImageUrl(url?: string): string {
 }
 
 /**
- * Formats clean, elegant WhatsApp order message text with ZERO raw image URLs.
+ * Formats clean, elegant WhatsApp order message text with full product request details.
+ * Contains NO raw image URLs, relying on WhatsApp's OpenGraph meta preview card from requestUrl.
  */
 export function generateWhatsAppBuyMessage(payload: WhatsAppOrderPayload): string {
   const { requestNumber, requestUrl, items, totalAmount, customTemplate } = payload;
@@ -110,60 +111,4 @@ export function generateWhatsAppQuestionUrl(sellerPhone: string, productName: st
   const codeStr = productCode ? `(#${productCode})` : "";
   const message = `Hi Miss Malli, I have an inquiry about *${productName}* ${codeStr}.\nCould you please help me with details and styling advice?`;
   return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
-}
-
-/**
- * Mobile-first hybrid WhatsApp ordering helper:
- * - On Mobile (supporting navigator.share with files): Attaches actual photo file(s) directly to WhatsApp with message as caption.
- * - On Desktop / Fallback: Opens WhatsApp Web click-to-chat URL with clean text and OpenGraph meta card preview.
- */
-export async function sendWhatsAppOrderWithMedia({
-  sellerPhone,
-  messageText,
-  imageUrls,
-  fallbackUrl,
-}: {
-  sellerPhone: string;
-  messageText: string;
-  imageUrls?: string[];
-  fallbackUrl?: string;
-}): Promise<{ shared: boolean }> {
-  const cleanPhone = normalizeWhatsAppPhone(sellerPhone);
-  const waUrl = fallbackUrl || `https://wa.me/${cleanPhone}?text=${encodeURIComponent(messageText)}`;
-  const validUrls = (imageUrls || []).filter(Boolean);
-
-  if (typeof navigator !== "undefined" && navigator.share && navigator.canShare && validUrls.length > 0) {
-    try {
-      const filePromises = validUrls.map(async (url, idx) => {
-        const fullUrl = toAbsoluteImageUrl(url);
-        const res = await fetch(fullUrl);
-        const blob = await res.blob();
-        const ext = blob.type.includes("png") ? "png" : "jpg";
-        return new File([blob], `miss-malli-drape-${idx + 1}.${ext}`, {
-          type: blob.type || "image/jpeg",
-        });
-      });
-
-      const files = await Promise.all(filePromises);
-
-      if (navigator.canShare({ files })) {
-        await navigator.share({
-          files,
-          text: messageText,
-        });
-        return { shared: true };
-      }
-    } catch (err: any) {
-      if (err.name === "AbortError") {
-        return { shared: false };
-      }
-      console.warn("Native file share fallback:", err);
-    }
-  }
-
-  // Desktop or standard fallback
-  if (typeof window !== "undefined") {
-    window.open(waUrl, "_blank");
-  }
-  return { shared: false };
 }

@@ -118,6 +118,9 @@ export default function ShoppingBagPage() {
       const allImages = items.map((i) => i.imageUrl).filter(Boolean).join(",");
       const summaryName = items.length === 1 ? items[0].name : `${items.length} drapes in order`;
 
+      // Direct WhatsApp launch
+      window.open(whatsappUrl, "_blank");
+
       navigate(
         `/request-created?number=${encodeURIComponent(data.requestNumber)}&token=${encodeURIComponent(
           data.secretToken

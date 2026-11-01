@@ -4,7 +4,7 @@ import { Check, MessageCircle, Copy, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { Footer } from "~/components/layout/Footer";
 import { getStoreSettings } from "~/db/d1.server";
-import { normalizeWhatsAppPhone, sendWhatsAppOrderWithMedia } from "~/utils/whatsapp";
+import { normalizeWhatsAppPhone } from "~/utils/whatsapp";
 
 export async function loader({ context }: LoaderFunctionArgs) {
   const env = (context as any)?.cloudflare?.env;
@@ -31,18 +31,10 @@ export default function RequestCreatedPage() {
   const itemStr = productName ? ` for *${productName}*` : "";
   const priceStr = price ? ` (₹${Number(price).toLocaleString("en-IN")})` : "";
 
-  // 100% clean text message without any raw image URLs
+  // Pure clean text message with live status tracking link (generates WhatsApp meta OG preview)
   const messageText = `Hi Miss Malli, I would like to confirm my order${itemStr}${priceStr}.\n🔖 Request: ${requestNumber}\n\nView order & live status:\n${requestUrl}`;
 
-  const handleOpenWhatsApp = (e: React.MouseEvent) => {
-    e.preventDefault();
-    sendWhatsAppOrderWithMedia({
-      sellerPhone,
-      messageText,
-      imageUrls: imageUrlsList,
-      fallbackUrl: `https://wa.me/${cleanPhone}?text=${encodeURIComponent(messageText)}`,
-    });
-  };
+  const whatsappDirectUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(messageText)}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(messageText);
@@ -103,14 +95,15 @@ export default function RequestCreatedPage() {
         )}
 
         <div className="w-full mt-4 space-y-3">
-          <button
-            type="button"
-            onClick={handleOpenWhatsApp}
-            className="w-full py-4 px-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-lg transition active:scale-[0.99] cursor-pointer"
+          <a
+            href={whatsappDirectUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full py-4 px-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-lg transition active:scale-[0.99]"
           >
             <MessageCircle className="w-4 h-4" />
             <span>Open WhatsApp to Confirm</span>
-          </button>
+          </a>
 
           <button
             type="button"
