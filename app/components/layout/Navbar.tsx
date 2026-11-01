@@ -159,23 +159,23 @@ export function Navbar() {
           </div>
 
           {/* Mobile Dead-Centered Logo Lockup (Circular Avatar + Rectangular Brand Title) */}
-          <div className="lg:hidden absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-auto max-w-[calc(100%-140px)]">
+          <div className="lg:hidden absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-auto max-w-[calc(100%-120px)]">
             <Link to="/" prefetch="intent" className="flex items-center gap-2 group py-1 focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
               <img
                 src="/brand/logo.png"
                 alt="Miss Malli"
-                className="h-8 w-8 sm:h-9 sm:w-9 rounded-full object-cover mix-blend-multiply hover:opacity-95 transition shrink-0"
+                className="h-9 w-9 sm:h-10 sm:w-10 rounded-full object-cover mix-blend-multiply hover:opacity-95 transition shrink-0"
               />
               <img
                 src="/brand/logo-rect-transparent.png"
                 alt="Miss Malli - Made for Her Moments"
-                className="h-7 sm:h-8 w-auto max-w-[140px] sm:max-w-[175px] object-contain shrink-0 group-hover:opacity-90 transition"
+                className="h-10 sm:h-11 w-auto max-w-[210px] object-contain shrink-0 group-hover:opacity-90 transition"
               />
             </Link>
           </div>
 
           {/* Desktop Brand Logo Lockup */}
-          <Link to="/" prefetch="intent" className="hidden lg:flex items-center gap-3 group py-1 focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
+          <Link to="/" prefetch="intent" className="hidden lg:flex items-center gap-3.5 group py-1 focus-visible:ring-2 focus-visible:ring-brand-plum rounded-lg">
             <img
               src="/brand/logo.png"
               alt="Miss Malli"
@@ -184,7 +184,7 @@ export function Navbar() {
             <img
               src="/brand/logo-rect-transparent.png"
               alt="Miss Malli - Made for Her Moments"
-              className="h-10 w-auto object-contain shrink-0 group-hover:opacity-90 transition"
+              className="h-13 lg:h-14 w-auto object-contain shrink-0 group-hover:opacity-90 transition"
             />
           </Link>
 
@@ -197,7 +197,7 @@ export function Navbar() {
             {/* The animated sliding pill */}
             <span
               ref={pillRef}
-              className="absolute rounded-full bg-brand-deepPlum shadow-sm pointer-events-none transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+              className="absolute rounded-full bg-brand-primary shadow-xs pointer-events-none transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
               style={{ left: 0, width: 0, top: 0, height: 0, opacity: 0 }}
             />
 
@@ -231,10 +231,10 @@ export function Navbar() {
                       } catch {}
                     }
                   }}
-                  className={`relative z-10 px-4 py-2 rounded-full text-[13px] font-semibold transition-colors duration-200 select-none focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-plum ${
+                  className={`relative z-10 px-4 py-2 rounded-full text-[13px] transition-colors duration-200 select-none focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-plum ${
                     isActive
-                      ? "!text-white font-bold"
-                      : "text-brand-deepPlum/80 hover:text-brand-deepPlum hover:bg-brand-deepPlum/[0.05]"
+                      ? "text-brand-dark font-black"
+                      : "text-brand-deepPlum/80 hover:text-brand-deepPlum hover:bg-brand-deepPlum/[0.05] font-semibold"
                   }`}
                 >
                   {link.label}
@@ -253,7 +253,7 @@ export function Navbar() {
             >
               <Heart className="w-5 h-5 stroke-[2.2]" />
               {savedIds.length > 0 && (
-                <span className="absolute top-1.5 right-1.5 bg-brand-plum text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs animate-heart-burst">
+                <span className="absolute top-1.5 right-1.5 bg-brand-secondary text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs animate-heart-burst">
                   {savedIds.length}
                 </span>
               )}
@@ -267,7 +267,7 @@ export function Navbar() {
             >
               <ShoppingBag className="w-5 h-5 stroke-[2.2]" />
               {bagCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 bg-brand-plum text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs animate-heart-burst">
+                <span className="absolute top-1.5 right-1.5 bg-brand-secondary text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold shadow-xs animate-heart-burst">
                   {bagCount}
                 </span>
               )}
@@ -278,9 +278,9 @@ export function Navbar() {
               href={getChatUrl("Hi Miss Malli, I'd like assistance with an order")}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-deepPlum text-white text-[13px] font-semibold hover:bg-brand-plum active:scale-95 transition shadow-md focus-visible:ring-2 focus-visible:ring-brand-plum"
+              className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-primary text-brand-dark text-[13px] font-bold border border-brand-secondary/20 hover:bg-brand-secondary hover:text-white hover:border-transparent active:scale-95 transition shadow-sm focus-visible:ring-2 focus-visible:ring-brand-plum group"
             >
-              <MessageCircle className="w-4 h-4 text-emerald-400" />
+              <MessageCircle className="w-4 h-4 text-[#1E7E34] group-hover:text-emerald-300 transition-colors" />
               <span>WhatsApp Order</span>
             </a>
           </div>
@@ -337,7 +337,7 @@ export function Navbar() {
                       onClick={() => setMobileMenuOpen(false)}
                       className={`flex items-center justify-between px-4 py-3 rounded-xl text-base transition ${
                         isActive
-                          ? "bg-brand-deepPlum text-white font-bold shadow-xs"
+                          ? "bg-brand-primary text-brand-dark font-black shadow-xs border border-brand-secondary/20"
                           : "text-brand-deepPlum hover:bg-brand-lilac/20 font-medium"
                       }`}
                     >

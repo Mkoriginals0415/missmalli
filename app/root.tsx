@@ -119,10 +119,14 @@ export default function App() {
           dangerouslySetInnerHTML={{
             __html: `
               :root {
-                --color-brand-plum: ${themeColors.primaryPlum};
-                --color-brand-plum-rgb: ${hexToRgb(themeColors.primaryPlum, "113 61 140")};
-                --color-brand-deep-plum: ${themeColors.deepPlum};
-                --color-brand-deep-plum-rgb: ${hexToRgb(themeColors.deepPlum, "42 18 53")};
+                --color-brand-primary: ${themeColors.primaryPlum};
+                --color-brand-primary-rgb: ${hexToRgb(themeColors.primaryPlum, "181 154 217")};
+                --color-brand-secondary: ${themeColors.deepPlum};
+                --color-brand-secondary-rgb: ${hexToRgb(themeColors.deepPlum, "113 61 140")};
+                --color-brand-plum: ${themeColors.deepPlum};
+                --color-brand-plum-rgb: ${hexToRgb(themeColors.deepPlum, "113 61 140")};
+                --color-brand-deep-plum: #2A1235;
+                --color-brand-deep-plum-rgb: 42 18 53;
                 --color-brand-ivory: ${themeColors.ivoryCanvas};
                 --color-brand-ivory-rgb: ${hexToRgb(themeColors.ivoryCanvas, "251 248 242")};
                 --color-brand-gold: ${themeColors.accentGold};

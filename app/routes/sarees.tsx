@@ -244,8 +244,8 @@ export default function SareesListingPage() {
                     onClick={() => setSelectedFabric(f)}
                     className={`px-3.5 py-1.5 rounded-full text-xs font-bold border transition ${
                       selectedFabric === f
-                        ? "bg-brand-deepPlum text-white border-brand-deepPlum shadow-sm"
-                        : "bg-brand-ivory text-brand-deepPlum border-brand-lilac/50 hover:bg-white"
+                        ? "bg-brand-primary text-brand-dark font-black border-brand-secondary/30 shadow-xs"
+                        : "bg-white text-brand-deepPlum border-brand-primary/40 hover:bg-brand-primary/20"
                     }`}
                   >
                     {f === "all" ? "All Fabrics" : f}
@@ -287,8 +287,8 @@ export default function SareesListingPage() {
                     onClick={() => setSelectedOccasion(occ)}
                     className={`px-3.5 py-1.5 rounded-full text-xs font-bold border transition ${
                       selectedOccasion === occ
-                        ? "bg-brand-deepPlum text-white border-brand-deepPlum shadow-sm"
-                        : "bg-brand-ivory text-brand-deepPlum border-brand-lilac/50 hover:bg-white"
+                        ? "bg-brand-primary text-brand-dark font-black border-brand-secondary/30 shadow-xs"
+                        : "bg-white text-brand-deepPlum border-brand-primary/40 hover:bg-brand-primary/20"
                     }`}
                   >
                     {occ === "all" ? "All Occasions" : occ}
@@ -446,8 +446,8 @@ export default function SareesListingPage() {
                       onClick={() => setSelectedFabric(f)}
                       className={`px-4 py-2 rounded-full text-xs font-bold border transition min-h-[40px] ${
                         selectedFabric === f
-                          ? "bg-brand-deepPlum text-white border-brand-deepPlum shadow-xs"
-                          : "bg-white text-brand-deepPlum border-brand-lilac/50 hover:bg-brand-ivory"
+                          ? "bg-brand-primary text-brand-dark font-black border-brand-secondary/30 shadow-xs"
+                          : "bg-white text-brand-deepPlum border-brand-primary/40 hover:bg-brand-primary/20"
                       }`}
                     >
                       {f === "all" ? "All Fabrics" : f}
@@ -489,8 +489,8 @@ export default function SareesListingPage() {
                       onClick={() => setSelectedOccasion(occ)}
                       className={`px-4 py-2 rounded-full text-xs font-bold border transition min-h-[40px] ${
                         selectedOccasion === occ
-                          ? "bg-brand-deepPlum text-white border-brand-deepPlum shadow-xs"
-                          : "bg-white text-brand-deepPlum border-brand-lilac/50 hover:bg-brand-ivory"
+                          ? "bg-brand-primary text-brand-dark font-black border-brand-secondary/30 shadow-xs"
+                          : "bg-white text-brand-deepPlum border-brand-primary/40 hover:bg-brand-primary/20"
                       }`}
                     >
                       {occ === "all" ? "All Occasions" : occ}
@@ -510,7 +510,7 @@ export default function SareesListingPage() {
               </button>
               <button
                 onClick={() => setMobileFilterOpen(false)}
-                className="flex-1 py-3 px-4 rounded-full bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md min-h-[44px]"
+                className="flex-1 py-3 px-4 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition shadow-md min-h-[44px]"
               >
                 Show {filtered.length} Sarees
               </button>

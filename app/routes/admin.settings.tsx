@@ -321,12 +321,12 @@ export default function AdminSettingsPage() {
           <div className="p-4 rounded-2xl bg-brand-ivory/60 border border-brand-deepPlum/15 space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-brand-deepPlum">
-                Primary Brand Color
+                Primary Brand Color (#B59AD9)
               </label>
               <span className="w-5 h-5 rounded-full border border-black/10 shadow-inner" style={{ backgroundColor: colors.primaryPlum }} />
             </div>
             <p className="text-[10px] text-brand-deepPlum/60">
-              Navigation active tabs, brand headers, highlights
+              Main brand color, active navigation tabs, and primary action buttons
             </p>
             <div className="flex items-center gap-2 pt-1">
               <input
@@ -348,12 +348,12 @@ export default function AdminSettingsPage() {
           <div className="p-4 rounded-2xl bg-brand-ivory/60 border border-brand-deepPlum/15 space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-brand-deepPlum">
-                Deep Plum (Buttons & Footer)
+                Secondary Brand Color (#713D8C)
               </label>
               <span className="w-5 h-5 rounded-full border border-black/10 shadow-inner" style={{ backgroundColor: colors.deepPlum }} />
             </div>
             <p className="text-[10px] text-brand-deepPlum/60">
-              Primary CTA buttons, footer background, bold typography
+              Supporting brand plum, secondary buttons, badges, and accents
             </p>
             <div className="flex items-center gap-2 pt-1">
               <input

@@ -71,7 +71,7 @@ export default function SearchPage() {
                 <button
                   key={tag}
                   onClick={() => setQuery(tag)}
-                  className="px-4 py-2 rounded-full bg-white border border-brand-lilac/40 text-xs font-medium text-brand-deepPlum hover:bg-brand-deepPlum hover:text-white transition shadow-sm"
+                  className="px-4 py-2 rounded-full bg-white border border-brand-primary/50 text-xs font-semibold text-brand-dark hover:bg-brand-primary hover:text-brand-dark transition shadow-2xs"
                 >
                   {tag}
                 </button>
@@ -97,7 +97,7 @@ export default function SearchPage() {
                   >
                     <div className="relative aspect-[2/3] bg-brand-ivory/60 overflow-hidden">
                       <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover object-top" />
-                      <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full bg-brand-deepPlum text-white text-[9px] font-bold">
+                      <span className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-brand-primary text-brand-dark text-[9px] font-black border border-brand-secondary/20 shadow-xs">
                         #{product.code}
                       </span>
                     </div>

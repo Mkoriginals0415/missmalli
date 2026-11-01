@@ -483,10 +483,10 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
                 style={{ opacity: 1 }}
               >
                 <div className="flex items-center justify-between mb-1 gap-2">
-                  <span className="text-[9px] uppercase tracking-widest font-bold px-2 py-0.5 rounded-full bg-brand-deepPlum text-white shadow-xs">
+                  <span className="text-[9px] uppercase tracking-widest font-black px-2.5 py-0.5 rounded-full bg-brand-primary text-brand-dark border border-brand-secondary/20 shadow-xs">
                     {item.tag}
                   </span>
-                  <span className="text-[10px] text-brand-plum font-serif italic font-semibold">
+                  <span className="text-[10px] text-brand-secondary font-serif italic font-semibold">
                     Pure Silk Weave
                   </span>
                 </div>
@@ -552,7 +552,7 @@ export function Hero3DCoverFlow({ items }: Hero3DCoverFlowProps) {
           {/* Direct Drape Explore Link (Takes directly to Sarees catalog page) */}
           <Link
             to="/sarees"
-            className="ml-2 px-5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider bg-brand-deepPlum text-white hover:bg-brand-plum transition-all shadow-xs"
+            className="ml-2 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-brand-primary text-brand-dark hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition-all shadow-xs"
           >
             Explore Drape ↗
           </Link>

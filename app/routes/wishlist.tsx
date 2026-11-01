@@ -59,7 +59,7 @@ export default function WishlistPage() {
           {savedSarees.length > 0 && (
             <button
               onClick={handleMoveAllToBag}
-              className="px-6 py-2.5 rounded-full bg-brand-deepPlum text-white text-xs font-semibold hover:bg-brand-plum transition shadow-sm self-start sm:self-auto"
+              className="px-6 py-2.5 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition shadow-sm self-start sm:self-auto"
             >
               Move all to bag
             </button>
@@ -78,7 +78,7 @@ export default function WishlistPage() {
             <div className="pt-2">
               <Link
                 to="/sarees"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-deepPlum text-white text-xs font-semibold hover:bg-brand-plum transition shadow-md"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition shadow-md"
               >
                 <span>Discover Handlooms</span>
                 <ArrowRight className="w-4 h-4" />
@@ -98,7 +98,7 @@ export default function WishlistPage() {
                     alt={saree.name}
                     className="w-full h-full object-cover object-top group-hover:scale-105 transition duration-500"
                   />
-                  <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full bg-brand-deepPlum text-white text-[9px] font-bold">
+                  <span className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-brand-primary text-brand-dark text-[9px] font-black border border-brand-secondary/20 shadow-xs">
                     #{saree.code}
                   </span>
                   <button

@@ -147,7 +147,7 @@ export function QuickViewModal({
             alt={product.name}
             className="w-full h-full object-cover"
           />
-          <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-brand-deepPlum text-white text-[11px] font-bold">
+          <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-brand-primary text-brand-dark text-[11px] font-black border border-brand-secondary/20 shadow-xs">
             #{product.code}
           </span>
         </div>
@@ -211,15 +211,15 @@ export function QuickViewModal({
             <button
               onClick={handleBuyNow}
               disabled={isSubmitting}
-              className="w-full py-3 px-4 rounded-full bg-brand-plum text-white text-xs font-semibold hover:bg-brand-deepPlum transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50"
+              className="w-full py-3 px-4 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 group"
             >
-              <MessageCircle className="w-4 h-4 text-emerald-400" />
+              <MessageCircle className="w-4 h-4 text-emerald-700 group-hover:text-emerald-300 transition-colors" />
               <span>Buy now on WhatsApp</span>
             </button>
 
             <button
               onClick={handleAddToBag}
-              className="w-full py-2.5 px-4 rounded-full border border-brand-plum text-brand-plum text-xs font-semibold hover:bg-brand-plum hover:text-white transition flex items-center justify-center gap-2"
+              className="w-full py-2.5 px-4 rounded-full bg-brand-secondary text-white text-xs font-semibold hover:bg-brand-secondary/90 transition flex items-center justify-center gap-2 shadow-xs"
             >
               <ShoppingBag className="w-4 h-4" />
               <span>Add to Bag</span>

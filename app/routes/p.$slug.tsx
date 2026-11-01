@@ -484,7 +484,7 @@ export default function ProductDetailPage() {
 
               <button
                 onClick={handleAddToBag}
-                className="flex-1 py-3 px-6 rounded-full bg-brand-plum text-white font-semibold text-xs hover:bg-brand-deepPlum transition shadow-md flex items-center justify-center gap-2 min-h-[44px]"
+                className="flex-1 py-3 px-6 rounded-full bg-brand-secondary text-white font-semibold text-xs hover:bg-brand-secondary/90 transition shadow-md flex items-center justify-center gap-2 min-h-[44px]"
               >
                 <ShoppingBag className="w-4 h-4" />
                 <span>Add to Bag</span>
@@ -493,22 +493,22 @@ export default function ProductDetailPage() {
               <button
                 onClick={() => toggleSave(product.id)}
                 className={`p-3 rounded-full border border-brand-lilac/50 transition min-w-[44px] min-h-[44px] flex items-center justify-center ${
-                  isSaved(product.id) ? "bg-brand-blush text-brand-plum border-brand-plum" : "bg-white text-brand-deepPlum"
+                  isSaved(product.id) ? "bg-brand-blush text-brand-secondary border-brand-secondary" : "bg-white text-brand-deepPlum"
                 }`}
                 aria-label="Save to Wishlist"
               >
-                <Heart className={`w-4 h-4 ${isSaved(product.id) ? "fill-brand-plum" : ""}`} />
+                <Heart className={`w-4 h-4 ${isSaved(product.id) ? "fill-brand-secondary" : ""}`} />
               </button>
             </div>
 
-            {/* Buy Now on WhatsApp Button (Black pill from design) */}
+            {/* Buy Now on WhatsApp Button */}
             <div>
               <button
                 onClick={handleBuyNow}
                 disabled={isSubmitting}
-                className="w-full py-3.5 px-6 rounded-full bg-brand-deepPlum text-white font-semibold text-xs hover:bg-brand-plum transition shadow-lg flex items-center justify-center gap-2.5 disabled:opacity-50 min-h-[48px]"
+                className="w-full py-3.5 px-6 rounded-full bg-brand-primary text-brand-dark font-black text-xs hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition shadow-md flex items-center justify-center gap-2.5 disabled:opacity-50 min-h-[48px] group"
               >
-                <MessageCircle className="w-4 h-4 text-emerald-400" />
+                <MessageCircle className="w-4 h-4 text-emerald-700 group-hover:text-emerald-300 transition-colors" />
                 <span>Buy Now on WhatsApp (#{product.code})</span>
               </button>
               <p className="text-[11px] text-center text-brand-deepPlum/60 mt-1.5 font-medium">
@@ -713,9 +713,9 @@ export default function ProductDetailPage() {
           <button
             onClick={handleBuyNow}
             disabled={isSubmitting}
-            className="py-2.5 px-4 rounded-full bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md flex items-center gap-1.5 whitespace-nowrap min-h-[42px]"
+            className="py-2.5 px-4 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition shadow-md flex items-center gap-1.5 whitespace-nowrap min-h-[42px] group"
           >
-            <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
+            <MessageCircle className="w-3.5 h-3.5 text-emerald-700 group-hover:text-emerald-300 transition-colors" />
             <span>Order on WhatsApp</span>
           </button>
         </div>

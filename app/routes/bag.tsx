@@ -173,7 +173,7 @@ export default function ShoppingBagPage() {
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
                 to="/sarees"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-deepPlum text-white text-xs font-semibold hover:bg-brand-plum transition shadow-md"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition shadow-md"
               >
                 <span>Browse Sarees</span>
                 <ArrowRight className="w-4 h-4" />
@@ -342,7 +342,7 @@ export default function ShoppingBagPage() {
                 <button
                   onClick={handleSendWhatsAppOrder}
                   disabled={isSubmitting}
-                  className="w-full py-3.5 px-6 rounded-full bg-brand-deepPlum text-white font-bold text-xs hover:bg-brand-plum transition shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 min-h-[48px]"
+                  className="w-full py-3.5 px-6 rounded-full bg-brand-primary text-brand-dark font-black text-xs hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 min-h-[48px] group"
                 >
                   {isSubmitting ? (
                     <>
@@ -351,7 +351,7 @@ export default function ShoppingBagPage() {
                     </>
                   ) : (
                     <>
-                      <MessageCircle className="w-4 h-4 text-emerald-400" />
+                      <MessageCircle className="w-4 h-4 text-emerald-700 group-hover:text-emerald-300 transition-colors" />
                       <span>Order on WhatsApp ({totalItemsCount} {totalItemsCount === 1 ? "item" : "items"})</span>
                     </>
                   )}
@@ -383,12 +383,12 @@ export default function ShoppingBagPage() {
           <button
             onClick={handleSendWhatsAppOrder}
             disabled={isSubmitting}
-            className="py-3 px-5 rounded-full bg-brand-deepPlum text-white text-xs font-bold hover:bg-brand-plum transition shadow-md flex items-center gap-2 min-h-[44px]"
+            className="py-3 px-5 rounded-full bg-brand-primary text-brand-dark text-xs font-black hover:bg-brand-secondary hover:text-white border border-brand-secondary/20 transition shadow-md flex items-center gap-2 min-h-[44px] group"
           >
             {isSubmitting ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
-              <MessageCircle className="w-4 h-4 text-emerald-400" />
+              <MessageCircle className="w-4 h-4 text-emerald-700 group-hover:text-emerald-300 transition-colors" />
             )}
             <span>Order on WhatsApp</span>
           </button>
