@@ -52,10 +52,10 @@ export function Footer() {
                 href={getChatUrl("Hi Miss Malli, I would like assistance with an order")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-primary text-emerald-950 text-xs font-bold hover:bg-[#a085cc] transition min-h-[44px] shadow-sm border border-brand-primary/40 group"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-primary text-xs font-bold hover:bg-[#a085cc] transition min-h-[44px] shadow-sm border border-brand-primary/40 group"
               >
                 <WhatsAppIcon className="w-4 h-4 text-[#25D366] shrink-0" fill="#25D366" />
-                <span className="text-[#15803d] font-bold">Chat on WhatsApp</span>
+                <span className="text-[#25D366] font-bold">Chat on WhatsApp</span>
               </a>
             </div>
 

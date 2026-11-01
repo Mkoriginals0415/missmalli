@@ -212,10 +212,10 @@ export function QuickViewModal({
             <button
               onClick={handleBuyNow}
               disabled={isSubmitting}
-              className="w-full py-3 px-4 rounded-full bg-brand-primary text-emerald-950 text-xs font-black hover:bg-[#a085cc] border border-brand-primary/30 transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 group"
+              className="w-full py-3 px-4 rounded-full bg-brand-primary text-xs font-black hover:bg-[#a085cc] border border-brand-primary/30 transition flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 group"
             >
               <WhatsAppIcon className="w-4 h-4 text-[#25D366] shrink-0" fill="#25D366" />
-              <span className="text-[#15803d] font-bold">Buy now on WhatsApp</span>
+              <span className="text-[#25D366] font-bold">Buy now on WhatsApp</span>
             </button>
 
             <button

@@ -631,61 +631,6 @@ export default function AdminHomepageEditor() {
             </div>
           </div>
 
-          {/* Desktop Images Editor */}
-          <div className="space-y-3 pt-4 border-t border-brand-deepPlum/10">
-            <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-brand-deepPlum">
-                Desktop Bento Moodboard Showcase Images
-              </h4>
-              <p className="text-[11px] text-brand-deepPlum/60 font-medium">
-                Upload luxury editorial moodboard, loom craftsmanship, and handloom silk aesthetic photos (these are brand showcase visuals, distinct from individual catalog products)
-              </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-              {hero.desktopImages.map((imgUrl, i) => (
-                <div key={i} className="p-3 rounded-2xl bg-brand-ivory/50 border border-brand-deepPlum/15 space-y-2 flex flex-col justify-between">
-                  <div className="aspect-[3/4] rounded-xl overflow-hidden bg-white relative border border-brand-deepPlum/10 shadow-2xs group">
-                    <img src={imgUrl} alt={`Col ${i + 1}`} className="w-full h-full object-cover" />
-                    <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded-md bg-black/70 text-white text-[9px] font-bold">
-                      Column {i + 1}
-                    </span>
-                  </div>
-
-                  <div className="space-y-1.5 pt-1">
-                    <label className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-2 rounded-xl bg-brand-primary text-brand-dark text-[11px] font-bold cursor-pointer hover:bg-brand-plum transition shadow-xs">
-                      <Upload className="w-3 h-3 text-brand-lilac" />
-                      <span>Upload Photo</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={async (e) => {
-                          if (e.target.files && e.target.files[0]) {
-                            const dataUrl = await processImageFile(e.target.files[0]);
-                            const updated = [...hero.desktopImages];
-                            updated[i] = dataUrl;
-                            setHero({ ...hero, desktopImages: updated });
-                          }
-                        }}
-                      />
-                    </label>
-
-                    <input
-                      type="text"
-                      value={imgUrl}
-                      onChange={(e) => {
-                        const updated = [...hero.desktopImages];
-                        updated[i] = e.target.value;
-                        setHero({ ...hero, desktopImages: updated });
-                      }}
-                      placeholder="Or paste link..."
-                      className="w-full px-2 py-1 rounded-lg border border-brand-deepPlum/20 text-[9px] text-brand-deepPlum font-mono"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
 
 
           {/* Bottom Review Strip */}

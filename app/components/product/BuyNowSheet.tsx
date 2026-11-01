@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { X, MessageCircle, Loader2 } from "lucide-react";
+import { WhatsAppIcon } from "~/components/ui/WhatsAppIcon";
 import { useNavigate } from "@remix-run/react";
 import { generateWhatsAppBuyUrl } from "~/utils/whatsapp";
 import { useMyRequests } from "~/hooks/useLocalStorage";
@@ -231,8 +232,8 @@ export function BuyNowSheet({
             </>
           ) : (
             <>
-              <MessageCircle className="w-4 h-4" />
-              Continue to WhatsApp
+              <WhatsAppIcon className="w-4 h-4 text-[#25D366] shrink-0" fill="#25D366" />
+              <span className="text-[#25D366] font-bold">Continue to WhatsApp</span>
             </>
           )}
         </button>

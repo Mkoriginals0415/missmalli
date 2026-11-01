@@ -353,7 +353,7 @@ export default function ShoppingBagPage() {
                   ) : (
                     <>
                       <WhatsAppIcon className="w-4 h-4 text-[#25D366] shrink-0" fill="#25D366" />
-                      <span className="text-[#15803d] font-bold">Order on WhatsApp ({totalItemsCount} {totalItemsCount === 1 ? "item" : "items"})</span>
+                      <span className="text-[#25D366] font-bold">Order on WhatsApp ({totalItemsCount} {totalItemsCount === 1 ? "item" : "items"})</span>
                     </>
                   )}
                 </button>
@@ -384,14 +384,14 @@ export default function ShoppingBagPage() {
           <button
             onClick={handleSendWhatsAppOrder}
             disabled={isSubmitting}
-            className="py-3 px-5 rounded-full bg-brand-primary text-emerald-950 text-xs font-black hover:bg-[#a085cc] border border-brand-primary/30 transition shadow-md flex items-center gap-2 min-h-[44px] group"
+            className="py-3 px-5 rounded-full bg-brand-primary text-xs font-black hover:bg-[#a085cc] border border-brand-primary/30 transition shadow-md flex items-center gap-2 min-h-[44px] group"
           >
             {isSubmitting ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               <WhatsAppIcon className="w-4 h-4 text-[#25D366] shrink-0" fill="#25D366" />
             )}
-            <span className="text-[#15803d] font-bold">Order on WhatsApp</span>
+            <span className="text-[#25D366] font-bold">Order on WhatsApp</span>
           </button>
         </div>
       )}

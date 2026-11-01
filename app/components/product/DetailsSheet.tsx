@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { X, MessageCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { WhatsAppIcon } from "~/components/ui/WhatsAppIcon";
 import { generateWhatsAppQuestionUrl } from "~/utils/whatsapp";
 import { useSellerPhone } from "~/hooks/useSellerPhone";
 
@@ -89,10 +90,10 @@ export function DetailsSheet({ isOpen, onClose, product, sellerPhone }: DetailsS
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full py-3 px-4 rounded-full border border-brand-purple text-brand-purple hover:bg-brand-primary hover:text-white transition flex items-center justify-center gap-2 text-sm font-medium"
+            className="w-full py-3 px-4 rounded-full border border-emerald-500/40 hover:bg-emerald-50 transition flex items-center justify-center gap-2 text-sm font-bold"
           >
-            <MessageCircle className="w-4 h-4" />
-            Ask about this saree on WhatsApp
+            <WhatsAppIcon className="w-4 h-4 text-[#25D366] shrink-0" fill="#25D366" />
+            <span className="text-[#25D366]">Ask about this saree on WhatsApp</span>
           </a>
         </div>
       </div>
